@@ -1,0 +1,52 @@
+DATABASE SCHEMA SUMMARY
+=======================
+This database uses PostgreSQL and is perfectly structured to match the React frontend forms and Zustand data stores exactly. It contains 11 primary tables designed for a healthcare/hospital management system (ESHS).
+
+1. Patient
+   - Purpose: Stores comprehensive demographic, medical, and billing details for patients.
+   - Core Fields: uhid (Unique Health ID), salutation, first_name,middle_name, last_name, age, dob, gender, bloodGroup, maritalStatus.
+   - Contact Fields: Mobile_number, alternate_mobile_number, email, address, city, state, country, pincode.
+   - Emergency Contacts: emergency_name, emergency_relationship, emergency_phone.
+   - Insurance : insuranceProvider, insurancePolicyNumber, insuranceTpa, insuranceContact, insuranceNotes
+   - Corporate : corporateName, corporateId, employeeId, corporateContact, corporateAddress.
+   - Hospital Meta: patientCategory, careType, assignedDepartment, service, registeredOn, lastVisit, status, initials, inquiryId, appointmentId, vip.
+
+2. Appointment
+   - Purpose: Manages scheduled visits for patients.
+   - Fields: appointmentNumber, patient, phone, email, doctor, service, date, time, type, notes, status, inquiryId, uhid.
+
+3. Inquiry
+   - Purpose: Tracks new leads, patient inquiries, or service requests.
+   - Fields: inquiryNumber, name, phone, email, service, source, priority, status, followUp, notes, appointmentId.
+
+4. Invoice
+   - Purpose: Comprehensive billing and financial transactions.
+   - Fields: invoiceNumber, uhid, patient, service, date, subtotal, tax, discount, total, paid, balance, status, paymentMode, transactionId, remarks.
+
+5. PatientDocument
+   - Purpose: Stores metadata for uploaded patient files (lab reports, ID proofs, etc.).
+   - Fields: uhid, name, type, uploadedBy, uploadedOn, verified, fileUrl.
+
+6. Consultation
+   - Purpose: Detailed medical consultation records and prescriptions.
+   - Fields: uhid, doctor, service, date, chiefComplaint, diagnosis, treatmentNotes, prescription, followUp, files (String[]).
+
+7. Nc (Non-Conformance / Incident)
+   - Purpose: Quality management or incident tracking.
+   - Fields: ncNumber, uhid, patient, relatedDocument, department, severity, status, dueDate, assignedTo, description, rootCause, title.
+
+8. TestMaster
+   - Purpose: Reference table for available laboratory or medical tests.
+   - Fields: name, serviceCode.
+
+9. ServiceMaster
+   - Purpose: Reference table for available hospital services or departments.
+   - Fields: name, serviceCode.
+
+10. PackageMaster
+    - Purpose: Reference table for bundled health packages.
+    - Fields: name, serviceCode.
+
+11. User (Mapped to "users" table)
+    - Purpose: System authentication and role management (Doctors, Admins, Reception).
+    - Fields: email, password, firstName, lastName, role, department, isActive, lastLoginAt.

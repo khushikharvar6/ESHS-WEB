@@ -1,0 +1,97 @@
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateNcDto, ResolveNcDto } from './dto/nc.dto';
+export declare class NcService {
+    private readonly prisma;
+    constructor(prisma: PrismaService);
+    create(dto: CreateNcDto, userId?: string): Promise<{
+        patient: string;
+        id: string;
+        department: string;
+        createdAt: Date;
+        updatedAt: string | null;
+        description: string | null;
+        title: string | null;
+        uhid: string;
+        status: string;
+        updatedBy: string | null;
+        relatedDocument: string;
+        severity: string;
+        dueDate: string;
+        assignedTo: string;
+        rootCause: string | null;
+    }>;
+    findAll(page?: number, limit?: number, status?: string, severity?: string, patientId?: string): Promise<{
+        data: {
+            patient: string;
+            id: string;
+            department: string;
+            createdAt: Date;
+            updatedAt: string | null;
+            description: string | null;
+            title: string | null;
+            uhid: string;
+            status: string;
+            updatedBy: string | null;
+            relatedDocument: string;
+            severity: string;
+            dueDate: string;
+            assignedTo: string;
+            rootCause: string | null;
+        }[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }>;
+    findById(id: string): Promise<{
+        patient: string;
+        id: string;
+        department: string;
+        createdAt: Date;
+        updatedAt: string | null;
+        description: string | null;
+        title: string | null;
+        uhid: string;
+        status: string;
+        updatedBy: string | null;
+        relatedDocument: string;
+        severity: string;
+        dueDate: string;
+        assignedTo: string;
+        rootCause: string | null;
+    }>;
+    resolve(id: string, dto: ResolveNcDto, userId?: string): Promise<{
+        patient: string;
+        id: string;
+        department: string;
+        createdAt: Date;
+        updatedAt: string | null;
+        description: string | null;
+        title: string | null;
+        uhid: string;
+        status: string;
+        updatedBy: string | null;
+        relatedDocument: string;
+        severity: string;
+        dueDate: string;
+        assignedTo: string;
+        rootCause: string | null;
+    }>;
+    close(id: string): Promise<{
+        patient: string;
+        id: string;
+        department: string;
+        createdAt: Date;
+        updatedAt: string | null;
+        description: string | null;
+        title: string | null;
+        uhid: string;
+        status: string;
+        updatedBy: string | null;
+        relatedDocument: string;
+        severity: string;
+        dueDate: string;
+        assignedTo: string;
+        rootCause: string | null;
+    }>;
+}

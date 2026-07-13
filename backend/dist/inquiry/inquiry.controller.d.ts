@@ -1,0 +1,108 @@
+import { InquiryService } from './inquiry.service';
+import { CreateInquiryDto, UpdateInquiryDto } from './dto/create-inquiry.dto';
+export declare class InquiryController {
+    private readonly inquiryService;
+    constructor(inquiryService: InquiryService);
+    create(dto: CreateInquiryDto, userId: string): Promise<{
+        id: string;
+        email: string | null;
+        firstName: string;
+        lastName: string;
+        phone: string;
+        createdAt: Date;
+        updatedAt: Date;
+        service: string;
+        status: string;
+        appointmentId: string | null;
+        source: string;
+        priority: string;
+        followUp: string;
+        notes: string | null;
+    }>;
+    findAll(page?: number, limit?: number, status?: string, search?: string): Promise<{
+        data: {
+            id: string;
+            email: string | null;
+            firstName: string;
+            lastName: string;
+            phone: string;
+            createdAt: Date;
+            updatedAt: Date;
+            service: string;
+            status: string;
+            appointmentId: string | null;
+            source: string;
+            priority: string;
+            followUp: string;
+            notes: string | null;
+        }[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }>;
+    findById(id: string): Promise<{
+        id: string;
+        email: string | null;
+        firstName: string;
+        lastName: string;
+        phone: string;
+        createdAt: Date;
+        updatedAt: Date;
+        service: string;
+        status: string;
+        appointmentId: string | null;
+        source: string;
+        priority: string;
+        followUp: string;
+        notes: string | null;
+    }>;
+    update(id: string, dto: UpdateInquiryDto): Promise<{
+        id: string;
+        email: string | null;
+        firstName: string;
+        lastName: string;
+        phone: string;
+        createdAt: Date;
+        updatedAt: Date;
+        service: string;
+        status: string;
+        appointmentId: string | null;
+        source: string;
+        priority: string;
+        followUp: string;
+        notes: string | null;
+    }>;
+    convert(id: string, patientId: string): Promise<{
+        id: string;
+        email: string | null;
+        firstName: string;
+        lastName: string;
+        phone: string;
+        createdAt: Date;
+        updatedAt: Date;
+        service: string;
+        status: string;
+        appointmentId: string | null;
+        source: string;
+        priority: string;
+        followUp: string;
+        notes: string | null;
+    }>;
+    markLost(id: string, lostReason: string): Promise<{
+        id: string;
+        email: string | null;
+        firstName: string;
+        lastName: string;
+        phone: string;
+        createdAt: Date;
+        updatedAt: Date;
+        service: string;
+        status: string;
+        appointmentId: string | null;
+        source: string;
+        priority: string;
+        followUp: string;
+        notes: string | null;
+    }>;
+}

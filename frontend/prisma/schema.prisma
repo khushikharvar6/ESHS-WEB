@@ -1,0 +1,381 @@
+// ES Healthcare Centre — Flattened Schema for Frontend Compatibility
+// PostgreSQL provider with UUID primary keys for all models
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// 1. USERS & AUTH
+// ============================================================================
+
+model User {
+  id          String    @id @default(uuid())
+  email       String    @unique
+  password    String
+  firstName   String    @map("first_name")
+  lastName    String    @map("last_name")
+  role        String    @default("FRONT_DESK")
+  department  String?
+  phone       String?
+  avatarUrl   String?
+  isActive    Boolean   @default(true) @map("is_active")
+  lastLoginAt DateTime? @map("last_login_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+// ============================================================================
+// 2. PATIENT
+// ============================================================================
+
+model Patient {
+  id                    String   @id @default(uuid())
+  uhid                  String   @unique @default(dbgenerated("gen_random_uuid()"))
+  salutation            String   @default("")
+  firstName             String   @default("")
+  middleName            String?
+  lastName              String   @default("")
+  age                   Int      @default(0)
+  dob                   String?
+  gender                String   @default("")
+  bloodGroup            String?
+  maritalStatus         String?
+  
+  mobileNo              String   @default("")
+  alternateMobile       String?
+  emailAddress          String?
+  residentialAddress    String?
+  city                  String?
+  state                 String?
+  country               String   @default("India")
+  pincode               String?
+  
+  emergencyContactName  String?
+  emergencyRelationship String?
+  emergencyPhoneNumber  String?
+  
+  patientCategory       String?
+  careType              String?
+  assignedDepartmentServices String?
+  assignedDepartment    String?
+  service               String   @default("")
+  
+  insurance             PatientInsurance?
+  corporate             PatientCorporate?
+  
+  registeredOn          String   @default("")
+  lastVisit             String   @default("")
+  status                String   @default("Active")
+  initials              String   @default("")
+  inquiryId             String?
+  appointmentId         String?
+  vip                   Boolean  @default(false)
+  
+  updatedBy             String?
+  updatedAt             String?
+  createdAt             DateTime @default(now())
+
+  @@index([uhid])
+  @@index([mobileNo])
+  @@map("patients")
+}
+
+model PatientInsurance {
+  id                String   @id @default(uuid())
+  patientUhid       String   @unique
+  patient           Patient  @relation(fields: [patientUhid], references: [uhid], onDelete: Cascade)
+  
+  firstName         String?
+  lastName          String?
+  
+  insuranceProvider String?
+  policyNumber      String?
+  tpaNetwork        String?
+  insuranceContact  String?
+  insuranceNotes    String?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("patient_insurance")
+}
+
+model PatientCorporate {
+  id                String   @id @default(uuid())
+  patientUhid       String   @unique
+  patient           Patient  @relation(fields: [patientUhid], references: [uhid], onDelete: Cascade)
+  
+  firstName         String?
+  lastName          String?
+  
+  companyName       String?
+  corporateId       String?
+  employeeId        String?
+  companyContact    String?
+  corporateAddress  String?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("patient_corporate")
+}
+
+model PatientDocument {
+  id           String   @id @default(uuid())
+  uhid         String   @default("")
+  name         String   @default("")
+  type         String   @default("")
+  uploadedBy   String   @default("")
+  uploadedOn   String   @default("")
+  verified     Boolean  @default(false)
+  fileUrl      String?
+  updatedBy    String?
+  updatedAt    String?
+  createdAt    DateTime @default(now())
+}
+
+// ============================================================================
+// 3. INQUIRY
+// ============================================================================
+
+model Inquiry {
+  id            String   @id @default(uuid())
+  firstName     String   @default("")
+  lastName      String   @default("")
+  phone         String   @default("")
+  email         String?
+  service       String   @default("")
+  source        String   @default("")
+  priority      String   @default("Routine")
+  status        String   @default("New")
+  followUp      String   @default("")
+  notes         String?
+  appointmentId String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ============================================================================
+// 4. DOCTOR / CONSULTANT
+// ============================================================================
+
+model Doctor {
+  id              String   @id
+  firstName       String
+  lastName        String
+  fullName        String
+  specialization  String[]
+  qualification   String?
+  experienceYears Int?
+  phone           String?
+  email           String?
+  consultationFee Decimal  @default(0)
+  followUpFee     Decimal  @default(0)
+  isActive        Boolean  @default(true)
+  bio             String?
+  avatarUrl       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ============================================================================
+// 5. APPOINTMENT
+// ============================================================================
+
+model Appointment {
+  id        String   @id @default(uuid())
+  firstName String   @default("")
+  lastName  String   @default("")
+  phone     String   @default("")
+  email     String?
+  doctor    String   @default("")
+  service   String   @default("")
+  date      String   @default("")
+  time      String   @default("")
+  type      String   @default("")
+  notes     String?
+  status    String   @default("Scheduled")
+  inquiryId String?
+  uhid      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================================
+// 6. CONSULTATION
+// ============================================================================
+
+model Consultation {
+  id             String   @id @default(uuid())
+  uhid           String   @default("")
+  doctor         String   @default("")
+  service        String   @default("")
+  date           String   @default("")
+  chiefComplaint String   @default("")
+  diagnosis      String   @default("")
+  treatmentNotes String?
+  prescription   String?
+  followUp       String?
+  files          String[]
+  updatedBy      String?
+  updatedAt      String?
+  createdAt      DateTime @default(now())
+}
+
+// ============================================================================
+// 7. INVOICE
+// ============================================================================
+
+model Invoice {
+  id            String   @id @default(uuid())
+  uhid          String?
+  patient       String   @default("")
+  service       String   @default("")
+  date          String   @default("")
+  subtotal      Decimal  @default(0)
+  tax           Decimal  @default(0)
+  discount      Decimal  @default(0)
+  total         Decimal  @default(0)
+  paid          Decimal  @default(0)
+  balance       Decimal  @default(0)
+  status        String   @default("Draft")
+  paymentMode   String?
+  transactionId String?
+  remarks       String?
+  updatedBy     String?
+  updatedAt     String?
+  createdAt     DateTime @default(now())
+}
+
+// ============================================================================
+// 8. NON-CONFORMANCE (NC)
+// ============================================================================
+
+model NonConformance {
+  id              String   @id @default(uuid())
+  uhid            String   @default("")
+  patient         String   @default("")
+  relatedDocument String   @default("")
+  department      String   @default("")
+  severity        String   @default("Minor")
+  status          String   @default("Open")
+  dueDate         String   @default("")
+  assignedTo      String   @default("")
+  description     String?
+  rootCause       String?
+  title           String?
+  updatedBy       String?
+  updatedAt       String?
+  createdAt       DateTime @default(now())
+}
+
+// ============================================================================
+// MASTERS (Keep mostly intact for backend seeding logic)
+// ============================================================================
+
+model ServiceMaster {
+  id         String   @id
+  department String   @unique @default("DOCTOR_CONSULTATION")
+  name       String   @default("Unknown Service")
+  price      Decimal  @default(0)
+  taxRate    Decimal  @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("service_masters")
+}
+
+model TestMaster {
+  id          String   @id
+  itemType    String   @default("TEST")
+  category    String   @default("Uncategorized")
+  subcategory String?
+  serviceType String?
+  department  String   @default("DOCTOR_CONSULTATION")
+  name        String   @default("Unknown Test")
+  price       Decimal  @default(0)
+  taxRate     Decimal  @default(0)
+  sourceUrl   String   @default("https://eshealth.in/")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  packageItems PackageItem[]
+
+  @@unique([name, category])
+  @@map("test_masters")
+}
+
+model PackageMaster {
+  id          String   @id
+  name        String   @unique @default("Unknown Package")
+  description String?
+  price       Decimal  @default(0)
+  taxRate     Decimal  @default(0)
+  isActive    Boolean  @default(true)
+  sourceUrl   String   @default("https://eshealthcarecentre.in/packages")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  items PackageItem[]
+
+  @@map("package_masters")
+}
+
+model PackageItem {
+  id        String        @id @default(uuid())
+  packageId String
+  package   PackageMaster @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  testId    String?
+  test      TestMaster?   @relation(fields: [testId], references: [id])
+  itemName  String
+  quantity  Int           @default(1)
+  createdAt DateTime      @default(now())
+
+  @@index([packageId])
+}
+
+model Feedback {
+  id               String   @id @default(uuid())
+  uhid             String
+  patientName      String
+  service          String
+
+  heardAbout       String?
+  referenceBy      String?
+  serviceAvailed   String?
+
+  overallRating    Int
+  staffAppreciated String?
+  positiveComments String?
+  negativeComments String?
+  agreeToUsage     Boolean  @default(true)
+
+  ratings          FeedbackRating[]
+
+  createdAt        DateTime @default(now())
+
+  @@map("feedbacks")
+}
+
+model FeedbackRating {
+  id         String   @id @default(uuid())
+  feedbackId String
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+  
+  category   String
+  question   String
+  rating     Int
+
+  @@map("feedback_ratings")
+}

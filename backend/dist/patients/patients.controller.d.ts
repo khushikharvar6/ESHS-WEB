@@ -1,0 +1,57 @@
+import { PatientsService } from './patients.service';
+import { CreatePatientDto, UpdatePatientDto } from './dto/create-patient.dto';
+export declare class PatientsController {
+    private readonly patientsService;
+    constructor(patientsService: PatientsService);
+    create(dto: CreatePatientDto, userId: string): Promise<any>;
+    findAll(page?: number, limit?: number, search?: string, department?: string, status?: string): Promise<{
+        data: any[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }>;
+    search(query: string): Promise<any[]>;
+    findById(id: string): Promise<any>;
+    findByUhid(uhid: string): Promise<any>;
+    update(id: string, dto: UpdatePatientDto): Promise<any>;
+    deactivate(id: string): Promise<{
+        id: string;
+        firstName: string;
+        lastName: string;
+        createdAt: Date;
+        updatedAt: string | null;
+        uhid: string;
+        salutation: string;
+        middleName: string | null;
+        age: number;
+        dob: string | null;
+        gender: string;
+        bloodGroup: string | null;
+        maritalStatus: string | null;
+        mobileNo: string;
+        alternateMobile: string | null;
+        emailAddress: string | null;
+        residentialAddress: string | null;
+        city: string | null;
+        state: string | null;
+        country: string;
+        pincode: string | null;
+        emergencyContactName: string | null;
+        emergencyRelationship: string | null;
+        emergencyPhoneNumber: string | null;
+        patientCategory: string | null;
+        careType: string | null;
+        assignedDepartmentServices: string | null;
+        assignedDepartment: string | null;
+        service: string;
+        registeredOn: string;
+        lastVisit: string;
+        status: string;
+        initials: string;
+        inquiryId: string | null;
+        appointmentId: string | null;
+        vip: boolean;
+        updatedBy: string | null;
+    }>;
+}
