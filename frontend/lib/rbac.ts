@@ -41,28 +41,25 @@ export const PERMISSION_MATRIX: Record<Role, Permissions> = {
     PATIENT_PROFILE: ['FULL'],
     BILLING: ['FULL'],
     FEEDBACK: ['FULL'],
-    SMS: ['FULL'],
-  },
-  OPD: {
-    DASHBOARD: ['READ'],
-    APPOINTMENT: ['READ', 'UPDATE'], // Mark Complete is UPDATE
-    PATIENT_PROFILE: ['READ', 'UPDATE'], // View and upload only
-    MRD: ['READ', 'UPDATE'], // View and upload records
   },
   MRD: {
     DASHBOARD: ['READ'],
-    REGISTRATION: ['READ'],
-    PATIENT_PROFILE: ['READ', 'UPDATE'],
+    PATIENT_PROFILE: ['FULL'],
+    FEEDBACK: ['FULL'],
     MRD: ['FULL'],
-    FEEDBACK: ['READ'],
   },
   QA: {
     DASHBOARD: ['READ'],
-    PATIENT_PROFILE: ['READ'],
-    MRD: ['READ'],
-    FEEDBACK: ['READ'],
+    PATIENT_PROFILE: ['FULL'],
+    FEEDBACK: ['FULL'],
     QA: ['FULL'],
-  }
+  },
+  OPD: {
+    DASHBOARD: ['READ'],
+    PATIENT_PROFILE: ['FULL'],
+    MRD: ['READ', 'UPDATE'],
+    QA: ['READ', 'UPDATE'],
+  },
 }
 
 export function hasPermission(role: string, module: Module, action: Action): boolean {
