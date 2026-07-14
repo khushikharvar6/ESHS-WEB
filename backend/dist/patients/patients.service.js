@@ -142,7 +142,7 @@ let PatientsService = class PatientsService {
     }
     async findById(id) {
         const patient = await this.prisma.patient.findUnique({
-            where: { id },
+            where: { uhid: id },
             include: {
                 insurance: true,
                 corporate: true,
@@ -249,7 +249,7 @@ let PatientsService = class PatientsService {
             };
         }
         const updated = await this.prisma.patient.update({
-            where: { id },
+            where: { uhid: id },
             data: updateData,
             include: {
                 insurance: true,
@@ -279,9 +279,8 @@ let PatientsService = class PatientsService {
     }
     async deactivate(id) {
         await this.findById(id);
-        return this.prisma.patient.update({
-            where: { id },
-            data: { status: 'Inactive' },
+        return this.prisma.patient.delete({
+            where: { uhid: id },
         });
     }
 };

@@ -15,13 +15,11 @@ const prisma_module_1 = require("./prisma/prisma.module");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
 const patients_module_1 = require("./patients/patients.module");
-const inquiry_module_1 = require("./inquiry/inquiry.module");
 const appointments_module_1 = require("./appointments/appointments.module");
 const doctors_module_1 = require("./doctors/doctors.module");
 const pricing_module_1 = require("./pricing/pricing.module");
 const billing_module_1 = require("./billing/billing.module");
 const feedback_module_1 = require("./feedback/feedback.module");
-const sms_module_1 = require("./sms/sms.module");
 const mrd_module_1 = require("./mrd/mrd.module");
 const nc_module_1 = require("./nc/nc.module");
 const notifications_module_1 = require("./notifications/notifications.module");
@@ -40,13 +38,11 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
             patients_module_1.PatientsModule,
-            inquiry_module_1.InquiryModule,
             appointments_module_1.AppointmentsModule,
             doctors_module_1.DoctorsModule,
             pricing_module_1.PricingModule,
             billing_module_1.BillingModule,
             feedback_module_1.FeedbackModule,
-            sms_module_1.SmsModule,
             mrd_module_1.MrdModule,
             nc_module_1.NcModule,
             notifications_module_1.NotificationsModule,

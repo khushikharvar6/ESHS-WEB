@@ -31,7 +31,7 @@ export class AuthService {
 
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { lastLoginAt: new Date() },
+      data: { lastLogin: new Date() },
     });
 
     const payload = {
@@ -51,8 +51,6 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
         department: user.department,
-        phone: user.phone,
-        avatarUrl: user.avatarUrl,
       },
     };
   }
@@ -76,7 +74,7 @@ export class AuthService {
         lastName: dto.lastName,
         role: dto.role,
         department: dto.department,
-        phone: dto.phone,
+        updatedAt: new Date(),
       },
     });
 
@@ -99,10 +97,8 @@ export class AuthService {
         lastName: true,
         role: true,
         department: true,
-        phone: true,
-        avatarUrl: true,
         isActive: true,
-        lastLoginAt: true,
+        lastLogin: true,
         createdAt: true,
       },
     });

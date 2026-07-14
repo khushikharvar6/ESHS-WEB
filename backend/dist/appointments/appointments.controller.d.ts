@@ -4,12 +4,10 @@ export declare class AppointmentsController {
     private readonly appointmentsService;
     constructor(appointmentsService: AppointmentsService);
     create(dto: CreateAppointmentDto, userId: string): Promise<{
-        doctor: string;
         id: string;
         email: string | null;
         firstName: string;
         lastName: string;
-        phone: string;
         createdAt: Date;
         updatedAt: Date;
         type: string;
@@ -17,18 +15,18 @@ export declare class AppointmentsController {
         service: string;
         status: string;
         inquiryId: string | null;
-        notes: string | null;
+        doctor: string;
+        phone: string;
         date: string;
         time: string;
+        notes: string | null;
     }>;
     findAll(page?: number, limit?: number, status?: string, date?: string, doctorId?: string, department?: string): Promise<{
         data: {
-            doctor: string;
             id: string;
             email: string | null;
             firstName: string;
             lastName: string;
-            phone: string;
             createdAt: Date;
             updatedAt: Date;
             type: string;
@@ -36,9 +34,11 @@ export declare class AppointmentsController {
             service: string;
             status: string;
             inquiryId: string | null;
-            notes: string | null;
+            doctor: string;
+            phone: string;
             date: string;
             time: string;
+            notes: string | null;
         }[];
         total: number;
         page: number;
@@ -46,12 +46,10 @@ export declare class AppointmentsController {
         totalPages: number;
     }>;
     findById(id: string): Promise<{
-        doctor: string;
         id: string;
         email: string | null;
         firstName: string;
         lastName: string;
-        phone: string;
         createdAt: Date;
         updatedAt: Date;
         type: string;
@@ -59,17 +57,17 @@ export declare class AppointmentsController {
         service: string;
         status: string;
         inquiryId: string | null;
-        notes: string | null;
+        doctor: string;
+        phone: string;
         date: string;
         time: string;
+        notes: string | null;
     }>;
     update(id: string, dto: UpdateAppointmentDto): Promise<{
-        doctor: string;
         id: string;
         email: string | null;
         firstName: string;
         lastName: string;
-        phone: string;
         createdAt: Date;
         updatedAt: Date;
         type: string;
@@ -77,17 +75,17 @@ export declare class AppointmentsController {
         service: string;
         status: string;
         inquiryId: string | null;
-        notes: string | null;
+        doctor: string;
+        phone: string;
         date: string;
         time: string;
+        notes: string | null;
     }>;
     cancel(id: string): Promise<{
-        doctor: string;
         id: string;
         email: string | null;
         firstName: string;
         lastName: string;
-        phone: string;
         createdAt: Date;
         updatedAt: Date;
         type: string;
@@ -95,17 +93,17 @@ export declare class AppointmentsController {
         service: string;
         status: string;
         inquiryId: string | null;
-        notes: string | null;
+        doctor: string;
+        phone: string;
         date: string;
         time: string;
+        notes: string | null;
     }>;
     complete(id: string): Promise<{
-        doctor: string;
         id: string;
         email: string | null;
         firstName: string;
         lastName: string;
-        phone: string;
         createdAt: Date;
         updatedAt: Date;
         type: string;
@@ -113,8 +111,10 @@ export declare class AppointmentsController {
         service: string;
         status: string;
         inquiryId: string | null;
-        notes: string | null;
+        doctor: string;
+        phone: string;
         date: string;
         time: string;
+        notes: string | null;
     }>;
 }

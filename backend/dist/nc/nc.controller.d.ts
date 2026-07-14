@@ -4,7 +4,6 @@ export declare class NcController {
     private readonly ncService;
     constructor(ncService: NcService);
     create(dto: CreateNcDto, userId: string): Promise<{
-        patient: string;
         id: string;
         department: string;
         createdAt: Date;
@@ -12,17 +11,17 @@ export declare class NcController {
         description: string | null;
         title: string | null;
         uhid: string;
+        patient: string;
         status: string;
-        updatedBy: string | null;
         relatedDocument: string;
         severity: string;
         dueDate: string;
         assignedTo: string;
         rootCause: string | null;
+        updatedBy: string | null;
     }>;
     findAll(page?: number, limit?: number, status?: string, severity?: string, patientId?: string): Promise<{
         data: {
-            patient: string;
             id: string;
             department: string;
             createdAt: Date;
@@ -30,13 +29,14 @@ export declare class NcController {
             description: string | null;
             title: string | null;
             uhid: string;
+            patient: string;
             status: string;
-            updatedBy: string | null;
             relatedDocument: string;
             severity: string;
             dueDate: string;
             assignedTo: string;
             rootCause: string | null;
+            updatedBy: string | null;
         }[];
         total: number;
         page: number;
@@ -44,7 +44,6 @@ export declare class NcController {
         totalPages: number;
     }>;
     findById(id: string): Promise<{
-        patient: string;
         id: string;
         department: string;
         createdAt: Date;
@@ -52,16 +51,16 @@ export declare class NcController {
         description: string | null;
         title: string | null;
         uhid: string;
+        patient: string;
         status: string;
-        updatedBy: string | null;
         relatedDocument: string;
         severity: string;
         dueDate: string;
         assignedTo: string;
         rootCause: string | null;
+        updatedBy: string | null;
     }>;
     resolve(id: string, dto: ResolveNcDto, userId: string): Promise<{
-        patient: string;
         id: string;
         department: string;
         createdAt: Date;
@@ -69,16 +68,16 @@ export declare class NcController {
         description: string | null;
         title: string | null;
         uhid: string;
+        patient: string;
         status: string;
-        updatedBy: string | null;
         relatedDocument: string;
         severity: string;
         dueDate: string;
         assignedTo: string;
         rootCause: string | null;
+        updatedBy: string | null;
     }>;
     close(id: string): Promise<{
-        patient: string;
         id: string;
         department: string;
         createdAt: Date;
@@ -86,12 +85,13 @@ export declare class NcController {
         description: string | null;
         title: string | null;
         uhid: string;
+        patient: string;
         status: string;
-        updatedBy: string | null;
         relatedDocument: string;
         severity: string;
         dueDate: string;
         assignedTo: string;
         rootCause: string | null;
+        updatedBy: string | null;
     }>;
 }

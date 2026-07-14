@@ -14,8 +14,6 @@ export declare class AuthService {
             lastName: string;
             role: string;
             department: string | null;
-            phone: string | null;
-            avatarUrl: string | null;
         };
     }>;
     register(dto: RegisterDto): Promise<{
@@ -28,14 +26,12 @@ export declare class AuthService {
     getProfile(userId: string): Promise<{
         id: string;
         email: string;
+        role: string;
         firstName: string;
         lastName: string;
-        role: string;
         department: string | null;
-        phone: string | null;
-        avatarUrl: string | null;
         isActive: boolean;
-        lastLoginAt: Date | null;
+        lastLogin: Date | null;
         createdAt: Date;
     }>;
 }

@@ -7,13 +7,12 @@ export declare class UsersController {
         data: {
             id: string;
             email: string;
+            role: string;
             firstName: string;
             lastName: string;
-            role: string;
             department: string | null;
-            phone: string | null;
             isActive: boolean;
-            lastLoginAt: Date | null;
+            lastLogin: Date | null;
             createdAt: Date;
         }[];
         total: number;
@@ -24,25 +23,22 @@ export declare class UsersController {
     findById(id: string): Promise<{
         id: string;
         email: string;
+        role: string;
         firstName: string;
         lastName: string;
-        role: string;
         department: string | null;
-        phone: string | null;
-        avatarUrl: string | null;
         isActive: boolean;
-        lastLoginAt: Date | null;
+        lastLogin: Date | null;
         createdAt: Date;
         updatedAt: Date;
     }>;
     update(id: string, dto: UpdateUserDto): Promise<{
         id: string;
         email: string;
+        role: string;
         firstName: string;
         lastName: string;
-        role: string;
         department: string | null;
-        phone: string | null;
         isActive: boolean;
     }>;
     remove(id: string): Promise<{

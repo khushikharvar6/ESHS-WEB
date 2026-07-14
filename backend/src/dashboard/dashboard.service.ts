@@ -21,9 +21,9 @@ export class DashboardService {
       revenueSummary,
     ] = await Promise.all([
       // Total patients
-      this.prisma.patient.count({ where: { status: 'Active' } }),
+      this.prisma.patient.count(),
       // Total inquiries
-      this.prisma.inquiry.count(),
+      Promise.resolve(0),
       // Total appointments
       this.prisma.appointment.count(),
       // Today's appointments count

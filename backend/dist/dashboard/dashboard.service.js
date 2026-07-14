@@ -22,8 +22,8 @@ let DashboardService = class DashboardService {
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
         const [patientCount, inquiryCount, appointmentCount, todayAppointments, openNcsCount, revenueSummary,] = await Promise.all([
-            this.prisma.patient.count({ where: { status: 'Active' } }),
-            this.prisma.inquiry.count(),
+            this.prisma.patient.count(),
+            Promise.resolve(0),
             this.prisma.appointment.count(),
             this.prisma.appointment.count(),
             this.prisma.nonConformance.count({
