@@ -9,6 +9,7 @@ const publicRoutes = [
   '/api/auth/register',
   '/_next',
   '/favicon.ico',
+  '/es-logo.jpg'
 ]
 
 export async function middleware(request: NextRequest) {

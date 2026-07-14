@@ -299,7 +299,7 @@ function PatientProfileContent() {
               data={filteredPatientsList}
               toolbar={
                 <div className="flex flex-wrap items-center gap-2">
-                  <Select value={filterDept} onValueChange={setFilterDept}>
+                  <Select value={filterDept} onValueChange={(val) => setFilterDept(val || "")}>
                     <SelectTrigger className="w-[160px]">
                       <SelectValue placeholder="Department" />
                     </SelectTrigger>
@@ -308,7 +308,7 @@ function PatientProfileContent() {
                       {uniqueDepts.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                     </SelectContent>
                   </Select>
-                  <Select value={filterCategory} onValueChange={setFilterCategory}>
+                  <Select value={filterCategory} onValueChange={(val) => setFilterCategory(val || "")}>
                     <SelectTrigger className="w-[140px]">
                       <SelectValue placeholder="Category" />
                     </SelectTrigger>
@@ -317,7 +317,7 @@ function PatientProfileContent() {
                       {uniqueCategories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                     </SelectContent>
                   </Select>
-                  <Select value={filterStatus} onValueChange={setFilterStatus}>
+                  <Select value={filterStatus} onValueChange={(val) => setFilterStatus(val || "")}>
                     <SelectTrigger className="w-[130px]">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>

@@ -16,3 +16,8 @@ declare module 'next/navigation' {
   export const redirect: (url: string) => void;
   export const notFound: () => void;
 }
+
+declare module 'next/headers' {
+  export function cookies(): any;
+  export function headers(): any;
+}

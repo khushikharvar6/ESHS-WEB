@@ -12,7 +12,7 @@ import { DoctorsModule } from './doctors/doctors.module';
 import { PricingModule } from './pricing/pricing.module';
 import { BillingModule } from './billing/billing.module';
 import { FeedbackModule } from './feedback/feedback.module';
-import { SmsModule } from './sms/sms.module';
+
 import { MrdModule } from './mrd/mrd.module';
 import { NcModule } from './nc/nc.module';
 import { NotificationsModule } from './notifications/notifications.module';
@@ -34,7 +34,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     PricingModule,
     BillingModule,
     FeedbackModule,
-    SmsModule,
+
     MrdModule,
     NcModule,
     NotificationsModule,
