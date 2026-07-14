@@ -9,7 +9,7 @@ export class PricingInitializationService implements OnModuleInit {
   constructor(private readonly prisma: PrismaService) {}
 
   async onModuleInit() {
-    await this.initializeAllPrices();
+    this.initializeAllPrices().catch(err => this.logger.error('Failed to initialize pricing data:', err));
   }
 
   async initializeAllPrices() {
@@ -27,6 +27,12 @@ export class PricingInitializationService implements OnModuleInit {
   // ===========================================================================
   private async initializeTestMaster() {
     this.logger.log('  📋 Upserting TestMaster records...');
+
+    const count = await this.prisma.testMaster.count();
+    if (count >= 280) {
+      this.logger.log('  ✅ TestMaster records already initialized. Skipping.');
+      return;
+    }
 
     const tests = [
       // ── PATHOLOGY — 56 records ──
