@@ -47,18 +47,24 @@ export const PERMISSION_MATRIX: Record<Role, Permissions> = {
     PATIENT_PROFILE: ['FULL'],
     FEEDBACK: ['FULL'],
     MRD: ['FULL'],
+    INQUIRY: ['READ'],
+    APPOINTMENT: ['READ'],
   },
   QA: {
     DASHBOARD: ['READ'],
     PATIENT_PROFILE: ['FULL'],
     FEEDBACK: ['FULL'],
     QA: ['FULL'],
+    INQUIRY: ['READ'],
+    APPOINTMENT: ['READ'],
   },
   OPD: {
     DASHBOARD: ['READ'],
     PATIENT_PROFILE: ['FULL'],
     MRD: ['READ', 'UPDATE'],
     QA: ['READ', 'UPDATE'],
+    INQUIRY: ['READ'],
+    APPOINTMENT: ['READ'],
   },
 }
 
