@@ -12,13 +12,15 @@ model User {
   email      String    @unique
   password   String
   role       String    @default("USER")
-  firstName  String    @default("")
-  lastName   String    @default("")
+  firstName  String    @default("") @map("first_name")
+  lastName   String    @default("") @map("last_name")
   department String?
-  isActive   Boolean   @default(true)
-  lastLogin  DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime
+  phone      String?
+  avatarUrl  String?
+  isActive   Boolean   @default(true) @map("is_active")
+  lastLogin  DateTime? @map("last_login_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
 
   @@map("users")
 }
