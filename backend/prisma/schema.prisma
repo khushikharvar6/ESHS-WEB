@@ -128,7 +128,7 @@ model Appointment {
   status    String   @default("Scheduled")
   inquiryId String?
   uhid      String?
-  patient   Patient? @relation(fields: [uhid], references: [uhid])
+  patient        Patient? @relation(fields: [uhid], references: [uhid], onDelete: Cascade)
   doctorId  String?
   doctorRef Doctor?  @relation(fields: [doctorId], references: [id])
   createdAt DateTime @default(now())
@@ -138,7 +138,7 @@ model Appointment {
 model Consultation {
   id             String   @id @default(uuid())
   uhid           String   @default("")
-  patient        Patient? @relation(fields: [uhid], references: [uhid])
+  patient        Patient? @relation(fields: [uhid], references: [uhid], onDelete: Cascade)
   doctor         String   @default("")
   doctorId       String?
   doctorRef      Doctor?  @relation(fields: [doctorId], references: [id])
@@ -260,7 +260,7 @@ model PackageItem {
 model Feedback {
   id               String           @id @default(uuid())
   uhid             String
-  patient          Patient?         @relation(fields: [uhid], references: [uhid])
+  patient        Patient? @relation(fields: [uhid], references: [uhid], onDelete: Cascade)
   patientName      String
   service          String
   heardAbout       String?
@@ -279,6 +279,7 @@ model Feedback {
 
 model FeedbackRating {
   id         String   @id @default(uuid())
+  uhid       String?
   feedbackId String
   category   String
   question   String
