@@ -8,15 +8,12 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 let connectionString = process.env.DATABASE_URL || ''
-if (connectionString && process.env.NODE_ENV === 'production') {
-  if (!connectionString.includes('sslmode')) {
-    connectionString += (connectionString.includes('?') ? '&' : '?') + 'sslmode=require'
-  }
-  if (!connectionString.includes('sslaccept')) {
-    connectionString += (connectionString.includes('?') ? '&' : '?') + 'sslaccept=accept_invalid_certs'
-  }
-  process.env.DATABASE_URL = connectionString
-}
+
+// Strip sslmode from the connection string so it doesn't override our custom ssl object
+connectionString = connectionString.replace(/[?&]sslmode=[^&]*/g, '').replace(/[?&]sslaccept=[^&]*/g, '')
+
+// Fix trailing ? or & if we stripped the only parameter
+if (connectionString.endsWith('?')) connectionString = connectionString.slice(0, -1)
 
 const pool = globalForPrisma.pool ?? new Pool({
   connectionString,
