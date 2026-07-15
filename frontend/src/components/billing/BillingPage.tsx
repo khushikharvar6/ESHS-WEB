@@ -365,8 +365,9 @@ export function BillingPage() {
     }
   }
 
-  const createAndPrint = async () => {
-    await createBill()
+  const printBill = () => {
+    if (!patient) { toast.error('Please select a patient first'); return }
+    if (invoice.items.length === 0) { toast.error('Please add at least one service'); return }
     window.print()
   }
 
@@ -889,8 +890,8 @@ export function BillingPage() {
             }} className="flex items-center gap-1 px-5 py-2 text-sm bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-semibold shadow-sm">
               <FileText className="w-4 h-4" /> Create Bill ✓
             </button>
-            <button onClick={createAndPrint} className="flex items-center gap-1 px-5 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-sm">
-              <Printer className="w-4 h-4" /> Create & Print Bill ✓
+            <button onClick={printBill} className="flex items-center gap-1 px-5 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-sm">
+              <Printer className="w-4 h-4" /> Print Bill
             </button>
             <button onClick={saveAndShare} className="flex items-center gap-1 px-5 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold shadow-sm">
               <Share2 className="w-4 h-4" /> Save & Share ↗
@@ -934,8 +935,8 @@ export function BillingPage() {
               <span className="font-bold">Tariff</span><span>{payer.toLowerCase()}</span>
             </div>
             <div className="grid grid-cols-[100px_1fr] gap-y-1">
-              <span className="font-bold">Bill Number</span><span>{invoice.invoiceNumber}</span>
-              <span className="font-bold">Visit Id</span><span>SIOP-{invoice.invoiceNumber.split('-')[1] || '21812'}</span>
+              <span className="font-bold">Bill Number</span><span>{invoice.invoiceNumber || 'UNSAVED'}</span>
+              <span className="font-bold">Visit Id</span><span>SIOP-{invoice.invoiceNumber ? invoice.invoiceNumber.split('-')[1] : 'UNSAVED'}</span>
               <span className="font-bold leading-tight">Bill Date and<br/>Time</span><span className="flex items-center">{orderDateTime}</span>
               <span className="font-bold leading-tight">Reg. Date<br/>Time</span><span className="flex items-center">{orderDateTime}</span>
             </div>
