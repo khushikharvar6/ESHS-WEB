@@ -17,6 +17,7 @@ if (connectionString.endsWith('?')) connectionString = connectionString.slice(0,
 
 const pool = globalForPrisma.pool ?? new Pool({
   connectionString,
+  max: 1, // Limit connections per serverless instance
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined
 })
 if (process.env.NODE_ENV !== 'production') globalForPrisma.pool = pool
