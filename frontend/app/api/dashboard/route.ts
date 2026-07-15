@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { getDatabaseSummary } from '@/lib/server-db'
 
@@ -7,3 +8,4 @@ export async function GET() {
   const summary = await getDatabaseSummary()
   return NextResponse.json(summary)
 }
+

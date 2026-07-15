@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { verifyToken } from '@/lib/auth'
@@ -23,3 +24,4 @@ export async function GET() {
     return NextResponse.json({ success: false, error: 'Failed to fetch user' }, { status: 500 })
   }
 }
+

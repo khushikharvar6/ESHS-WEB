@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import {
   createResource,
@@ -72,3 +73,4 @@ export async function DELETE(request: Request) {
   const result = await deleteResource('invoices', String(id))
   return NextResponse.json(result)
 }
+

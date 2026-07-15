@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { promises as fs } from 'fs'
 import path from 'path'
@@ -30,3 +31,4 @@ Type: ${type || 'Notification'}
     return NextResponse.json({ success: false, error: error.message }, { status: 400 })
   }
 }
+

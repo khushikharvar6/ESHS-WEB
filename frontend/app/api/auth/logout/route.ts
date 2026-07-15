@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 
@@ -13,3 +14,4 @@ export async function POST() {
     return NextResponse.json({ success: false, error: 'Failed to logout' }, { status: 500 })
   }
 }
+
