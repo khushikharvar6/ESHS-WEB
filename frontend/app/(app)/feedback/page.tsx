@@ -468,7 +468,7 @@ export default function FeedbackPage() {
                     Print Form
                   </Button>
                   <Button variant="secondary" onClick={() => {
-                    const link = `https://eshs-web.vercel.app/feedback/${patient.uhid}`
+                    const link = `https://eshs-web.vercel.app/f/${patient.uhid}`
                     navigator.clipboard.writeText(link)
                     toast.success('Feedback link copied!')
                   }}>
@@ -477,7 +477,7 @@ export default function FeedbackPage() {
                   <Button 
                     className="bg-[#25D366] hover:bg-[#1da851] text-white flex items-center gap-2"
                     onClick={() => {
-                      const link = `https://eshs-web.vercel.app/feedback/${patient.uhid}`
+                      const link = `https://eshs-web.vercel.app/f/${patient.uhid}`
                       const text = encodeURIComponent(`Dear ${patient.name || 'Patient'}, thank you for visiting ES Healthcare Centre. We hope you had a great experience! Please take 1 minute to fill out your feedback form here: ${link}`)
                       window.open(`https://wa.me/?text=${text}`, 'whatsapp_web')
                     }}
