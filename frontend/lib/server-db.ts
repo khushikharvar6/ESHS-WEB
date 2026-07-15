@@ -8,8 +8,13 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 let connectionString = process.env.DATABASE_URL || ''
-if (connectionString && !connectionString.includes('sslmode') && process.env.NODE_ENV === 'production') {
-  connectionString += (connectionString.includes('?') ? '&' : '?') + 'sslmode=require&sslaccept=accept_invalid_certs'
+if (connectionString && process.env.NODE_ENV === 'production') {
+  if (!connectionString.includes('sslmode')) {
+    connectionString += (connectionString.includes('?') ? '&' : '?') + 'sslmode=require'
+  }
+  if (!connectionString.includes('sslaccept')) {
+    connectionString += (connectionString.includes('?') ? '&' : '?') + 'sslaccept=accept_invalid_certs'
+  }
   process.env.DATABASE_URL = connectionString
 }
 
