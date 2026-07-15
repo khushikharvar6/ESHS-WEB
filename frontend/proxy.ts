@@ -7,6 +7,10 @@ const publicRoutes = [
   '/login',
   '/api/auth/login',
   '/api/auth/register',
+  '/api/feedback',
+  '/api/patients',
+  '/f/',
+  '/f',
   '/_next',
   '/favicon.ico',
   '/es-logo.jpg'
