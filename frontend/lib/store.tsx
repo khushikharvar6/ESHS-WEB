@@ -599,15 +599,27 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
     try {
       // Remove virtual fields that Prisma doesn't know about
-      const { name, phone, address, email, emergencyName, emergencyPhone, ...dbData } = created
+      const { 
+        name, phone, address, email, emergencyName, emergencyPhone, 
+        insuranceProvider, policyNumber, tpaNetwork, insuranceContact, insuranceNotes,
+        companyName, corporateId, employeeId, companyContact, corporateAddress,
+        ...dbData 
+      } = created as any
       
       // Ensure the correct Prisma fields are populated
       if (email) dbData.emailAddress = email
       if (emergencyName) dbData.emergencyContactName = emergencyName
       if (emergencyPhone) dbData.emergencyPhoneNumber = emergencyPhone
       
+      if (created.patientCategory === 'Insurance' && insuranceProvider) {
+        dbData.insurance = { create: { insuranceProvider, policyNumber, tpaNetwork, insuranceContact, insuranceNotes } }
+      }
+      if (created.patientCategory === 'Corporate' && companyName) {
+        dbData.corporate = { create: { companyName, corporateId, employeeId, companyContact, corporateAddress } }
+      }
+      
       const ops = [
-        apiCreateResource('patients', { ...dbData, id: created.uhid }),
+        apiCreateResource('patients', { ...dbData, uhid: created.uhid }),
       ]
 
       if (data.appointmentId) {
