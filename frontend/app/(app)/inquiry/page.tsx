@@ -312,12 +312,18 @@ export default function InquiryPage() {
         }
         renderActions={(r) => (
           <>
-            <DropdownMenuItem onClick={() => setViewTarget(r)}>
+            <DropdownMenuItem onClick={(e) => {
+              e.preventDefault()
+              setViewTarget(r)
+            }}>
               <Eye />
               View
             </DropdownMenuItem>
             <Protect module="INQUIRY" action="UPDATE">
-              <DropdownMenuItem onClick={() => openEdit(r)}>
+              <DropdownMenuItem onClick={(e) => {
+                e.preventDefault()
+                openEdit(r)
+              }}>
                 <Pencil />
                 Edit
               </DropdownMenuItem>
@@ -335,7 +341,8 @@ export default function InquiryPage() {
               <DropdownMenuItem
                 variant="destructive"
                 disabled={r.status === 'Lost'}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault()
                   setLostTarget(r)
                   setLostOpen(true)
                 }}

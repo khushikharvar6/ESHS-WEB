@@ -82,6 +82,9 @@ export default function AppointmentPage() {
   const [fStatus, setFStatus] = useState(ALL)
   const [fDate, setFDate] = useState('')
   const [viewTarget, setViewTarget] = useState<Appointment | null>(null)
+  const [rescheduleTarget, setRescheduleTarget] = useState<Appointment | null>(null)
+  const [rescheduleDate, setRescheduleDate] = useState('')
+  const [rescheduleTime, setRescheduleTime] = useState('')
   const [editTarget, setEditTarget] = useState<Appointment | null>(null)
   const [editFirstName, setEditFirstName] = useState('')
   const [editLastName, setEditLastName] = useState('')
@@ -186,12 +189,18 @@ export default function AppointmentPage() {
         }
         renderActions={(r) => (
           <>
-            <DropdownMenuItem onClick={() => setViewTarget(r)}>
+            <DropdownMenuItem onClick={(e) => {
+              e.preventDefault()
+              setViewTarget(r)
+            }}>
               <Eye />
               View
             </DropdownMenuItem>
             <Protect module="APPOINTMENT" action="CREATE">
-              <DropdownMenuItem onClick={() => openEdit(r)}>
+              <DropdownMenuItem onClick={(e) => {
+                e.preventDefault()
+                openEdit(r)
+              }}>
                 <CalendarPlus />
                 Edit
               </DropdownMenuItem>
@@ -201,7 +210,7 @@ export default function AppointmentPage() {
                 disabled={r.status === 'Cancelled'}
                 onClick={() => {
                   updateAppointmentStatus(r.id, 'Checked In')
-                  toast.success(`${r.patient} checked in`)
+                  toast.success(`${r.firstName} checked in`)
                 }}
               >
                 <LogIn />
@@ -209,9 +218,11 @@ export default function AppointmentPage() {
               </DropdownMenuItem>
             </Protect>
             <Protect module="APPOINTMENT" action="CREATE">
-              <DropdownMenuItem onClick={() => {
-                updateAppointment(r.id, { status: 'Confirmed' })
-                toast.success(`${r.id} rescheduled`)
+              <DropdownMenuItem onClick={(e) => {
+                e.preventDefault()
+                setRescheduleDate(r.date || '')
+                setRescheduleTime(r.time || '')
+                setRescheduleTarget(r)
               }}>
                 <RotateCcw />
                 Reschedule
@@ -265,8 +276,58 @@ export default function AppointmentPage() {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={Boolean(rescheduleTarget)} onOpenChange={(open) => !open && setRescheduleTarget(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reschedule Appointment</DialogTitle>
+            <DialogDescription>Select a new date and time for {rescheduleTarget?.firstName}'s appointment.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <FieldGroup>
+              <Field>
+                <FieldLabel>New Date</FieldLabel>
+                <Input
+                  type="date"
+                  value={rescheduleDate}
+                  onChange={(e) => setRescheduleDate(e.target.value)}
+                />
+              </Field>
+              <Field>
+                <FieldLabel>New Time</FieldLabel>
+                <Input
+                  type="time"
+                  value={rescheduleTime}
+                  onChange={(e) => setRescheduleTime(e.target.value)}
+                />
+              </Field>
+            </FieldGroup>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button onClick={() => {
+              if (rescheduleTarget) {
+                const formattedDate = new Date(rescheduleDate).toLocaleDateString('en-GB', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                })
+                updateAppointment(rescheduleTarget.id, {
+                  date: formattedDate !== 'Invalid Date' ? formattedDate : rescheduleDate,
+                  time: rescheduleTime,
+                  status: 'Scheduled',
+                })
+                toast.success(`Appointment ${rescheduleTarget.id} rescheduled`)
+                setRescheduleTarget(null)
+              }
+            }}>Reschedule</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={Boolean(editTarget)} onOpenChange={(open) => !open && setEditTarget(null)}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Appointment</DialogTitle>
             <DialogDescription>Update booking details and status.</DialogDescription>

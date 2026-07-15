@@ -82,6 +82,7 @@ export default function DashboardPage() {
     invoices,
     documents,
     ncs,
+    inquiries,
     updateAppointmentStatus,
   } = useHealthcare()
 
@@ -172,15 +173,29 @@ export default function DashboardPage() {
   }, [patients, documents])
 
   const openNcs = ncs.filter((n) => n.status !== 'Closed').length
+
+  const dueFollowUps = useMemo(() => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return inquiries.filter(i => {
+      if (!i.followUp || i.status === 'Converted' || i.status === 'Lost') return false
+      const fDate = new Date(i.followUp)
+      if (Number.isNaN(fDate.getTime())) return false
+      fDate.setHours(0, 0, 0, 0)
+      return fDate.getTime() <= today.getTime()
+    })
+  }, [inquiries])
+
   const operationalAlerts = useMemo(
     () => buildOperationalAlerts({
       pendingBilling,
       missingDocuments: missingDocs,
       openNcs,
+      inquiriesFollowUpCount: dueFollowUps.length,
       backendHealthy: backendSummary?.status === 'ok',
       patientsCount: patients.length,
     }),
-    [backendSummary, pendingBilling, missingDocs, openNcs, patients.length],
+    [backendSummary, pendingBilling, missingDocs, openNcs, dueFollowUps.length, patients.length],
   )
 
   const queue = filteredAppointments.filter(
@@ -378,7 +393,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-4">
         <Card>
           <CardHeader>
             <CardTitle>Today&apos;s Centre Pulse</CardTitle>
@@ -457,6 +472,33 @@ export default function DashboardPage() {
                 <div className="text-[11px] text-muted-foreground/70">{item.time}</div>
               </div>
             ))}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Follow-ups Due</CardTitle>
+            <CardDescription>Inquiries requiring action today.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2 h-full">
+            {dueFollowUps.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-6 text-muted-foreground text-sm">
+                No follow-ups due today.
+              </div>
+            ) : (
+              dueFollowUps.slice(0, 5).map((inq) => (
+                <div key={inq.id} className="rounded-lg border border-warning/50 bg-warning/5 p-3 flex flex-col cursor-pointer transition hover:bg-warning/10" onClick={() => router.push('/inquiry')}>
+                  <div className="flex justify-between items-start">
+                    <span className="font-medium text-foreground text-sm">{inq.firstName} {inq.lastName}</span>
+                    <Badge variant="outline" className="text-[10px]">{inq.status}</Badge>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">{inq.phone} • {inq.service}</div>
+                  <div className="text-[11px] text-muted-foreground mt-1 line-clamp-1">{inq.notes ?? 'No notes'}</div>
+                </div>
+              ))
+            )}
+            {dueFollowUps.length > 5 && (
+              <Button variant="ghost" className="w-full text-xs mt-2" onClick={() => router.push('/inquiry')}>View All ({dueFollowUps.length})</Button>
+            )}
           </CardContent>
         </Card>
       </div>
