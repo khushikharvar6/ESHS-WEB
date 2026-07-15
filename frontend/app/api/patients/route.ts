@@ -16,7 +16,12 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const payload = await request.json()
-  const patient = await createResource('patients', payload)
+  let patient
+  try {
+    patient = await createResource('patients', payload)
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message || String(error) }, { status: 500 })
+  }
 
   try {
     const { sendNotification, NotificationTemplates } = await import('@/lib/sms')

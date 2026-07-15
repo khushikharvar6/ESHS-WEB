@@ -277,8 +277,8 @@ function RegistrationForm() {
       appointmentId: fromAppt ?? undefined,
       inquiryId: fromInquiry ?? undefined,
     })
-    } catch (error) {
-      toast.error('Failed to save registration. Please try again.')
+    } catch (error: any) {
+      toast.error(`Failed to save: ${error?.message || String(error)}`)
       return
     }
 

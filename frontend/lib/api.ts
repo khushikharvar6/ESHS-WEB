@@ -21,7 +21,15 @@ async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
   })
 
   if (!response.ok) {
-    throw new Error(`Request failed with ${response.status}`)
+    let errorMsg = `Request failed with ${response.status}`
+    try {
+      const errorData = await response.json()
+      if (errorData.error) errorMsg = errorData.error
+      else if (errorData.message) errorMsg = errorData.message
+    } catch (e) {
+      // Not JSON
+    }
+    throw new Error(errorMsg)
   }
 
   return response.json() as Promise<T>
