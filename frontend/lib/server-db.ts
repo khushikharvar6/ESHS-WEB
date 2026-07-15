@@ -9,7 +9,7 @@ const globalForPrisma = globalThis as unknown as {
 
 let connectionString = process.env.DATABASE_URL || ''
 if (connectionString && !connectionString.includes('sslmode') && process.env.NODE_ENV === 'production') {
-  connectionString += (connectionString.includes('?') ? '&' : '?') + 'sslmode=require'
+  connectionString += (connectionString.includes('?') ? '&' : '?') + 'sslmode=require&sslaccept=accept_invalid_certs'
   process.env.DATABASE_URL = connectionString
 }
 
