@@ -477,7 +477,7 @@ export default function FeedbackPage() {
                   <Button 
                     className="bg-[#25D366] hover:bg-[#1da851] text-white flex items-center gap-2"
                     onClick={() => {
-                      const link = `https://eshealthcarecentre.in/feedback/${patient.uhid}?services=${encodeURIComponent(selectedServices.join(','))}`
+                      const link = `${window.location.origin}/feedback/${patient.uhid}?services=${encodeURIComponent(selectedServices.join(','))}`
                       const text = encodeURIComponent(`Dear ${patient.name || 'Patient'}, thank you for visiting ES Healthcare Centre. We hope you had a great experience! Please take 1 minute to fill out your feedback form here: ${link}`)
                       window.open(`https://wa.me/?text=${text}`, 'whatsapp_web')
                     }}
