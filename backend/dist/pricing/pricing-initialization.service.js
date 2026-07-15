@@ -19,7 +19,7 @@ let PricingInitializationService = PricingInitializationService_1 = class Pricin
         this.logger = new common_1.Logger(PricingInitializationService_1.name);
     }
     async onModuleInit() {
-        await this.initializeAllPrices();
+        this.initializeAllPrices().catch(err => this.logger.error('Failed to initialize pricing data:', err));
     }
     async initializeAllPrices() {
         this.logger.log('🔄 Initializing ES Healthcare Centre pricing data...');
@@ -31,6 +31,11 @@ let PricingInitializationService = PricingInitializationService_1 = class Pricin
     }
     async initializeTestMaster() {
         this.logger.log('  📋 Upserting TestMaster records...');
+        const count = await this.prisma.testMaster.count();
+        if (count >= 280) {
+            this.logger.log('  ✅ TestMaster records already initialized. Skipping.');
+            return;
+        }
         const tests = [
             { category: 'Pathology', subcategory: null, serviceType: 'Hematology', department: 'PATHOLOGY', name: 'CBC - Complete Blood Count', price: 315 },
             { category: 'Pathology', subcategory: null, serviceType: 'Hematology', department: 'PATHOLOGY', name: 'Platelet Count', price: 210 },

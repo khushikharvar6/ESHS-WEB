@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -46,6 +47,11 @@ model Patient {
   updatedAt        DateTime
   corporate        PatientCorporate?
   insurance        PatientInsurance?
+  appointments     Appointment[]
+  consultations    Consultation[]
+  invoices         Invoice[]
+  nonConformances  NonConformance[]
+  feedbacks        Feedback[]
 
   @@index([uhid])
   @@index([mobileNo])
@@ -87,7 +93,7 @@ model PatientCorporate {
 }
 
 model Doctor {
-  id              String   @id
+  id              String         @id
   firstName       String
   lastName        String
   fullName        String
@@ -96,13 +102,15 @@ model Doctor {
   experienceYears Int?
   phone           String?
   email           String?
-  consultationFee Decimal  @default(0)
-  followUpFee     Decimal  @default(0)
-  isActive        Boolean  @default(true)
+  consultationFee Decimal        @default(0)
+  followUpFee     Decimal        @default(0)
+  isActive        Boolean        @default(true)
   bio             String?
   avatarUrl       String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  appointments    Appointment[]
+  consultations   Consultation[]
 }
 
 model Appointment {
@@ -120,6 +128,9 @@ model Appointment {
   status    String   @default("Scheduled")
   inquiryId String?
   uhid      String?
+  patient   Patient? @relation(fields: [uhid], references: [uhid])
+  doctorId  String?
+  doctorRef Doctor?  @relation(fields: [doctorId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -127,7 +138,10 @@ model Appointment {
 model Consultation {
   id             String   @id @default(uuid())
   uhid           String   @default("")
+  patient        Patient? @relation(fields: [uhid], references: [uhid])
   doctor         String   @default("")
+  doctorId       String?
+  doctorRef      Doctor?  @relation(fields: [doctorId], references: [id])
   service        String   @default("")
   date           String   @default("")
   chiefComplaint String   @default("")
@@ -144,6 +158,7 @@ model Consultation {
 model Invoice {
   id            String   @id @default(uuid())
   uhid          String?
+  patientRef    Patient? @relation(fields: [uhid], references: [uhid])
   patient       String   @default("")
   service       String   @default("")
   date          String   @default("")
@@ -165,6 +180,7 @@ model Invoice {
 model NonConformance {
   id              String   @id @default(uuid())
   uhid            String   @default("")
+  patientRef      Patient? @relation(fields: [uhid], references: [uhid])
   patient         String   @default("")
   relatedDocument String   @default("")
   department      String   @default("")
@@ -244,6 +260,7 @@ model PackageItem {
 model Feedback {
   id               String           @id @default(uuid())
   uhid             String
+  patient          Patient?         @relation(fields: [uhid], references: [uhid])
   patientName      String
   service          String
   heardAbout       String?
@@ -269,4 +286,22 @@ model FeedbackRating {
   feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
 
   @@map("feedback_ratings")
+}
+
+model Inquiry {
+  id            String  @id @default(uuid())
+  firstName     String  @default("")
+  lastName      String  @default("")
+  phone         String  @default("")
+  email         String?
+  service       String  @default("")
+  source        String  @default("")
+  priority      String  @default("Routine")
+  status        String  @default("New")
+  followUp      String  @default("")
+  notes         String?
+  appointmentId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

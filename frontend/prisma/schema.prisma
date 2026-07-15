@@ -36,8 +36,7 @@ model User {
 // ============================================================================
 
 model Patient {
-  id            String  @id @default(uuid())
-  uhid          String  @unique @default(dbgenerated("gen_random_uuid()"))
+  uhid          String  @id @unique @default(dbgenerated("gen_random_uuid()"))
   salutation    String  @default("")
   firstName     String  @default("")
   middleName    String?
@@ -241,6 +240,8 @@ model Consultation {
   prescription   String?
   followUp       String?
   files          String[]
+  vitals         Json?
+  medicines      Json?
   updatedBy      String?
   updatedAt      String?
   createdAt      DateTime @default(now())

@@ -1,0 +1,17 @@
+model Inquiry {
+  id            String   @id @default(uuid())
+  firstName     String   @default("")
+  lastName      String   @default("")
+  phone         String   @default("")
+  email         String?
+  service       String   @default("")
+  source        String   @default("")
+  priority      String   @default("Routine")
+  status        String   @default("New")
+  followUp      String   @default("")
+  notes         String?
+  appointmentId String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

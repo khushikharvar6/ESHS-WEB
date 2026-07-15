@@ -95,9 +95,10 @@ export default function InquiryPage() {
   const [editLastName, setEditLastName] = useState('')
   const [editPhone, setEditPhone] = useState('')
   const [editService, setEditService] = useState('')
-  const [editPriority, setEditPriority] = useState<Inquiry['priority']>('Routine')
+  const [editPriority, setEditPriority] = useState<Inquiry['priority']>('Medium')
   const [editStatus, setEditStatus] = useState<Inquiry['status']>('New')
   const [editNotes, setEditNotes] = useState('')
+  const [editFollowUp, setEditFollowUp] = useState('')
   const [lostReason, setLostReason] = useState('')
   const [lostOpen, setLostOpen] = useState(false)
   const [lostTarget, setLostTarget] = useState<Inquiry | null>(null)
@@ -178,6 +179,7 @@ export default function InquiryPage() {
     setEditPriority(inq.priority)
     setEditStatus(inq.status)
     setEditNotes(inq.notes ?? '')
+    setEditFollowUp('')
   }
 
   function saveEdit() {
@@ -190,6 +192,9 @@ export default function InquiryPage() {
       priority: editPriority,
       status: editStatus,
       notes: editNotes,
+      followUp: editFollowUp ? new Date(editFollowUp).toLocaleDateString('en-GB', {
+        day: '2-digit', month: 'short', year: 'numeric'
+      }) : editTarget.followUp,
     })
     toast.success(`Inquiry ${editTarget.id} updated`)
     setEditTarget(null)
@@ -393,6 +398,7 @@ export default function InquiryPage() {
               <Field><FieldLabel>Service</FieldLabel><Input value={editService} onChange={(e) => setEditService(e.target.value)} /></Field>
               <Field><FieldLabel>Priority</FieldLabel><Select value={editPriority} onValueChange={(value) => setEditPriority((value as Inquiry['priority']) ?? 'Medium')}><SelectTrigger className="w-full"><SelectValue /></SelectTrigger><SelectContent>{['Low','Medium','High'].map((p)=><SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent></Select></Field>
               <Field><FieldLabel>Status</FieldLabel><Select value={editStatus} onValueChange={(value) => setEditStatus((value as Inquiry['status']) ?? 'New')}><SelectTrigger className="w-full"><SelectValue /></SelectTrigger><SelectContent>{['New','In Progress','Converted','Lost'].map((s)=><SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select></Field>
+              <Field><FieldLabel>Follow-up Date</FieldLabel><Input type="date" value={editFollowUp} onChange={(e) => setEditFollowUp(e.target.value)} /></Field>
               <Field><FieldLabel>Notes</FieldLabel><Textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} rows={3} /></Field>
             </FieldGroup>
           )}

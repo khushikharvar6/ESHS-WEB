@@ -220,7 +220,12 @@ export default function AppointmentPage() {
             <Protect module="APPOINTMENT" action="CREATE">
               <DropdownMenuItem onClick={(e) => {
                 e.preventDefault()
-                setRescheduleDate(r.date || '')
+                let parsed = r.date || ''
+                if (parsed) {
+                  const d = new Date(parsed)
+                  if (!isNaN(d.getTime())) parsed = d.toISOString().split('T')[0]
+                }
+                setRescheduleDate(parsed)
                 setRescheduleTime(r.time || '')
                 setRescheduleTarget(r)
               }}>

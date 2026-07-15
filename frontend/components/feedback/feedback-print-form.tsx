@@ -1,6 +1,5 @@
 'use client'
 
-// @ts-expect-error - Next.js types might be missing in this environment
 import Image from 'next/image'
 import { CENTRE } from '@/lib/constants'
 import type { Patient } from '@/lib/store'

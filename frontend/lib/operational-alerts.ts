@@ -13,6 +13,7 @@ export type OperationalAlertInput = {
   pendingBilling: number
   missingDocuments: number
   openNcs: number
+  inquiriesFollowUpCount?: number
   backendHealthy?: boolean
   patientsCount?: number
 }
@@ -50,6 +51,17 @@ export function buildOperationalAlerts(input: OperationalAlertInput) {
       level: 'critical',
       href: '/qa',
       meta: 'Quality review',
+    })
+  }
+
+  if (input.inquiriesFollowUpCount && input.inquiriesFollowUpCount > 0) {
+    alerts.push({
+      id: 'inquiry-followup',
+      title: 'Inquiry follow-ups due',
+      message: `${input.inquiriesFollowUpCount} inquir${input.inquiriesFollowUpCount > 1 ? 'ies require' : 'y requires'} follow-up today.`,
+      level: 'warning',
+      href: '/inquiry',
+      meta: 'Front Desk / Follow-ups',
     })
   }
 
