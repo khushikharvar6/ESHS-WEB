@@ -7,8 +7,14 @@ const globalForPrisma = globalThis as unknown as {
   pool: Pool | undefined
 }
 
+let connectionString = process.env.DATABASE_URL || ''
+if (connectionString && !connectionString.includes('sslmode') && process.env.NODE_ENV === 'production') {
+  connectionString += (connectionString.includes('?') ? '&' : '?') + 'sslmode=require'
+  process.env.DATABASE_URL = connectionString
+}
+
 const pool = globalForPrisma.pool ?? new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined
 })
 if (process.env.NODE_ENV !== 'production') globalForPrisma.pool = pool
