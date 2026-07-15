@@ -780,72 +780,8 @@ export default function PublicFeedbackPage() {
                 </div>
               </div>
 
-              <div className="pt-4 pb-2 text-center text-slate-500 font-medium">
-                {Object.keys(ratings).length} of {
-                  (() => {
-                    let expectedRatingCount = generalQuestions.length
-                    if (isHomecare) expectedRatingCount += 5
-                    if (isOPD) {
-                      if (showDoctorConsult) expectedRatingCount += 3
-                      if (showPathology) expectedRatingCount += 3
-                      if (showRadiology) expectedRatingCount += 3
-                      if (showCardiology) expectedRatingCount += 3
-                      if (showPulmonology) expectedRatingCount += 3
-                      if (showOphthalmology) expectedRatingCount += 3
-                      if (showPhysiotherapy) expectedRatingCount += 3
-                      if (showPharmacy) expectedRatingCount += 2
-                      if (showPackage) expectedRatingCount += 3
-                      if (showDayCare) expectedRatingCount += 4
-                    }
-                    if (isIPD) expectedRatingCount += 7
-                    return expectedRatingCount
-                  })()
-                } Questions Rated
-              </div>
-
-              <Button 
-                type="submit" 
-                className="w-full bg-teal-700 hover:bg-teal-800 text-white py-8 text-xl rounded-xl shadow-lg transition-transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0" 
-                disabled={
-                  overallRating === 0 || 
-                  Object.keys(ratings).length < (() => {
-                    let expectedRatingCount = generalQuestions.length
-                    if (isHomecare) expectedRatingCount += 5
-                    if (isOPD) {
-                      if (showDoctorConsult) expectedRatingCount += 3
-                      if (showPathology) expectedRatingCount += 3
-                      if (showRadiology) expectedRatingCount += 3
-                      if (showCardiology) expectedRatingCount += 3
-                      if (showPulmonology) expectedRatingCount += 3
-                      if (showOphthalmology) expectedRatingCount += 3
-                      if (showPhysiotherapy) expectedRatingCount += 3
-                      if (showPharmacy) expectedRatingCount += 2
-                      if (showPackage) expectedRatingCount += 3
-                      if (showDayCare) expectedRatingCount += 4
-                    }
-                    if (isIPD) expectedRatingCount += 7
-                    return expectedRatingCount
-                  })()
-                }
-              >
-                {overallRating === 0 || Object.keys(ratings).length < (() => {
-                    let expectedRatingCount = generalQuestions.length
-                    if (isHomecare) expectedRatingCount += 5
-                    if (isOPD) {
-                      if (showDoctorConsult) expectedRatingCount += 3
-                      if (showPathology) expectedRatingCount += 3
-                      if (showRadiology) expectedRatingCount += 3
-                      if (showCardiology) expectedRatingCount += 3
-                      if (showPulmonology) expectedRatingCount += 3
-                      if (showOphthalmology) expectedRatingCount += 3
-                      if (showPhysiotherapy) expectedRatingCount += 3
-                      if (showPharmacy) expectedRatingCount += 2
-                      if (showPackage) expectedRatingCount += 3
-                      if (showDayCare) expectedRatingCount += 4
-                    }
-                    if (isIPD) expectedRatingCount += 7
-                    return expectedRatingCount
-                  })() ? 'Please rate all questions above' : 'Submit Form'}
+              <Button type="submit" className="w-full bg-teal-700 hover:bg-teal-800 text-white py-8 text-xl rounded-xl shadow-lg transition-transform hover:-translate-y-1" disabled={overallRating === 0}>
+                Submit Form
               </Button>
             </form>
           </CardContent>
