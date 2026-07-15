@@ -7,7 +7,10 @@ const globalForPrisma = globalThis as unknown as {
   pool: Pool | undefined
 }
 
-const pool = globalForPrisma.pool ?? new Pool({ connectionString: process.env.DATABASE_URL })
+const pool = globalForPrisma.pool ?? new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined
+})
 if (process.env.NODE_ENV !== 'production') globalForPrisma.pool = pool
 
 const adapter = new PrismaPg(pool)
