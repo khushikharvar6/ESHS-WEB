@@ -48,6 +48,13 @@
   "pnpm": {
     "overrides": {
       "hono": "4.12.25"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "prisma",
+      "bcrypt",
+      "sharp",
+      "core-js"
+    ]
   }
 } 
