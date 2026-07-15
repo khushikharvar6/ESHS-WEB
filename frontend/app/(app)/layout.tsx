@@ -16,6 +16,9 @@ export default function AppLayout({
   const pathname = usePathname()
 
   useEffect(() => {
+    // Skip auth for public feedback routes - never redirect /f/* to login
+    if (pathname.startsWith('/f/') || pathname.startsWith('/f')) return
+
     const isAuthenticated = typeof window !== 'undefined' && window.localStorage.getItem('es-homs-auth')
     if (!isAuthenticated) {
       router.push('/login')
