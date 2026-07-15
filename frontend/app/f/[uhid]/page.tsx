@@ -740,7 +740,7 @@ export default function PublicFeedbackPage() {
               {/* Open Feedback */}
               <div className="space-y-6">
                 <div>
-                  <Label className="text-slate-800 font-semibold">Staff member you would like to appreciate:</Label>
+                  <Label className="text-slate-800 font-semibold">Staff member you would like to appreciate (Optional):</Label>
                   <Input 
                     placeholder="Name of doctor, nurse, or staff..."
                     value={staffAppreciated}
@@ -760,7 +760,7 @@ export default function PublicFeedbackPage() {
                     />
                   </div>
                   <div>
-                    <Label className="text-red-700 font-semibold mb-2 block">Suggestions / Remarks for improvement:</Label>
+                    <Label className="text-red-700 font-semibold mb-2 block">Suggestions / Remarks for improvement (Optional):</Label>
                     <Textarea 
                       placeholder="Areas for improvement..."
                       value={negativeComments}
@@ -780,7 +780,31 @@ export default function PublicFeedbackPage() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-teal-700 hover:bg-teal-800 text-white py-8 text-xl rounded-xl shadow-lg transition-transform hover:-translate-y-1" disabled={overallRating === 0}>
+              <Button 
+                type="submit" 
+                className="w-full bg-teal-700 hover:bg-teal-800 text-white py-8 text-xl rounded-xl shadow-lg transition-transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0" 
+                disabled={
+                  overallRating === 0 || 
+                  Object.keys(ratings).length < (() => {
+                    let expectedRatingCount = generalQuestions.length
+                    if (isHomecare) expectedRatingCount += 5
+                    if (isOPD) {
+                      if (showDoctorConsult) expectedRatingCount += 3
+                      if (showPathology) expectedRatingCount += 3
+                      if (showRadiology) expectedRatingCount += 3
+                      if (showCardiology) expectedRatingCount += 3
+                      if (showPulmonology) expectedRatingCount += 3
+                      if (showOphthalmology) expectedRatingCount += 3
+                      if (showPhysiotherapy) expectedRatingCount += 3
+                      if (showPharmacy) expectedRatingCount += 2
+                      if (showPackage) expectedRatingCount += 3
+                      if (showDayCare) expectedRatingCount += 4
+                    }
+                    if (isIPD) expectedRatingCount += 7
+                    return expectedRatingCount
+                  })()
+                }
+              >
                 Submit Form
               </Button>
             </form>
