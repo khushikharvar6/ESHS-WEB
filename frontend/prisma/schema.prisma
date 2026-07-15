@@ -3,10 +3,12 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // ============================================================================
@@ -36,51 +38,57 @@ model User {
 // ============================================================================
 
 model Patient {
-  id                    String   @id @default(uuid())
-  uhid                  String   @unique @default(dbgenerated("gen_random_uuid()"))
-  salutation            String   @default("")
-  firstName             String   @default("")
-  middleName            String?
-  lastName              String   @default("")
-  age                   Int      @default(0)
-  dob                   String?
-  gender                String   @default("")
-  bloodGroup            String?
-  maritalStatus         String?
-  
-  mobileNo              String   @default("")
-  alternateMobile       String?
-  emailAddress          String?
-  residentialAddress    String?
-  city                  String?
-  state                 String?
-  country               String   @default("India")
-  pincode               String?
-  
+  id            String  @id @default(uuid())
+  uhid          String  @unique @default(dbgenerated("gen_random_uuid()"))
+  salutation    String  @default("")
+  firstName     String  @default("")
+  middleName    String?
+  lastName      String  @default("")
+  age           Int     @default(0)
+  dob           String?
+  gender        String  @default("")
+  bloodGroup    String?
+  maritalStatus String?
+
+  mobileNo           String  @default("")
+  alternateMobile    String?
+  emailAddress       String?
+  residentialAddress String?
+  city               String?
+  state              String?
+  country            String  @default("India")
+  pincode            String?
+
   emergencyContactName  String?
   emergencyRelationship String?
   emergencyPhoneNumber  String?
-  
-  patientCategory       String?
-  careType              String?
+
+  patientCategory            String?
+  careType                   String?
   assignedDepartmentServices String?
-  assignedDepartment    String?
-  service               String   @default("")
-  
-  insurance             PatientInsurance?
-  corporate             PatientCorporate?
-  
-  registeredOn          String   @default("")
-  lastVisit             String   @default("")
-  status                String   @default("Active")
-  initials              String   @default("")
-  inquiryId             String?
-  appointmentId         String?
-  vip                   Boolean  @default(false)
-  
-  updatedBy             String?
-  updatedAt             String?
-  createdAt             DateTime @default(now())
+  assignedDepartment         String?
+  service                    String  @default("")
+
+  insurance PatientInsurance?
+  corporate PatientCorporate?
+
+  registeredOn  String  @default("")
+  lastVisit     String  @default("")
+  status        String  @default("Active")
+  initials      String  @default("")
+  inquiryId     String?
+  appointmentId String?
+  vip           Boolean @default(false)
+
+  updatedBy       String?
+  updatedAt       String?
+  createdAt       DateTime          @default(now())
+  appointments    Appointment[]
+  consultations   Consultation[]
+  invoices        Invoice[]
+  nonConformances NonConformance[]
+  feedbacks       Feedback[]
+  documents       PatientDocument[]
 
   @@index([uhid])
   @@index([mobileNo])
@@ -88,57 +96,58 @@ model Patient {
 }
 
 model PatientInsurance {
-  id                String   @id @default(uuid())
-  patientUhid       String   @unique
-  patient           Patient  @relation(fields: [patientUhid], references: [uhid], onDelete: Cascade)
-  
-  firstName         String?
-  lastName          String?
-  
+  id          String  @id @default(uuid())
+  patientUhid String  @unique
+  patient     Patient @relation(fields: [patientUhid], references: [uhid], onDelete: Cascade)
+
+  firstName String?
+  lastName  String?
+
   insuranceProvider String?
   policyNumber      String?
   tpaNetwork        String?
   insuranceContact  String?
   insuranceNotes    String?
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("patient_insurance")
 }
 
 model PatientCorporate {
-  id                String   @id @default(uuid())
-  patientUhid       String   @unique
-  patient           Patient  @relation(fields: [patientUhid], references: [uhid], onDelete: Cascade)
-  
-  firstName         String?
-  lastName          String?
-  
-  companyName       String?
-  corporateId       String?
-  employeeId        String?
-  companyContact    String?
-  corporateAddress  String?
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
+  id          String  @id @default(uuid())
+  patientUhid String  @unique
+  patient     Patient @relation(fields: [patientUhid], references: [uhid], onDelete: Cascade)
+
+  firstName String?
+  lastName  String?
+
+  companyName      String?
+  corporateId      String?
+  employeeId       String?
+  companyContact   String?
+  corporateAddress String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("patient_corporate")
 }
 
 model PatientDocument {
-  id           String   @id @default(uuid())
-  uhid         String   @default("")
-  name         String   @default("")
-  type         String   @default("")
-  uploadedBy   String   @default("")
-  uploadedOn   String   @default("")
-  verified     Boolean  @default(false)
-  fileUrl      String?
-  updatedBy    String?
-  updatedAt    String?
-  createdAt    DateTime @default(now())
+  id         String   @id @default(uuid())
+  uhid       String   @default("")
+  patient    Patient? @relation(fields: [uhid], references: [uhid])
+  name       String   @default("")
+  type       String   @default("")
+  uploadedBy String   @default("")
+  uploadedOn String   @default("")
+  verified   Boolean  @default(false)
+  fileUrl    String?
+  updatedBy  String?
+  updatedAt  String?
+  createdAt  DateTime @default(now())
 }
 
 // ============================================================================
@@ -146,21 +155,21 @@ model PatientDocument {
 // ============================================================================
 
 model Inquiry {
-  id            String   @id @default(uuid())
-  firstName     String   @default("")
-  lastName      String   @default("")
-  phone         String   @default("")
+  id            String  @id @default(uuid())
+  firstName     String  @default("")
+  lastName      String  @default("")
+  phone         String  @default("")
   email         String?
-  service       String   @default("")
-  source        String   @default("")
-  priority      String   @default("Routine")
-  status        String   @default("New")
-  followUp      String   @default("")
+  service       String  @default("")
+  source        String  @default("")
+  priority      String  @default("Routine")
+  status        String  @default("New")
+  followUp      String  @default("")
   notes         String?
   appointmentId String?
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // ============================================================================
@@ -168,7 +177,7 @@ model Inquiry {
 // ============================================================================
 
 model Doctor {
-  id              String   @id
+  id              String         @id
   firstName       String
   lastName        String
   fullName        String
@@ -177,13 +186,15 @@ model Doctor {
   experienceYears Int?
   phone           String?
   email           String?
-  consultationFee Decimal  @default(0)
-  followUpFee     Decimal  @default(0)
-  isActive        Boolean  @default(true)
+  consultationFee Decimal        @default(0)
+  followUpFee     Decimal        @default(0)
+  isActive        Boolean        @default(true)
   bio             String?
   avatarUrl       String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  appointments    Appointment[]
+  consultations   Consultation[]
 }
 
 // ============================================================================
@@ -205,6 +216,9 @@ model Appointment {
   status    String   @default("Scheduled")
   inquiryId String?
   uhid      String?
+  patient   Patient? @relation(fields: [uhid], references: [uhid])
+  doctorId  String?
+  doctorRef Doctor?  @relation(fields: [doctorId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -217,7 +231,10 @@ model Appointment {
 model Consultation {
   id             String   @id @default(uuid())
   uhid           String   @default("")
+  patient        Patient? @relation(fields: [uhid], references: [uhid])
   doctor         String   @default("")
+  doctorId       String?
+  doctorRef      Doctor?  @relation(fields: [doctorId], references: [id])
   service        String   @default("")
   date           String   @default("")
   chiefComplaint String   @default("")
@@ -238,6 +255,7 @@ model Consultation {
 model Invoice {
   id            String   @id @default(uuid())
   uhid          String?
+  patientRef    Patient? @relation(fields: [uhid], references: [uhid])
   patient       String   @default("")
   service       String   @default("")
   date          String   @default("")
@@ -263,6 +281,7 @@ model Invoice {
 model NonConformance {
   id              String   @id @default(uuid())
   uhid            String   @default("")
+  patientRef      Patient? @relation(fields: [uhid], references: [uhid])
   patient         String   @default("")
   relatedDocument String   @default("")
   department      String   @default("")
@@ -346,24 +365,25 @@ model PackageItem {
 }
 
 model Feedback {
-  id               String   @id @default(uuid())
-  uhid             String
-  patientName      String
-  service          String
+  id          String   @id @default(uuid())
+  uhid        String
+  patient     Patient? @relation(fields: [uhid], references: [uhid])
+  patientName String
+  service     String
 
-  heardAbout       String?
-  referenceBy      String?
-  serviceAvailed   String?
+  heardAbout     String?
+  referenceBy    String?
+  serviceAvailed String?
 
   overallRating    Int
   staffAppreciated String?
   positiveComments String?
   negativeComments String?
-  agreeToUsage     Boolean  @default(true)
+  agreeToUsage     Boolean @default(true)
 
-  ratings          FeedbackRating[]
+  ratings FeedbackRating[]
 
-  createdAt        DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@map("feedbacks")
 }
@@ -372,10 +392,10 @@ model FeedbackRating {
   id         String   @id @default(uuid())
   feedbackId String
   feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
-  
-  category   String
-  question   String
-  rating     Int
+
+  category String
+  question String
+  rating   Int
 
   @@map("feedback_ratings")
 }
