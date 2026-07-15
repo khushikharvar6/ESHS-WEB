@@ -20,20 +20,14 @@ async function main() {
   try {
     const dbData = {
         uhid: 'ES2026-' + String(Math.floor(100000 + Math.random() * 900000)).padStart(6, '0'),
-        salutation: 'Mr.',
         firstName: 'Test',
         lastName: 'Patient',
         mobileNo: '9999999999',
-        service: 'Consultation',
-        registeredOn: new Date().toISOString(),
-        lastVisit: new Date().toISOString(),
-        status: 'Active',
-        initials: 'TP',
-        vip: false
+        insuranceProvider: 'LIC' // THIS IS THE CULPRIT!
     }
     
     console.log("Attempting to create patient...")
-    const patient = await prisma.patient.create({ data: dbData })
+    const patient = await prisma.patient.create({ data: dbData as any })
     console.log("Success!", patient)
   } catch (error) {
     console.error("Prisma Error:", error)

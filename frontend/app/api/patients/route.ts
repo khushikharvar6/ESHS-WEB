@@ -16,9 +16,40 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const payload = await request.json()
+  
+  const {
+    insuranceProvider, policyNumber, tpaNetwork, insuranceContact, insuranceNotes,
+    companyName, corporateId, employeeId, companyContact, corporateAddress,
+    ...patientData
+  } = payload;
+
+  if (insuranceProvider || policyNumber || tpaNetwork || insuranceContact || insuranceNotes) {
+    patientData.insurance = {
+      create: {
+        insuranceProvider: insuranceProvider || '',
+        policyNumber: policyNumber || '',
+        tpaNetwork: tpaNetwork || '',
+        insuranceContact: insuranceContact || '',
+        insuranceNotes: insuranceNotes || ''
+      }
+    }
+  }
+
+  if (companyName || corporateId || employeeId || companyContact || corporateAddress) {
+    patientData.corporate = {
+      create: {
+        companyName: companyName || '',
+        corporateId: corporateId || '',
+        employeeId: employeeId || '',
+        companyContact: companyContact || '',
+        corporateAddress: corporateAddress || ''
+      }
+    }
+  }
+
   let patient
   try {
-    patient = await createResource('patients', payload)
+    patient = await createResource('patients', patientData)
   } catch (error: any) {
     return NextResponse.json({ error: error?.message || String(error) }, { status: 500 })
   }
