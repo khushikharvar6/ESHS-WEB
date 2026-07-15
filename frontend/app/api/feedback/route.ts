@@ -93,7 +93,7 @@ export async function POST(request: Request) {
       positiveComments: payload.positiveComments || '',
       negativeComments: payload.negativeComments || '',
       agreeToUsage: payload.agreeToUsage !== false,
-      homeHealthcareRatings: { create: getRatings('Home Healthcare Services') },
+      homeHealthcareRatings: { create: getRatings('Home Healthcare') },
       doctorConsultationRatings: { create: getRatings('Doctor Consultation') },
       pathologyRatings: { create: getRatings('Pathology') },
       radiologyRatings: { create: getRatings('Radiology') },
@@ -104,7 +104,7 @@ export async function POST(request: Request) {
       pharmacyRatings: { create: getRatings('Pharmacy Services') },
       packageRatings: { create: getRatings('Health Check-up Package') },
       dayCareRatings: { create: getRatings('Day Care Services') },
-      ipdRatings: { create: getRatings('IPD (Inpatient)') },
+      ipdRatings: { create: getRatings('IPD') },
       generalRatings: { create: getRatings('General Experience') }
     }
   })
