@@ -111,13 +111,15 @@ export async function getSignedDownloadUrl(storagePath: string, download = false
 export async function deleteDocumentFile(storagePath: string): Promise<void> {
   if (!storagePath) return
 
-  const { error } = await supabase.storage
-    .from(DOCUMENTS_BUCKET)
-    .remove([storagePath])
+  const deleteRes = await fetch('/api/storage/delete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ storagePath })
+  })
 
-  if (error) {
-    console.error('Supabase delete error:', error)
-    throw new Error(`Failed to delete file: ${error.message}`)
+  if (!deleteRes.ok) {
+    const errorData = await deleteRes.json()
+    throw new Error(`Failed to delete file: ${errorData.error}`)
   }
 }
 
