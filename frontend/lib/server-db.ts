@@ -66,9 +66,40 @@ export async function createResource<T extends Record<string, any>>(
   const model = PRISMA_MAP[resource]
   if (!model) throw new Error(`Unknown resource ${resource}`)
 
-  // Ensure id is a string if provided
-  const data = { ...input }
-  if ((data as any).id) (data as any).id = String((data as any).id)
+  const data = { ...input } as any
+  
+  // Auto-generate proper formatted IDs if not provided
+  if (!data.id) {
+    const currentYear = new Date().getFullYear()
+    const randomSuffix = Math.floor(100000 + Math.random() * 900000)
+    
+    switch (resource) {
+      case 'invoices':
+        data.id = `INV${currentYear}-${randomSuffix}`
+        break
+      case 'appointments':
+        data.id = `APT${currentYear}-${randomSuffix}`
+        break
+      case 'consultations':
+        data.id = `CONS${currentYear}-${randomSuffix}`
+        break
+      case 'inquiries':
+        data.id = `INQ${currentYear}-${randomSuffix}`
+        break
+      case 'ncs':
+        data.id = `NC${currentYear}-${randomSuffix}`
+        break
+      case 'documents':
+        data.id = `DOC${currentYear}-${randomSuffix}`
+        break
+      case 'feedback':
+        data.id = `FB${currentYear}-${randomSuffix}`
+        break
+      // For patients and masters, let Prisma fallback to default logic if not provided
+    }
+  } else {
+    data.id = String(data.id)
+  }
   
   return await model.create({ data })
 }
