@@ -199,8 +199,11 @@ export type Invoice = {
 export type PatientDocument = {
   id: string
   uhid: string
+  patientName: string
   name: string
   type: DocumentType | string
+  fileSize?: number
+  storagePath?: string
   uploadedBy: string
   uploadedOn: string
   verified: boolean
@@ -379,7 +382,7 @@ type StoreValue = {
   addInvoice: (i: Omit<Invoice, 'id'>) => Invoice
   updateInvoice: (id: string, patch: Partial<Invoice>) => void
   deleteInvoice: (id: string) => void
-  addDocument: (d: Omit<PatientDocument, 'id' | 'uploadedOn' | 'verified' | 'uploadedBy'> & { uploadedBy?: string; fileUrl?: string }) => void
+  addDocument: (d: Omit<PatientDocument, 'id' | 'uploadedOn' | 'verified' | 'uploadedBy'> & { uploadedBy?: string; fileUrl?: string; storagePath?: string; fileSize?: number; patientName: string }) => void
   updateDocument: (id: string, patch: Partial<PatientDocument>) => void
   verifyDocument: (id: string) => void
   deleteDocument: (id: string) => void
@@ -761,8 +764,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       const created: PatientDocument = {
         id,
         uhid: d.uhid,
+        patientName: d.patientName,
         name: d.name,
         type: d.type,
+        fileSize: d.fileSize,
+        storagePath: d.storagePath,
         uploadedBy: d.uploadedBy ?? CURRENT_USER.name,
         uploadedOn: today(),
         verified: false,

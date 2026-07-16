@@ -95,7 +95,7 @@ export default function InquiryPage() {
   const [editLastName, setEditLastName] = useState('')
   const [editPhone, setEditPhone] = useState('')
   const [editService, setEditService] = useState('')
-  const [editPriority, setEditPriority] = useState<Inquiry['priority']>('Medium')
+  const [editPriority, setEditPriority] = useState<Inquiry['priority']>('Routine')
   const [editStatus, setEditStatus] = useState<Inquiry['status']>('New')
   const [editNotes, setEditNotes] = useState('')
   const [editFollowUp, setEditFollowUp] = useState('')

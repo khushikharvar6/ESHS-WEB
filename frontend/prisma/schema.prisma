@@ -133,18 +133,21 @@ model PatientCorporate {
 }
 
 model PatientDocument {
-  id         String   @id @default(uuid())
-  uhid       String   @default("")
-  patient        Patient? @relation(fields: [uhid], references: [uhid], onDelete: Cascade)
-  name       String   @default("")
-  type       String   @default("")
-  uploadedBy String   @default("")
-  uploadedOn String   @default("")
-  verified   Boolean  @default(false)
-  fileUrl    String?
-  updatedBy  String?
-  updatedAt  String?
-  createdAt  DateTime @default(now())
+  id          String   @id @default(uuid())
+  uhid        String   @default("")
+  patient     Patient? @relation(fields: [uhid], references: [uhid], onDelete: Cascade)
+  patientName String   @default("")
+  name        String   @default("")
+  type        String   @default("")
+  fileSize    Int?
+  storagePath String?
+  uploadedBy  String   @default("")
+  uploadedOn  String   @default("")
+  verified    Boolean  @default(false)
+  fileUrl     String?
+  updatedBy   String?
+  updatedAt   String?
+  createdAt   DateTime @default(now())
 }
 
 // ============================================================================

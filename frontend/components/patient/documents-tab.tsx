@@ -41,6 +41,7 @@ import {
 import { AuditLine } from '@/components/patient/audit-line'
 import { DOCUMENT_TYPES } from '@/lib/constants'
 import { useHealthcare, expectedDocsForService } from '@/lib/store'
+import { uploadDocumentFile, deleteDocumentFile, formatFileSize, getSignedDownloadUrl } from '@/lib/document-upload'
 
 export function DocumentsTab({
   uhid,
@@ -49,10 +50,14 @@ export function DocumentsTab({
   uhid: string
   service: string
 }) {
-  const { documentsFor, addDocument, verifyDocument, deleteDocument } =
+  const { patients, documentsFor, addDocument, verifyDocument, deleteDocument } =
     useHealthcare()
   const [docType, setDocType] = useState<string>('ID Proof')
+  const [isUploading, setIsUploading] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+
+  const patient = useMemo(() => patients.find((p) => p.uhid === uhid), [patients, uhid])
+  const patientName = patient?.name || 'Unknown Patient'
 
   const docs = documentsFor(uhid)
 
@@ -72,16 +77,81 @@ export function DocumentsTab({
   const clinicalDocs = useMemo(() => docs.filter((d) => clinicalDocTypes.has(d.type)), [docs, clinicalDocTypes])
   const generalDocs = useMemo(() => docs.filter((d) => !clinicalDocTypes.has(d.type)), [docs, clinicalDocTypes])
 
-  function onFiles(files: FileList | null) {
+  async function onFiles(files: FileList | null) {
     if (!files || files.length === 0) return
-    Array.from(files).forEach((f) => {
-      const fileUrl = URL.createObjectURL(f)
-      addDocument({ uhid, name: f.name, type: docType, fileUrl })
-    })
-    toast.success(
-      `${files.length} file${files.length > 1 ? 's' : ''} uploaded as ${docType}`,
-    )
-    if (fileRef.current) fileRef.current.value = ''
+    setIsUploading(true)
+    
+    try {
+      for (const f of Array.from(files)) {
+        try {
+          const { publicUrl, storagePath, fileSize } = await uploadDocumentFile(f, uhid)
+          
+          addDocument({ 
+            uhid, 
+            patientName,
+            name: f.name, 
+            type: docType, 
+            fileUrl: publicUrl,
+            storagePath,
+            fileSize
+          })
+          toast.success(`Uploaded ${f.name} as ${docType}`)
+        } catch (err: any) {
+          toast.error(`Failed to upload ${f.name}: ${err.message}`)
+        }
+      }
+    } finally {
+      setIsUploading(false)
+      if (fileRef.current) fileRef.current.value = ''
+    }
+  }
+
+  async function handleDelete(d: any) {
+    try {
+      if (d.storagePath) {
+        await deleteDocumentFile(d.storagePath)
+      }
+      deleteDocument(d.id)
+      toast.success(`${d.name} deleted`)
+    } catch (err: any) {
+      toast.error(`Failed to delete ${d.name}: ${err.message}`)
+    }
+  }
+
+  async function handleView(d: any) {
+    if (d.storagePath) {
+      try {
+        const url = await getSignedDownloadUrl(d.storagePath, false)
+        window.open(url, '_blank')
+      } catch (err: any) {
+        toast.error(`Failed to get secure link: ${err.message}`)
+      }
+    } else if (d.fileUrl) {
+      window.open(d.fileUrl, '_blank')
+    } else {
+      toast.error('File preview not available')
+    }
+  }
+
+  async function handleDownload(d: any) {
+    if (d.storagePath) {
+      try {
+        const url = await getSignedDownloadUrl(d.storagePath, true)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = d.name
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        toast.success(`Downloaded ${d.name}`)
+      } catch (err: any) {
+        toast.error(`Failed to get secure link: ${err.message}`)
+      }
+    } else if (d.fileUrl) {
+      const a = document.createElement('a'); a.href = d.fileUrl; a.download = d.name; document.body.appendChild(a); a.click(); document.body.removeChild(a); toast.success(`Downloaded ${d.name}`)
+    } else {
+      toast.error('File not available for download')
+    }
   }
 
   const checklist = useMemo(() => {
@@ -151,15 +221,16 @@ export function DocumentsTab({
             <Protect module="PATIENT_PROFILE" action="UPDATE">
               <button
                 type="button"
+                disabled={isUploading}
                 onClick={() => fileRef.current?.click()}
-                className="flex flex-col items-center gap-2 rounded-xl border-2 border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:border-primary/50 hover:bg-accent"
+                className="flex flex-col items-center gap-2 rounded-xl border-2 border-dashed border-border bg-muted/30 px-4 py-8 text-center transition-colors hover:border-primary/50 hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <UploadCloud className="size-7 text-primary" />
                 <span className="text-sm font-medium text-foreground">
-                  Click to upload report, prescription, or document
+                  {isUploading ? 'Uploading...' : 'Click to upload report, prescription, or document'}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  {`PDF, DOC, JPG, PNG • Max 5MB • Category: ${docType}`}
+                  {`PDF, DOC, JPG, PNG • Max 10MB • Category: ${docType}`}
                 </span>
               </button>
             </Protect>
@@ -229,10 +300,10 @@ export function DocumentsTab({
                             </TableCell>
                             <TableCell className="text-right">
                               <div className="flex items-center justify-end gap-1">
-                                <Button variant="ghost" size="icon-sm" aria-label="View" onClick={() => { if (d.fileUrl) { window.open(d.fileUrl, '_blank') } else { toast.error('File preview not available — document was uploaded before preview support was added.') } }}>
+                                <Button variant="ghost" size="icon-sm" aria-label="View" onClick={() => handleView(d)}>
                                   <Eye />
                                 </Button>
-                                <Button variant="ghost" size="icon-sm" aria-label="Download" onClick={() => { if (d.fileUrl) { const a = document.createElement('a'); a.href = d.fileUrl; a.download = d.name; document.body.appendChild(a); a.click(); document.body.removeChild(a); toast.success(`Downloaded ${d.name}`) } else { toast.error('File not available for download.') } }}>
+                                <Button variant="ghost" size="icon-sm" aria-label="Download" onClick={() => handleDownload(d)}>
                                   <Download />
                                 </Button>
                                 {!d.verified && (
@@ -243,7 +314,7 @@ export function DocumentsTab({
                                   </Protect>
                                 )}
                                 <Protect module="PATIENT_PROFILE" action="DELETE">
-                                  <Button variant="ghost" size="icon-sm" aria-label="Delete" onClick={() => { deleteDocument(d.id); toast.error(`${d.name} deleted`) }}>
+                                  <Button variant="ghost" size="icon-sm" aria-label="Delete" onClick={() => handleDelete(d)}>
                                     <Trash2 />
                                   </Button>
                                 </Protect>
@@ -310,10 +381,10 @@ export function DocumentsTab({
                             </TableCell>
                             <TableCell className="text-right">
                               <div className="flex items-center justify-end gap-1">
-                                <Button variant="ghost" size="icon-sm" aria-label="View" onClick={() => { if (d.fileUrl) { window.open(d.fileUrl, '_blank') } else { toast.error('File preview not available — document was uploaded before preview support was added.') } }}>
+                                <Button variant="ghost" size="icon-sm" aria-label="View" onClick={() => handleView(d)}>
                                   <Eye />
                                 </Button>
-                                <Button variant="ghost" size="icon-sm" aria-label="Download" onClick={() => { if (d.fileUrl) { const a = document.createElement('a'); a.href = d.fileUrl; a.download = d.name; document.body.appendChild(a); a.click(); document.body.removeChild(a); toast.success(`Downloaded ${d.name}`) } else { toast.error('File not available for download.') } }}>
+                                <Button variant="ghost" size="icon-sm" aria-label="Download" onClick={() => handleDownload(d)}>
                                   <Download />
                                 </Button>
                                 {!d.verified && (
@@ -321,7 +392,7 @@ export function DocumentsTab({
                                     <BadgeCheck />
                                   </Button>
                                 )}
-                                <Button variant="ghost" size="icon-sm" aria-label="Delete" onClick={() => { deleteDocument(d.id); toast.error(`${d.name} deleted`) }}>
+                                <Button variant="ghost" size="icon-sm" aria-label="Delete" onClick={() => handleDelete(d)}>
                                   <Trash2 />
                                 </Button>
                               </div>

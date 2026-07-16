@@ -1,4 +1,4 @@
-import type { BillingInvoice, BillingInvoiceItem, BillingPatient } from '@/src/types/billing.types'
+import type { BillingInvoice, BillingInvoiceItem, BillingPatient } from '../types/billing.types'
 
 async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, { cache: 'no-store', ...init })
