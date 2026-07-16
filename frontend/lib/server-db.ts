@@ -1,30 +1,11 @@
 import { PrismaClient } from '@prisma/client'
-import { Pool } from 'pg'
-import { PrismaPg } from '@prisma/adapter-pg'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
-  pool: Pool | undefined
 }
 
-let connectionString = process.env.DATABASE_URL || ''
+export const prisma = globalForPrisma.prisma ?? new PrismaClient()
 
-// Strip sslmode from the connection string so it doesn't override our custom ssl object
-connectionString = connectionString.replace(/[?&]sslmode=[^&]*/g, '').replace(/[?&]sslaccept=[^&]*/g, '')
-
-// Fix trailing ? or & if we stripped the only parameter
-if (connectionString.endsWith('?')) connectionString = connectionString.slice(0, -1)
-
-const pool = globalForPrisma.pool ?? new Pool({
-  connectionString,
-  max: 1, // Limit connections per serverless instance
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined
-})
-if (process.env.NODE_ENV !== 'production') globalForPrisma.pool = pool
-
-const adapter = new PrismaPg(pool)
-
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter })
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 // Connect map for mapping generic resources to prisma models
 const PRISMA_MAP: Record<string, any> = {
