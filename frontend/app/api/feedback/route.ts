@@ -5,58 +5,66 @@ import { prisma } from '@/lib/server-db'
 export const runtime = 'nodejs'
 
 export async function GET() {
-  const feedbacks = await prisma.feedback.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: { 
-      homeHealthcareRatings: true,
-      doctorConsultationRatings: true,
-      pathologyRatings: true,
-      radiologyRatings: true,
-      cardiologyRatings: true,
-      pulmonologyRatings: true,
-      ophthalmologyRatings: true,
-      physiotherapyRatings: true,
-      pharmacyRatings: true,
-      packageRatings: true,
-      dayCareRatings: true,
-      ipdRatings: true,
-      generalRatings: true
-    }
-  })
-  
-  // Combine all the separate tables back into a single "ratings" array for the frontend
-  const formattedFeedbacks = feedbacks.map(f => {
-    const combinedRatings = [
-      ...(f.homeHealthcareRatings || []).map(r => ({ ...r, category: 'Home Healthcare Services' })),
-      ...(f.doctorConsultationRatings || []).map(r => ({ ...r, category: 'Doctor Consultation' })),
-      ...(f.pathologyRatings || []).map(r => ({ ...r, category: 'Pathology' })),
-      ...(f.radiologyRatings || []).map(r => ({ ...r, category: 'Radiology' })),
-      ...(f.cardiologyRatings || []).map(r => ({ ...r, category: 'Cardiology' })),
-      ...(f.pulmonologyRatings || []).map(r => ({ ...r, category: 'Pulmonology' })),
-      ...(f.ophthalmologyRatings || []).map(r => ({ ...r, category: 'Ophthalmology Services' })),
-      ...(f.physiotherapyRatings || []).map(r => ({ ...r, category: 'Physiotherapy Services' })),
-      ...(f.pharmacyRatings || []).map(r => ({ ...r, category: 'Pharmacy Services' })),
-      ...(f.packageRatings || []).map(r => ({ ...r, category: 'Health Check-up Package' })),
-      ...(f.dayCareRatings || []).map(r => ({ ...r, category: 'Day Care Services' })),
-      ...(f.ipdRatings || []).map(r => ({ ...r, category: 'IPD (Inpatient)' })),
-      ...(f.generalRatings || []).map(r => ({ ...r, category: 'General Experience' }))
-    ];
+  try {
+    const feedbacks = await prisma.feedback.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { 
+        homeHealthcareRatings: true,
+        doctorConsultationRatings: true,
+        pathologyRatings: true,
+        radiologyRatings: true,
+        cardiologyRatings: true,
+        pulmonologyRatings: true,
+        ophthalmologyRatings: true,
+        physiotherapyRatings: true,
+        pharmacyRatings: true,
+        packageRatings: true,
+        dayCareRatings: true,
+        ipdRatings: true,
+        generalRatings: true
+      }
+    })
+    
+    // Ensure objects are plain JS objects without Prisma symbols before spreading
+    const plainFeedbacks = JSON.parse(JSON.stringify(feedbacks))
+    
+    // Combine all the separate tables back into a single "ratings" array for the frontend
+    const formattedFeedbacks = plainFeedbacks.map((f: any) => {
+      const combinedRatings = [
+        ...(f.homeHealthcareRatings || []).map((r: any) => ({ ...r, category: 'Home Healthcare Services' })),
+        ...(f.doctorConsultationRatings || []).map((r: any) => ({ ...r, category: 'Doctor Consultation' })),
+        ...(f.pathologyRatings || []).map((r: any) => ({ ...r, category: 'Pathology' })),
+        ...(f.radiologyRatings || []).map((r: any) => ({ ...r, category: 'Radiology' })),
+        ...(f.cardiologyRatings || []).map((r: any) => ({ ...r, category: 'Cardiology' })),
+        ...(f.pulmonologyRatings || []).map((r: any) => ({ ...r, category: 'Pulmonology' })),
+        ...(f.ophthalmologyRatings || []).map((r: any) => ({ ...r, category: 'Ophthalmology Services' })),
+        ...(f.physiotherapyRatings || []).map((r: any) => ({ ...r, category: 'Physiotherapy Services' })),
+        ...(f.pharmacyRatings || []).map((r: any) => ({ ...r, category: 'Pharmacy Services' })),
+        ...(f.packageRatings || []).map((r: any) => ({ ...r, category: 'Health Check-up Package' })),
+        ...(f.dayCareRatings || []).map((r: any) => ({ ...r, category: 'Day Care Services' })),
+        ...(f.ipdRatings || []).map((r: any) => ({ ...r, category: 'IPD (Inpatient)' })),
+        ...(f.generalRatings || []).map((r: any) => ({ ...r, category: 'General Experience' }))
+      ];
 
-    // Remove the separate arrays so the payload isn't huge
-    const { 
-      homeHealthcareRatings, doctorConsultationRatings, pathologyRatings, radiologyRatings, 
-      cardiologyRatings, pulmonologyRatings, ophthalmologyRatings, physiotherapyRatings, 
-      pharmacyRatings, packageRatings, dayCareRatings, ipdRatings, generalRatings, 
-      ...rest 
-    } = f as any;
+      // Remove the separate arrays so the payload isn't huge
+      const { 
+        homeHealthcareRatings, doctorConsultationRatings, pathologyRatings, radiologyRatings, 
+        cardiologyRatings, pulmonologyRatings, ophthalmologyRatings, physiotherapyRatings, 
+        pharmacyRatings, packageRatings, dayCareRatings, ipdRatings, generalRatings, 
+        ...rest 
+      } = f;
 
-    return {
-      ...rest,
-      ratings: combinedRatings
-    }
-  })
+      return {
+        ...rest,
+        ratings: combinedRatings
+      }
+    })
 
-  return NextResponse.json(formattedFeedbacks)
+    return NextResponse.json(formattedFeedbacks)
+  } catch (error) {
+    console.error('Error fetching feedbacks:', error)
+    return NextResponse.json([])
+  }
 }
 
 export async function POST(request: Request) {
