@@ -7,10 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "postinstall": "node -e \"const fs = require('fs'); try { fs.rmSync('node_modules/@prisma/adapter-pg', {recursive:true, force:true}) } catch(e){}\" && prisma generate"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
+    "@prisma/adapter-pg": "^7.8.0",
     "@supabase/supabase-js": "^2.110.6",
     "@vercel/analytics": "^1.6.1",
     "bcrypt": "^6.0.0",

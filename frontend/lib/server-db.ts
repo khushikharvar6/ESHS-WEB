@@ -1,12 +1,37 @@
 import { PrismaClient } from '@prisma/client'
+import { Pool } from 'pg'
+import { PrismaPg } from '@prisma/adapter-pg'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
+  pool: Pool | undefined
 }
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient()
+// Ensure the connection string falls back to a valid dummy URL during static generation (e.g. next build on Vercel)
+// otherwise `new Pool()` will throw if the connection string is completely empty.
+let connectionString = process.env.DATABASE_URL || 'postgresql://dummy:dummy@dummy:5432/dummy'
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+// Configure pg.Pool with robust settings for Vercel/Supabase
+const pool = globalForPrisma.pool ?? new Pool({
+  connectionString,
+  max: 10, // Max 10 connections per serverless instance to prevent connection starvation
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
+  // Ensure SSL is explicitly required for remote database connections (like Supabase)
+  ssl: { rejectUnauthorized: false }
+})
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.pool = pool
+}
+
+const adapter = new PrismaPg(pool)
+
+export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter })
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma
+}
 // Connect map for mapping generic resources to prisma models
 const PRISMA_MAP: Record<string, any> = {
   patients: prisma.patient,
