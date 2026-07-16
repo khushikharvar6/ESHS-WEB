@@ -60,7 +60,12 @@ export async function GET() {
       }
     })
 
-    return NextResponse.json(formattedFeedbacks)
+    return NextResponse.json(formattedFeedbacks, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+        'X-Time': Date.now().toString()
+      }
+    })
   } catch (error) {
     console.error('Error fetching feedbacks:', error)
     return NextResponse.json([])

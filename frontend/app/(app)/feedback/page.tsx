@@ -78,7 +78,7 @@ export default function FeedbackPage() {
   const [dbFeedbacks, setDbFeedbacks] = useState<any[]>([])
 
   useEffect(() => {
-    fetch('/api/feedback')
+    fetch('/api/feedback', { cache: 'no-store' })
       .then(res => res.json())
       .then(data => setDbFeedbacks(data))
       .catch(console.error)
