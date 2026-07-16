@@ -207,7 +207,6 @@ export type PatientDocument = {
   uploadedBy: string
   uploadedOn: string
   verified: boolean
-  fileUrl?: string
 } & AuditMeta
 
 export type NcStatus = 'Open' | 'In Progress' | 'Closed'
@@ -382,7 +381,7 @@ type StoreValue = {
   addInvoice: (i: Omit<Invoice, 'id'>) => Invoice
   updateInvoice: (id: string, patch: Partial<Invoice>) => void
   deleteInvoice: (id: string) => void
-  addDocument: (d: Omit<PatientDocument, 'id' | 'uploadedOn' | 'verified' | 'uploadedBy'> & { uploadedBy?: string; fileUrl?: string; storagePath?: string; fileSize?: number; patientName: string }) => void
+  addDocument: (d: Omit<PatientDocument, 'id' | 'uploadedOn' | 'verified' | 'uploadedBy'> & { uploadedBy?: string; storagePath?: string; fileSize?: number; patientName: string }) => void
   updateDocument: (id: string, patch: Partial<PatientDocument>) => void
   verifyDocument: (id: string) => void
   deleteDocument: (id: string) => void
@@ -772,7 +771,6 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         uploadedBy: d.uploadedBy ?? CURRENT_USER.name,
         uploadedOn: today(),
         verified: false,
-        fileUrl: d.fileUrl,
       }
       apiCreateResource('documents', created).catch((error) => {
         console.warn('Failed to persist document', error)

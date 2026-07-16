@@ -144,7 +144,6 @@ model PatientDocument {
   uploadedBy  String   @default("")
   uploadedOn  String   @default("")
   verified    Boolean  @default(false)
-  fileUrl     String?
   updatedBy   String?
   updatedAt   String?
   createdAt   DateTime @default(now())

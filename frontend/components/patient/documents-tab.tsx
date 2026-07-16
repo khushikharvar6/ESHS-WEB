@@ -91,7 +91,6 @@ export function DocumentsTab({
             patientName,
             name: f.name, 
             type: docType, 
-            fileUrl: publicUrl,
             storagePath,
             fileSize
           })
@@ -126,8 +125,6 @@ export function DocumentsTab({
       } catch (err: any) {
         toast.error(`Failed to get secure link: ${err.message}`)
       }
-    } else if (d.fileUrl) {
-      window.open(d.fileUrl, '_blank')
     } else {
       toast.error('File preview not available')
     }
@@ -147,8 +144,6 @@ export function DocumentsTab({
       } catch (err: any) {
         toast.error(`Failed to get secure link: ${err.message}`)
       }
-    } else if (d.fileUrl) {
-      const a = document.createElement('a'); a.href = d.fileUrl; a.download = d.name; document.body.appendChild(a); a.click(); document.body.removeChild(a); toast.success(`Downloaded ${d.name}`)
     } else {
       toast.error('File not available for download')
     }
