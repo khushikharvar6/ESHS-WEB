@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin, DOCUMENTS_BUCKET } from '@/lib/supabase-server'
+import { getSupabaseAdmin, DOCUMENTS_BUCKET } from '@/lib/supabase-server'
 
 export async function POST(request: Request) {
   try {
@@ -10,7 +10,9 @@ export async function POST(request: Request) {
     }
 
     // Generate a signed URL for uploading to the private bucket.
-    // The client can use this URL to PUT the file directly to Supabase.
+    // Generate a signed URL for uploading the file
+    // Valid for 60 seconds
+    const supabaseAdmin = getSupabaseAdmin()
     const { data, error } = await supabaseAdmin.storage
       .from(DOCUMENTS_BUCKET)
       .createSignedUploadUrl(storagePath)

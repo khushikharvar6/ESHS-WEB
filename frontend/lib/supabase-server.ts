@@ -1,10 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
 import { DOCUMENTS_BUCKET } from './supabase'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder_key'
+export function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.warn('Warning: Missing Supabase Admin credentials')
+  }
 
-// This client has admin privileges and should ONLY be used in server environments (API routes/Server actions)
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+  return createClient(supabaseUrl, supabaseServiceKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.dummy')
+}
 
 export { DOCUMENTS_BUCKET }

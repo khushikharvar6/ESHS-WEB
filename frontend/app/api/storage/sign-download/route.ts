@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin, DOCUMENTS_BUCKET } from '@/lib/supabase-server'
+import { getSupabaseAdmin, DOCUMENTS_BUCKET } from '@/lib/supabase-server'
 
 export async function POST(request: Request) {
   try {
@@ -11,6 +11,7 @@ export async function POST(request: Request) {
 
     // Generate a signed URL for downloading/viewing the file.
     // Valid for 60 seconds.
+    const supabaseAdmin = getSupabaseAdmin()
     const { data, error } = await supabaseAdmin.storage
       .from(DOCUMENTS_BUCKET)
       .createSignedUrl(storagePath, 60, {
