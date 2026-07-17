@@ -535,34 +535,24 @@ function PatientProfileContent() {
       ) : null}
 
       <div className="w-full">
-        <Tabs defaultValue={CURRENT_USER.roleKey === 'concerned-dept' ? 'compliance' : 'history'}>
+        <Tabs defaultValue="history">
           <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1">
-            {CURRENT_USER.roleKey !== 'concerned-dept' && (
-              <TabsTrigger value="history">Visits History Timeline</TabsTrigger>
-            )}
-            {CURRENT_USER.roleKey !== 'concerned-dept' && (
-              <TabsTrigger value="consultations">Consultations ({consultations.length})</TabsTrigger>
-            )}
-            {(CURRENT_USER.roleKey === 'FRONT_DESK' || CURRENT_USER.roleKey === 'ADMIN') && (
-              <TabsTrigger value="billing">Billing ({invoices.length})</TabsTrigger>
-            )}
-            {CURRENT_USER.roleKey !== 'concerned-dept' && (
-              <TabsTrigger value="documents">Documents ({docs.length})</TabsTrigger>
-            )}
+            <TabsTrigger value="history">Visits History Timeline</TabsTrigger>
+            <TabsTrigger value="consultations">Consultations ({consultations.length})</TabsTrigger>
+            <TabsTrigger value="billing">Billing ({invoices.length})</TabsTrigger>
+            <TabsTrigger value="documents">Documents ({docs.length})</TabsTrigger>
 
-            {CURRENT_USER.roleKey !== 'front-office' && (
-              <TabsTrigger value="compliance">
-                Compliance / NCs
-                {openNcs.length > 0 ? (
-                  <Badge
-                    variant="destructive"
-                    className="ml-2 h-5 min-w-5 px-1 text-[10px]"
-                  >
-                    {openNcs.length}
-                  </Badge>
-                ) : null}
-              </TabsTrigger>
-            )}
+            <TabsTrigger value="compliance">
+              Compliance / NCs
+              {openNcs.length > 0 ? (
+                <Badge
+                  variant="destructive"
+                  className="ml-2 h-5 min-w-5 px-1 text-[10px]"
+                >
+                  {openNcs.length}
+                </Badge>
+              ) : null}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="history" className="mt-4">
@@ -620,27 +610,18 @@ function PatientProfileContent() {
             </div>
           </TabsContent>
 
-          {CURRENT_USER.roleKey !== 'concerned-dept' && (
-            <TabsContent value="consultations" className="mt-4">
-              <ConsultationsTab uhid={patient.uhid} service={patient.service} />
-            </TabsContent>
-          )}
-          {(CURRENT_USER.roleKey === 'FRONT_DESK' || CURRENT_USER.roleKey === 'ADMIN') && (
-            <TabsContent value="billing" className="mt-4">
-              <BillingTab uhid={patient.uhid} patientName={patient.name} />
-            </TabsContent>
-          )}
-          {CURRENT_USER.roleKey !== 'concerned-dept' && (
-            <TabsContent value="documents" className="mt-4">
-              <DocumentsTab uhid={patient.uhid} service={patient.service} />
-            </TabsContent>
-          )}
-
-          {CURRENT_USER.roleKey !== 'front-office' && (
-            <TabsContent value="compliance" className="mt-4">
-              <ComplianceTab patient={patient} />
-            </TabsContent>
-          )}
+          <TabsContent value="consultations" className="mt-4">
+            <ConsultationsTab uhid={patient.uhid} service={patient.service} />
+          </TabsContent>
+          <TabsContent value="billing" className="mt-4">
+            <BillingTab uhid={patient.uhid} patientName={patient.name} />
+          </TabsContent>
+          <TabsContent value="documents" className="mt-4">
+            <DocumentsTab uhid={patient.uhid} service={patient.service} />
+          </TabsContent>
+          <TabsContent value="compliance" className="mt-4">
+            <ComplianceTab patient={patient} />
+          </TabsContent>
         </Tabs>
       </div>
 
