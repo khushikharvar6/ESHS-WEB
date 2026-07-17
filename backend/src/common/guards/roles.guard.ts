@@ -21,6 +21,10 @@ export class RolesGuard implements CanActivate {
       return false;
     }
 
+    if (user.role === 'ADMIN' || user.role === 'PROJECT_COORDINATOR') {
+      return true;
+    }
+
     return requiredRoles.includes(user.role);
   }
 }

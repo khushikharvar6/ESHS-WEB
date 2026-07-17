@@ -1,4 +1,4 @@
-export type Role = 'ADMIN' | 'FRONT_DESK' | 'OPD' | 'MRD' | 'QA'
+export type Role = 'ADMIN' | 'FRONT_DESK' | 'OPD' | 'MRD' | 'QA' | 'PROJECT_COORDINATOR'
 
 export type Module = 
   | 'DASHBOARD'
@@ -21,6 +21,19 @@ export type Permissions = {
 
 export const PERMISSION_MATRIX: Record<Role, Permissions> = {
   ADMIN: {
+    DASHBOARD: ['FULL'],
+    INQUIRY: ['FULL'],
+    APPOINTMENT: ['FULL'],
+    REGISTRATION: ['FULL'],
+    PATIENT_PROFILE: ['FULL'],
+    BILLING: ['FULL'],
+    FEEDBACK: ['FULL'],
+    MRD: ['FULL'],
+    QA: ['FULL'],
+    USER_MANAGEMENT: ['FULL'],
+    SMS: ['FULL'],
+  },
+  PROJECT_COORDINATOR: {
     DASHBOARD: ['FULL'],
     INQUIRY: ['FULL'],
     APPOINTMENT: ['FULL'],
@@ -71,8 +84,8 @@ export const PERMISSION_MATRIX: Record<Role, Permissions> = {
 export function hasPermission(role: string, module: Module, action: Action): boolean {
   if (!role) return false
   
-  // ADMIN has full access, but we still check the matrix
-  if (role === 'SUPER_ADMIN' || role === 'ADMIN') return true
+  // ADMIN and PROJECT_COORDINATOR have full access
+  if (role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'PROJECT_COORDINATOR') return true
   
   const mappedRole = role as Role
   const rolePermissions = PERMISSION_MATRIX[mappedRole]
