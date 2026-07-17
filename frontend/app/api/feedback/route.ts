@@ -73,54 +73,76 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const payload = await request.json()
-  
-  const currentYear = new Date().getFullYear()
-  const feedbackId = `FB${currentYear}-${Math.floor(100000 + Math.random() * 900000)}`
-  const uhid = payload.uhid || ''
-  
-  const generateRating = (rating: any, index: number) => ({
-    id: `FBR${currentYear}-${Math.floor(10000 + Math.random() * 90000)}-${index + 1}`,
-    uhid: uhid,
-    question: rating.question,
-    rating: rating.rating
-  });
-
-  const getRatings = (category: string) => {
-    return (payload.ratings || [])
-      .filter((r: any) => r.category === category)
-      .map(generateRating)
-  }
-
-  const feedback = await prisma.feedback.create({
-    data: {
-      id: feedbackId,
-      uhid: uhid,
-      patientName: payload.patientName || '',
-      service: payload.service || '',
-      heardAbout: payload.heardAbout || '',
-      referenceBy: payload.referenceBy || '',
-      serviceAvailed: payload.serviceAvailed || '',
-      overallRating: payload.overallRating || 0,
-      staffAppreciated: payload.staffAppreciated || '',
-      positiveComments: payload.positiveComments || '',
-      negativeComments: payload.negativeComments || '',
-      agreeToUsage: payload.agreeToUsage !== false,
-      homeHealthcareRatings: { create: getRatings('Home Healthcare') },
-      doctorConsultationRatings: { create: getRatings('Doctor Consultation') },
-      pathologyRatings: { create: getRatings('Pathology') },
-      radiologyRatings: { create: getRatings('Radiology') },
-      cardiologyRatings: { create: getRatings('Cardiology') },
-      pulmonologyRatings: { create: getRatings('Pulmonology') },
-      ophthalmologyRatings: { create: getRatings('Ophthalmology Services') },
-      physiotherapyRatings: { create: getRatings('Physiotherapy Services') },
-      pharmacyRatings: { create: getRatings('Pharmacy Services') },
-      packageRatings: { create: getRatings('Health Check-up Package') },
-      dayCareRatings: { create: getRatings('Day Care Services') },
-      ipdRatings: { create: getRatings('IPD') },
-      generalRatings: { create: getRatings('General Experience') }
+  try {
+    const payload = await request.json()
+    
+    const currentYear = new Date().getFullYear()
+    const feedbackId = `FB${currentYear}-${Math.floor(100000 + Math.random() * 900000)}`
+    const uhid = payload.uhid || ''
+    
+    // Verify the patient exists before attempting to create feedback
+    // The Feedback model has a FK constraint to the Patient table via uhid
+    if (uhid) {
+      const patientExists = await prisma.patient.findUnique({ where: { uhid } })
+      if (!patientExists) {
+        console.error(`Feedback POST: Patient with UHID "${uhid}" not found in database`)
+        return NextResponse.json(
+          { error: `Patient with UHID "${uhid}" not found. Please verify the UHID.` },
+          { status: 400 }
+        )
+      }
     }
-  })
+    
+    const generateRating = (rating: any, index: number) => ({
+      id: `FBR${currentYear}-${Math.floor(10000 + Math.random() * 90000)}-${index + 1}`,
+      uhid: uhid,
+      question: rating.question,
+      rating: rating.rating
+    });
 
-  return NextResponse.json(feedback, { status: 201 })
+    const getRatings = (category: string) => {
+      return (payload.ratings || [])
+        .filter((r: any) => r.category === category)
+        .map(generateRating)
+    }
+
+    const feedback = await prisma.feedback.create({
+      data: {
+        id: feedbackId,
+        uhid: uhid,
+        patientName: payload.patientName || '',
+        service: payload.service || '',
+        heardAbout: payload.heardAbout || '',
+        referenceBy: payload.referenceBy || '',
+        serviceAvailed: payload.serviceAvailed || '',
+        overallRating: payload.overallRating || 0,
+        staffAppreciated: payload.staffAppreciated || '',
+        positiveComments: payload.positiveComments || '',
+        negativeComments: payload.negativeComments || '',
+        agreeToUsage: payload.agreeToUsage !== false,
+        homeHealthcareRatings: { create: getRatings('Home Healthcare') },
+        doctorConsultationRatings: { create: getRatings('Doctor Consultation') },
+        pathologyRatings: { create: getRatings('Pathology') },
+        radiologyRatings: { create: getRatings('Radiology') },
+        cardiologyRatings: { create: getRatings('Cardiology') },
+        pulmonologyRatings: { create: getRatings('Pulmonology') },
+        ophthalmologyRatings: { create: getRatings('Ophthalmology Services') },
+        physiotherapyRatings: { create: getRatings('Physiotherapy Services') },
+        pharmacyRatings: { create: getRatings('Pharmacy Services') },
+        packageRatings: { create: getRatings('Health Check-up Package') },
+        dayCareRatings: { create: getRatings('Day Care Services') },
+        ipdRatings: { create: getRatings('IPD') },
+        generalRatings: { create: getRatings('General Experience') }
+      }
+    })
+
+    console.log(`Feedback created successfully: ${feedbackId} for UHID: ${uhid}`)
+    return NextResponse.json(feedback, { status: 201 })
+  } catch (error: any) {
+    console.error('Error creating feedback:', error)
+    return NextResponse.json(
+      { error: error?.message || 'Failed to save feedback. Please try again.' },
+      { status: 500 }
+    )
+  }
 }

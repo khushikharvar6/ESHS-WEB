@@ -88,9 +88,14 @@ export default function PublicFeedbackPage() {
     return ratings[`${category}|||${question}`] || 0
   }
 
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+
   // Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitting(true)
+    setSubmitError('')
     
     // Prepare arrays
     const finalHeardAbout = [...heardAbout.filter(x => x !== 'Other')]
@@ -105,26 +110,38 @@ export default function PublicFeedbackPage() {
       return { category, question, rating: ratings[key] }
     })
     
-    await fetch('/api/feedback', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        uhid,
-        patientName: patient ? `${patient.firstName} ${patient.lastName}` : 'Verified Patient',
-        service: patient ? patient.service : 'General',
-        heardAbout: finalHeardAbout.join(', '),
-        referenceBy: finalReferenceBy.join(', '),
-        serviceAvailed: serviceAvailed.join(', '),
-        overallRating,
-        staffAppreciated,
-        positiveComments,
-        negativeComments,
-        agreeToUsage,
-        ratings: ratingsPayload
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uhid,
+          patientName: patient ? `${patient.firstName} ${patient.lastName}` : 'Verified Patient',
+          service: patient ? patient.service : 'General',
+          heardAbout: finalHeardAbout.join(', '),
+          referenceBy: finalReferenceBy.join(', '),
+          serviceAvailed: serviceAvailed.join(', '),
+          overallRating,
+          staffAppreciated,
+          positiveComments,
+          negativeComments,
+          agreeToUsage,
+          ratings: ratingsPayload
+        })
       })
-    })
 
-    setSubmitted(true)
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}))
+        throw new Error(errData.error || `Submission failed (status ${response.status})`)
+      }
+
+      setSubmitted(true)
+    } catch (err: any) {
+      console.error('Feedback submission error:', err)
+      setSubmitError(err.message || 'Something went wrong. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-slate-50">Loading...</div>
@@ -780,10 +797,17 @@ export default function PublicFeedbackPage() {
                 </div>
               </div>
 
+              {submitError && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-center font-medium">
+                  ⚠️ {submitError}
+                </div>
+              )}
+
               <Button 
                 type="submit" 
                 className="w-full bg-teal-700 hover:bg-teal-800 text-white py-8 text-xl rounded-xl shadow-lg transition-transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0" 
                 disabled={
+                  submitting ||
                   overallRating === 0 || 
                   Object.keys(ratings).length < (() => {
                     let expectedRatingCount = generalQuestions.length
@@ -805,7 +829,7 @@ export default function PublicFeedbackPage() {
                   })()
                 }
               >
-                Submit Form
+                {submitting ? 'Submitting...' : 'Submit Form'}
               </Button>
             </form>
           </CardContent>
