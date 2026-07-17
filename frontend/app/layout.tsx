@@ -14,13 +14,13 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'ES Healthcare Centre — Operations Management System',
+  title: 'ESHS - operational management system',
   description:
     'Enterprise healthcare operations platform for inquiries, appointments, registration, billing, MRD and quality assurance.',
   generator: 'v0.app',
   icons: {
-    icon: '/es-logo.jpg',
-    apple: '/es-logo.jpg',
+    icon: '/icon.svg',
+    apple: '/apple-icon.png',
   },
 }
 
