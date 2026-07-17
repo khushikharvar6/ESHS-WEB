@@ -437,8 +437,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
               ...item,
               name,
               phone: item.mobileNo ?? item.phone ?? '',
+              email: item.emailAddress ?? item.email ?? '',
               address: item.residentialAddress ?? item.address ?? '',
               emergencyName: item.emergencyContactName ?? item.emergencyName ?? '',
+              emergencyContact: item.emergencyContactName ?? item.emergencyName ?? '',
               emergencyRelationship: item.emergencyRelationship ?? '',
               emergencyPhone: item.emergencyPhoneNumber ?? item.emergencyPhone ?? '',
               status: item.status ?? 'Active',
@@ -684,9 +686,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             : p,
         ),
       )
-      const { name, phone, address, email, emergencyName, emergencyPhone, ...dbPatch } = patch as Record<string, any>
+      const { name, phone, address, email, emergencyName, emergencyContact, emergencyPhone, ...dbPatch } = patch as Record<string, any>
       if (email !== undefined) dbPatch.emailAddress = email
-      if (emergencyName !== undefined) dbPatch.emergencyContactName = emergencyName
+      if (emergencyName !== undefined || emergencyContact !== undefined) dbPatch.emergencyContactName = emergencyName ?? emergencyContact
       if (emergencyPhone !== undefined) dbPatch.emergencyPhoneNumber = emergencyPhone
       
       apiUpdateResource('patients', uhid, dbPatch).catch(
