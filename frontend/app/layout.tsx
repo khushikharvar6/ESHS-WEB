@@ -19,8 +19,8 @@ export const metadata: Metadata = {
     'Enterprise healthcare operations platform for inquiries, appointments, registration, billing, MRD and quality assurance.',
   generator: 'v0.app',
   icons: {
-    icon: '/icon.svg',
-    apple: '/apple-icon.png',
+    icon: '/es-favicon.png',
+    apple: '/es-favicon.png',
   },
 }
 
