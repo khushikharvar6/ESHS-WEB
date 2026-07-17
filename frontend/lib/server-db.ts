@@ -14,8 +14,8 @@ let connectionString = process.env.DATABASE_URL || 'postgresql://dummy:dummy@dum
 // Configure pg.Pool with robust settings for Vercel/Supabase
 const pool = globalForPrisma.pool ?? new Pool({
   connectionString,
-  max: 10, // Max 10 connections per serverless instance to prevent connection starvation
-  idleTimeoutMillis: 30000,
+  max: 1, // Max 1 connection per serverless instance to prevent connection starvation/exhaustion
+  idleTimeoutMillis: 5000,
   connectionTimeoutMillis: 5000,
   // Ensure SSL is explicitly required for remote database connections (like Supabase)
   ssl: { rejectUnauthorized: false }
