@@ -11,6 +11,11 @@ const globalForPrisma = globalThis as unknown as {
 // otherwise `new Pool()` will throw if the connection string is completely empty.
 let connectionString = process.env.DATABASE_URL || 'postgresql://dummy:dummy@dummy:5432/dummy'
 
+// Force transaction mode on Supavisor to prevent EMAXCONNSSESSION errors
+if (connectionString.includes('pooler.supabase.com') && !connectionString.includes('pool_mode=transaction')) {
+  connectionString += (connectionString.includes('?') ? '&' : '?') + 'pool_mode=transaction'
+}
+
 // Configure pg.Pool with robust settings for Vercel/Supabase
 const pool = globalForPrisma.pool ?? new Pool({
   connectionString,
