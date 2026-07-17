@@ -1,7 +1,5 @@
 import { Analytics } from '@vercel/analytics/react'
-// @ts-expect-error - Next.js types might be missing in this environment
 import type { Metadata, Viewport } from 'next'
-// @ts-expect-error - Next.js types might be missing in this environment
 import { Geist, Geist_Mono } from 'next/font/google'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from '@/components/ui/sonner'

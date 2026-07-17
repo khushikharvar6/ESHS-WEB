@@ -15,8 +15,8 @@ export function Brand({ className }: { className?: string }) {
         />
       </div>
       <div className="flex flex-col leading-tight max-w-[160px]">
-        <span className="text-[13px] font-bold tracking-tight text-foreground whitespace-normal break-words leading-tight">
-          ESHS - operational management system
+        <span className="text-[14px] font-semibold tracking-tight text-foreground whitespace-normal break-words leading-tight">
+          ES Healthcare Centre
         </span>
       </div>
     </div>
