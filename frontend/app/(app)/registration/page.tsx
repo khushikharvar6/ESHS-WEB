@@ -504,24 +504,35 @@ function RegistrationForm() {
                 </Field>
                 <Field className="col-span-1 sm:col-span-3">
                   <FieldLabel>Assigned Department / Service *</FieldLabel>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 mt-2">
-                    {SERVICES.map((s) => (
-                      <label key={s} className="flex items-center gap-2 text-sm border p-3 rounded-lg hover:bg-slate-50 cursor-pointer">
-                        <input 
-                          type="checkbox" 
-                          checked={services.includes(s)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setServices(prev => [...prev, s])
-                            } else {
-                              setServices(prev => prev.filter(item => item !== s))
-                            }
-                          }}
-                          className="rounded border-gray-300 w-4 h-4 text-blue-600 focus:ring-blue-500"
-                        />
-                        {s}
-                      </label>
-                    ))}
+                  <div className="flex flex-col gap-2 mt-2">
+                    <Select onValueChange={(val) => {
+                      if (val && !services.includes(val)) {
+                        setServices(prev => [...prev, val])
+                      }
+                    }}>
+                      <SelectTrigger className="w-full"><SelectValue placeholder="Select service to add..." /></SelectTrigger>
+                      <SelectContent>
+                        {SERVICES.map((s) => (
+                          <SelectItem key={s} value={s}>{s}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {services.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {services.map(s => (
+                          <span key={s} className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-xs px-2.5 py-1.5 rounded-full font-medium">
+                            {s}
+                            <button 
+                              type="button" 
+                              onClick={() => setServices(prev => prev.filter(item => item !== s))}
+                              className="text-blue-500 hover:text-blue-700 focus:outline-none"
+                            >
+                              &times;
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </Field>
               </div>
