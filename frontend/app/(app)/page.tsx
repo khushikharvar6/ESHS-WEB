@@ -633,26 +633,28 @@ export default function DashboardPage() {
             <CardDescription>Conversion metrics from inquiry to billed services.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col items-center w-full py-4 space-y-0.5">
+            <div className="flex flex-col items-center w-full py-4 space-y-1">
               {funnelData.map((step, idx) => {
-                const widthPct = Math.max((step.value / maxFunnelValue) * 100, 15)
+                // If there's no data yet, show a default declining funnel shape
+                const widthPct = maxFunnelValue > 0 
+                  ? Math.max((step.value / maxFunnelValue) * 100, 35) // at least 35% width to fit text
+                  : 100 - (idx * 15); // 100%, 85%, 70%, 55%
 
                 return (
                   <div key={step.label} className="flex flex-col items-center justify-center w-full group">
                     <div 
-                      className="h-10 sm:h-12 flex items-center justify-between px-3 sm:px-6 transition-all duration-700 ease-out shadow-sm hover:brightness-110 relative"
+                      className={`h-10 sm:h-12 flex items-center justify-between px-4 sm:px-6 transition-all duration-700 ease-out shadow-sm hover:brightness-110 relative ${step.color}`}
                       style={{ 
-                        width: `${widthPct}%`, 
-                        // Using a solid color mapping based on the step's color
-                        backgroundColor: `var(--tw-color-${step.color.split('-')[1]}-500, #6366f1)`,
-                        borderTopLeftRadius: idx === 0 ? '8px' : '2px',
-                        borderTopRightRadius: idx === 0 ? '8px' : '2px',
-                        borderBottomLeftRadius: idx === funnelData.length - 1 ? '8px' : '2px',
-                        borderBottomRightRadius: idx === funnelData.length - 1 ? '8px' : '2px',
+                        width: `${widthPct}%`,
+                        minWidth: '140px', // ensures text never truncates weirdly like "I..."
+                        borderTopLeftRadius: idx === 0 ? '8px' : '4px',
+                        borderTopRightRadius: idx === 0 ? '8px' : '4px',
+                        borderBottomLeftRadius: idx === funnelData.length - 1 ? '8px' : '4px',
+                        borderBottomRightRadius: idx === funnelData.length - 1 ? '8px' : '4px',
                       }}
                     >
-                      <span className="text-[11px] sm:text-xs font-semibold text-white drop-shadow-sm truncate mr-2">{step.label}</span>
-                      <span className="font-bold text-white tabular-nums drop-shadow-md text-xs sm:text-sm">{step.value}</span>
+                      <span className="text-xs sm:text-sm font-semibold text-white drop-shadow-sm">{step.label}</span>
+                      <span className="font-bold text-white tabular-nums drop-shadow-md text-sm sm:text-base ml-4">{step.value}</span>
                     </div>
                   </div>
                 )
