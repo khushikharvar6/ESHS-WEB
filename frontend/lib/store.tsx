@@ -40,6 +40,7 @@ export type Inquiry = {
   phone: string
   email?: string
   service: string
+  services?: string[]
   source: string
   priority: 'Routine' | 'Urgent' | 'Emergency'
   status: InquiryStatus
@@ -65,6 +66,7 @@ export type Appointment = {
   email?: string
   doctor: string
   service: string
+  services?: string[]
   date: string
   time: string
   type: string
@@ -107,6 +109,7 @@ export type Patient = {
   careType?: string
   assignedDepartmentServices?: string
   service: string
+  services?: string[]
   insuranceProvider?: string
   policyNumber?: string
   tpaNetwork?: string
@@ -223,6 +226,9 @@ export type NonConformance = {
   assignedTo: string
   description?: string
   rootCause?: string
+  correctiveAction?: string
+  preventiveAction?: string
+  capaStatus?: 'Pending' | 'Implemented' | 'Verified'
   title?: string
   createdAt?: string
 } & AuditMeta

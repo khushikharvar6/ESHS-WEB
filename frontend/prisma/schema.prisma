@@ -58,6 +58,7 @@ model Patient {
   residentialAddress         String?
   salutation                 String            @default("")
   service                    String            @default("")
+  services                   String[]          @default([])
   status                     String            @default("Active")
   updatedBy                  String?
   vip                        Boolean           @default(false)
@@ -138,6 +139,7 @@ model Appointment {
   email     String?
   doctor    String   @default("")
   service   String   @default("")
+  services  String[] @default([])
   date      String   @default("")
   time      String   @default("")
   type      String   @default("")
@@ -288,10 +290,12 @@ model Feedback {
   staffAppreciated          String?
   positiveComments          String?
   negativeComments          String?
+  homeHealthcareServices    String?
   agreeToUsage              Boolean                      @default(true)
   createdAt                 DateTime                     @default(now())
   cardiologyRatings         FeedbackCardiology[]
   dayCareRatings            FeedbackDayCare[]
+  dentalRatings             FeedbackDental[]
   doctorConsultationRatings FeedbackDoctorConsultation[]
   generalRatings            FeedbackGeneral[]
   homeHealthcareRatings     FeedbackHomeHealthcare[]
@@ -339,6 +343,17 @@ model FeedbackPathology {
   feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
 
   @@map("feedback_pathology")
+}
+
+model FeedbackDental {
+  id         String   @id @default(uuid())
+  uhid       String?
+  feedbackId String
+  question   String
+  rating     Int
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+
+  @@map("feedback_dental")
 }
 
 model FeedbackRadiology {
@@ -458,6 +473,7 @@ model Inquiry {
   phone         String   @default("")
   email         String?
   service       String   @default("")
+  services      String[] @default([])
   source        String   @default("")
   priority      String   @default("Routine")
   status        String   @default("New")

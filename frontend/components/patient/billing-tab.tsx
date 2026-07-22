@@ -45,7 +45,7 @@ import {
   SelectItem,
 } from '@/components/ui/select'
 import { inr } from '@/lib/format'
-import { CENTRE, PAYMENT_MODES } from '@/lib/constants'
+import { CENTRE, PAYMENT_MODES, CURRENT_USER } from '@/lib/constants'
 import { useHealthcare, type Invoice, type InvoiceStatus } from '@/lib/store'
 
 const INVOICE_STATUSES: InvoiceStatus[] = [
@@ -249,10 +249,10 @@ export function BillingTab({
         </div>
         <div className="text-center">
           <p className="font-bold mb-1">Created By</p>
-          <p>Khushi Kharvar</p>
+          <p>{CURRENT_USER.name}</p>
         </div>
         <div className="text-right">
-          <p className="font-bold mt-4">Khushi Kharvar</p>
+          <p className="font-bold mt-4">{CURRENT_USER.name}</p>
         </div>
       </div>
       

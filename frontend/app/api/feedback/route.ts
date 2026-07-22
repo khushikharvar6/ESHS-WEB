@@ -21,7 +21,8 @@ export async function GET() {
         packageRatings: true,
         dayCareRatings: true,
         ipdRatings: true,
-        generalRatings: true
+        generalRatings: true,
+        dentalRatings: true
       }
     })
     
@@ -43,14 +44,15 @@ export async function GET() {
         ...(f.packageRatings || []).map((r: any) => ({ ...r, category: 'Health Check-up Package' })),
         ...(f.dayCareRatings || []).map((r: any) => ({ ...r, category: 'Day Care Services' })),
         ...(f.ipdRatings || []).map((r: any) => ({ ...r, category: 'IPD (Inpatient)' })),
-        ...(f.generalRatings || []).map((r: any) => ({ ...r, category: 'General Experience' }))
+        ...(f.generalRatings || []).map((r: any) => ({ ...r, category: 'General Experience' })),
+        ...(f.dentalRatings || []).map((r: any) => ({ ...r, category: 'Dental' }))
       ];
 
       // Remove the separate arrays so the payload isn't huge
       const { 
         homeHealthcareRatings, doctorConsultationRatings, pathologyRatings, radiologyRatings, 
         cardiologyRatings, pulmonologyRatings, ophthalmologyRatings, physiotherapyRatings, 
-        pharmacyRatings, packageRatings, dayCareRatings, ipdRatings, generalRatings, 
+        pharmacyRatings, packageRatings, dayCareRatings, ipdRatings, generalRatings, dentalRatings,
         ...rest 
       } = f;
 
@@ -115,6 +117,7 @@ export async function POST(request: Request) {
         heardAbout: payload.heardAbout || '',
         referenceBy: payload.referenceBy || '',
         serviceAvailed: payload.serviceAvailed || '',
+        homeHealthcareServices: payload.homeHealthcareServices || null,
         overallRating: payload.overallRating || 0,
         staffAppreciated: payload.staffAppreciated || '',
         positiveComments: payload.positiveComments || '',
@@ -132,7 +135,8 @@ export async function POST(request: Request) {
         packageRatings: { create: getRatings('Health Check-up Package') },
         dayCareRatings: { create: getRatings('Day Care Services') },
         ipdRatings: { create: getRatings('IPD') },
-        generalRatings: { create: getRatings('General Experience') }
+        generalRatings: { create: getRatings('General Experience') },
+        dentalRatings: { create: getRatings('Dental') }
       }
     })
 

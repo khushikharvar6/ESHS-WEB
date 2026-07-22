@@ -91,7 +91,7 @@ function RegistrationForm() {
   const [patientCategory, setPatientCategory] = useState('Walk-In')
   const [careType, setCareType] = useState('OPD')
   const [assignedDepartment, setAssignedDepartment] = useState('')
-  const [service, setService] = useState('')
+  const [services, setServices] = useState<string[]>([])
   const [insuranceProvider, setInsuranceProvider] = useState('')
   const [policyNumber, setPolicyNumber] = useState('')
   const [tpaName, setTpaName] = useState('')
@@ -119,7 +119,7 @@ function RegistrationForm() {
     const pEmail = params.get('email')
     if (pEmail) setEmail(pEmail)
     const pService = params.get('service')
-    if (pService) setService(pService)
+    if (pService) setServices(pService.split(',').map(s => s.trim()))
   }, [params])
 
   const fromAppt = params.get('appt')
@@ -194,7 +194,7 @@ function RegistrationForm() {
     setPatientCategory('Walk-In')
     setCareType('OPD')
     setAssignedDepartment('')
-    setService('')
+    setServices([])
     setInsuranceProvider('')
     setPolicyNumber('')
     setTpaName('')
@@ -212,8 +212,8 @@ function RegistrationForm() {
   }
 
   async function submit(print = false) {
-    if (!firstName || !lastName || !mobile || !service) {
-      toast.error('First name, last name, mobile and service are required')
+    if (!firstName || !lastName || !mobile || services.length === 0) {
+      toast.error('First name, last name, mobile and at least one service are required')
       return
     }
     
@@ -263,7 +263,8 @@ function RegistrationForm() {
       patientCategory: patientCategory || undefined,
       careType: careType || undefined,
       assignedDepartmentServices: assignedDepartment || undefined,
-      service,
+      service: services[0] || '',
+      services,
       insuranceProvider: insuranceProvider || undefined,
       policyNumber: policyNumber || undefined,
       tpaNetwork: tpaName || undefined,
@@ -501,14 +502,27 @@ function RegistrationForm() {
                     </SelectContent>
                   </Select>
                 </Field>
-                <Field>
+                <Field className="col-span-1 sm:col-span-3">
                   <FieldLabel>Assigned Department / Service *</FieldLabel>
-                  <Select value={service} onValueChange={(value) => setService(value ?? '')}>
-                    <SelectTrigger className="w-full"><SelectValue placeholder="Select..." /></SelectTrigger>
-                    <SelectContent>
-                      {SERVICES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 mt-2">
+                    {SERVICES.map((s) => (
+                      <label key={s} className="flex items-center gap-2 text-sm border p-3 rounded-lg hover:bg-slate-50 cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={services.includes(s)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setServices(prev => [...prev, s])
+                            } else {
+                              setServices(prev => prev.filter(item => item !== s))
+                            }
+                          }}
+                          className="rounded border-gray-300 w-4 h-4 text-blue-600 focus:ring-blue-500"
+                        />
+                        {s}
+                      </label>
+                    ))}
+                  </div>
                 </Field>
               </div>
             </FieldGroup>

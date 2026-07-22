@@ -1,13 +1,14 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Plus, Eye, Pencil, CalendarPlus, XCircle } from 'lucide-react'
+import { Plus, Eye, Pencil, CalendarPlus, XCircle, PhoneCall, TrendingUp, ThumbsUp, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { PageHeader } from '@/components/page-header'
 import { DataTable, type Column } from '@/components/data-table'
 import { StatusBadge } from '@/components/status-badge'
 import { FilterSelect, ALL } from '@/components/filter-select'
+import { KpiCard } from '@/components/kpi-card'
 import { BookAppointmentDialog } from '@/components/book-appointment-dialog'
 import { Button } from '@/components/ui/button'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
@@ -121,6 +122,11 @@ export default function InquiryPage() {
       ),
     [inquiries, fStatus, fService, fPriority, fSource, fFollowUp],
   )
+
+  const totalInquiries = inquiries.length
+  const newInquiries = inquiries.filter(i => i.status === 'New').length
+  const convertedInquiries = inquiries.filter(i => i.status === 'Converted').length
+  const conversionRate = totalInquiries > 0 ? Math.round((convertedInquiries / totalInquiries) * 100) : 0
 
   function resetForm() {
     setFirstName('')
@@ -299,6 +305,33 @@ export default function InquiryPage() {
           </Protect>
         }
       />
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="Total Inquiries"
+          value={totalInquiries}
+          icon={PhoneCall}
+          accent="primary"
+        />
+        <KpiCard
+          label="New / Pending"
+          value={newInquiries}
+          icon={AlertCircle}
+          accent="warning"
+        />
+        <KpiCard
+          label="Converted"
+          value={convertedInquiries}
+          icon={ThumbsUp}
+          accent="green"
+        />
+        <KpiCard
+          label="Conversion Rate"
+          value={`${conversionRate}%`}
+          icon={TrendingUp}
+          accent="teal"
+        />
+      </div>
 
       <DataTable
         columns={columns}

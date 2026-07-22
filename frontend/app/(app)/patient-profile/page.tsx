@@ -153,6 +153,7 @@ function PatientProfileContent() {
   const present = new Set(docs.map((d) => d.type))
   const missing = expected.filter((e) => !present.has(e))
   const complete = missing.length === 0
+  const totalVisits = patient ? Math.max(invoices.length, consultations.length) : 0
 
   const allServicesTaken = useMemo(() => {
     if (!patient) return []
@@ -221,7 +222,12 @@ function PatientProfileContent() {
       },
     },
     { key: 'phone', header: 'Contact No.', sortable: true },
-    { key: 'service', header: 'Initial Service/Dept', sortable: true },
+    { 
+      key: 'service', 
+      header: 'Initial Service/Dept', 
+      sortable: true,
+      render: (r) => <span>{r.services && r.services.length > 0 ? r.services.join(', ') : r.service}</span>
+    },
     {
       key: 'registeredOn',
       header: 'Registered Date',
@@ -437,7 +443,7 @@ function PatientProfileContent() {
               ) : null}
 
               {/* Dynamic Emergency Contact & Visit summary */}
-              <div className="mt-3 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:justify-between text-sm text-muted-foreground gap-1.5">
+              <div className="mt-3 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:justify-between text-sm text-muted-foreground gap-4">
                 <div>
                   <span className="font-semibold text-slate-800">Emergency Contact:</span>{' '}
                   {patient.emergencyName ? (
@@ -448,9 +454,19 @@ function PatientProfileContent() {
                     <span>Not provided</span>
                   )}
                 </div>
-                <div>
-                  <span className="font-semibold text-slate-800">Last Visit:</span>{' '}
-                  <span>{patient.lastVisit}</span>
+                <div className="flex gap-4">
+                  <div>
+                    <span className="font-semibold text-slate-800">First Visit:</span>{' '}
+                    <span>{patient.registeredOn}</span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-slate-800">Latest Visit:</span>{' '}
+                    <span>{patient.lastVisit || 'No visits yet'}</span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-slate-800">Total Visits:</span>{' '}
+                    <span className={totalVisits > 1 ? "text-indigo-600 font-bold" : ""}>{totalVisits}</span>
+                  </div>
                 </div>
               </div>
             </div>

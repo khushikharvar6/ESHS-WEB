@@ -50,7 +50,7 @@ export const billingApi = {
       gender: String(p.gender ?? ''),
       phone: String(p.phone ?? ''),
       email: p.email ? String(p.email) : undefined,
-      servicesTaken: Array.isArray(p.servicesTaken) ? p.servicesTaken : (p.service ? [String(p.service)] : []),
+      servicesTaken: Array.isArray(p.services) && p.services.length > 0 ? (p.services as string[]) : (p.service ? [String(p.service)] : []),
     }))
   },
 }

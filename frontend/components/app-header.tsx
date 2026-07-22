@@ -63,6 +63,8 @@ export function AppHeader({ onOpenSidebar }: { onOpenSidebar: () => void }) {
   
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set())
   const [mounted, setMounted] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -98,14 +100,13 @@ export function AppHeader({ onOpenSidebar }: { onOpenSidebar: () => void }) {
     })
 
     // 3. Appointments (Active)
-    const activeAppts = store.appointments.filter(a => !['Completed', 'Cancelled', 'No Show'].includes(a.status))
-    activeAppts.forEach(a => {
+    store.appointments.filter(a => a.status === 'Scheduled' || a.status === 'Checked In').forEach(a => {
       items.push({
-        id: `appt-${a.id}`,
-        title: `Appointment: ${a.status}`,
-        module: 'Appointments',
+        id: `apt-${a.id}`,
+        title: `Appointment ${a.status}`,
+        module: 'OPD',
         detail: `${a.firstName} ${a.lastName} with ${a.doctor}`,
-        time: a.date || 'Upcoming',
+        time: a.time,
         href: `/appointment`
       })
     })
@@ -173,7 +174,7 @@ export function AppHeader({ onOpenSidebar }: { onOpenSidebar: () => void }) {
         <Menu />
       </Button>
 
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md relative">
         <InputGroup>
           <InputGroupAddon>
             <Search className="text-muted-foreground" />
@@ -181,8 +182,43 @@ export function AppHeader({ onOpenSidebar }: { onOpenSidebar: () => void }) {
           <InputGroupInput
             placeholder="Search UHID, patient, phone, invoice..."
             aria-label="Global search"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+              setIsSearchOpen(true)
+            }}
+            onFocus={() => setIsSearchOpen(true)}
+            onBlur={() => setTimeout(() => setIsSearchOpen(false), 200)}
           />
         </InputGroup>
+
+        {isSearchOpen && searchQuery.trim() && (
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden z-50 max-h-96 overflow-y-auto">
+            {searchResults.length === 0 ? (
+              <div className="p-4 text-center text-sm text-slate-500">No results found for "{searchQuery}"</div>
+            ) : (
+              <div className="flex flex-col">
+                {searchResults.map((r, i) => (
+                  <button
+                    key={i}
+                    className="flex flex-col text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition-colors"
+                    onClick={() => {
+                      setSearchQuery('')
+                      setIsSearchOpen(false)
+                      router.push(r.href)
+                    }}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] font-bold tracking-wider uppercase text-teal-600 bg-teal-50 px-2 py-0.5 rounded">{r.type}</span>
+                    </div>
+                    <span className="text-sm font-semibold text-slate-800">{r.title}</span>
+                    <span className="text-xs text-slate-500">{r.subtitle}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="ml-auto flex items-center gap-2 lg:gap-3">

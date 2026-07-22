@@ -15,6 +15,7 @@ import {
   CircleDollarSign,
   Activity,
   AlertTriangle,
+  Filter,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -106,7 +107,9 @@ export default function DashboardPage() {
   const filteredAppointments = useMemo(() => {
     return appointments.filter((appointment) => {
       const matchesStatus = queueStatusFilter === 'All' || appointment.status === queueStatusFilter
-      const matchesDepartment = departmentFilter === 'All' || appointment.service === departmentFilter
+      const matchesDepartment = departmentFilter === 'All' || 
+        (Array.isArray(appointment.services) ? appointment.services.includes(departmentFilter) : 
+         (typeof appointment.service === 'string' ? appointment.service.includes(departmentFilter) : false))
       return matchesStatus && matchesDepartment && matchesWindow(appointment.date, viewMode)
     })
   }, [appointments, departmentFilter, queueStatusFilter, viewMode])
@@ -114,7 +117,10 @@ export default function DashboardPage() {
   const filteredPatients = useMemo(() => {
     return patients.filter((patient) => {
       const matchesType = patientTypeFilter === 'All' || patient.patientCategory === patientTypeFilter
-      const matchesDepartment = departmentFilter === 'All' || patient.assignedDepartment === departmentFilter || patient.service === departmentFilter
+      const matchesDepartment = departmentFilter === 'All' || 
+        patient.assignedDepartment === departmentFilter || 
+        (Array.isArray(patient.services) ? patient.services.includes(departmentFilter) : 
+         (typeof patient.service === 'string' ? patient.service.includes(departmentFilter) : false))
       return matchesType && matchesDepartment
     })
   }, [departmentFilter, patients, patientTypeFilter])
@@ -131,7 +137,6 @@ export default function DashboardPage() {
     const latestPatient = [...patients].sort((a, b) => (b.registeredOn || '').localeCompare(a.registeredOn || ''))[0]
     const latestInvoice = [...invoices].sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0]
     const latestIssue = [...ncs].filter((n) => n.status !== 'Closed').sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))[0]
-
     const items: Array<{ title: string; detail: string; time: string }> = []
     if (latestPatient) {
       items.push({
@@ -157,6 +162,20 @@ export default function DashboardPage() {
 
     return items.slice(0, 4)
   }, [invoices, ncs, patients])
+
+  // Funnel Analytics
+  const totalInquiries = inquiries.length
+  const totalAppointments = appointments.length
+  const totalRegisteredPatients = patients.length
+  const billedPatientsCount = new Set(invoices.map(i => i.uhid)).size
+  
+  const funnelData = [
+    { label: 'Inquiries', value: totalInquiries, color: 'bg-blue-500' },
+    { label: 'Appointments', value: totalAppointments, color: 'bg-indigo-500' },
+    { label: 'Registered', value: totalRegisteredPatients, color: 'bg-purple-500' },
+    { label: 'Billed', value: billedPatientsCount, color: 'bg-emerald-500' }
+  ]
+  const maxFunnelValue = Math.max(totalInquiries, 1) // prevent div by zero
 
   // Missing documents across all registered patients.
   const missingDocs = useMemo(() => {
@@ -557,6 +576,46 @@ export default function DashboardPage() {
                 </div>
               )
             })}
+          </CardContent>
+        </Card>
+        
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Filter className="size-5 text-indigo-500" />
+              Patient Lifecycle Funnel
+            </CardTitle>
+            <CardDescription>Conversion metrics from inquiry to billed services.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-4 py-2">
+              {funnelData.map((step, idx) => {
+                const widthPct = Math.max((step.value / maxFunnelValue) * 100, 5)
+                const conversionPct = idx > 0 && funnelData[idx - 1].value > 0 
+                  ? Math.round((step.value / funnelData[idx - 1].value) * 100) 
+                  : 100
+
+                return (
+                  <div key={step.label} className="flex items-center gap-4 group">
+                    <div className="w-32 text-right text-sm font-medium text-slate-700">
+                      {step.label}
+                    </div>
+                    <div className="flex-1 flex items-center gap-3">
+                      <div className="h-10 rounded-r-lg rounded-l-sm transition-all duration-500 ease-out flex items-center px-3 shadow-sm"
+                           style={{ width: `${widthPct}%`, backgroundColor: 'var(--tw-gradient-from)', backgroundImage: `linear-gradient(to right, rgb(248, 250, 252), var(--tw-color-${step.color.split('-')[1]}-500))` }}
+                      >
+                        <span className="font-bold text-slate-800 tabular-nums bg-white/60 px-1.5 py-0.5 rounded text-xs">{step.value}</span>
+                      </div>
+                      {idx > 0 && (
+                        <div className="text-xs font-semibold text-slate-400 bg-slate-50 px-2 py-1 rounded-full border border-slate-100 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {conversionPct}% of prev
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -18,6 +18,7 @@ export interface Patient {
   patientCategory?: string
   careType?: string
   service: string
+  services?: string[]
   registeredOn?: string
   lastVisit?: string
   status?: 'Active' | 'Inactive'
@@ -32,6 +33,7 @@ export interface Inquiry {
   phone: string
   email?: string
   service: string
+  services?: string[]
   source: string
   priority: 'Routine' | 'Urgent' | 'Emergency'
   status: 'New' | 'In Progress' | 'Converted' | 'Lost'
@@ -47,6 +49,7 @@ export interface Appointment {
   email?: string
   doctor: string
   service: string
+  services?: string[]
   date: string
   time: string
   type: string

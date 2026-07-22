@@ -38,6 +38,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Progress } from '@/components/ui/progress'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -198,6 +199,15 @@ export default function FeedbackPage() {
 
     return result
   }, [allFeedbacks, serviceFilter, timeFilter, ratingFilter, searchQuery])
+
+  // Status Tracking Logic
+  const pendingFeedbacks = useMemo(() => {
+    return patients.filter(p => !dbFeedbacks.some(f => f.uhid === p.uhid))
+  }, [patients, dbFeedbacks])
+
+  const completedFeedbacks = useMemo(() => {
+    return patients.filter(p => dbFeedbacks.some(f => f.uhid === p.uhid))
+  }, [patients, dbFeedbacks])
 
   // Recalculate KPIs based on filtered list so dashboard reflects filters
   const total = filteredFeedbacks.length
@@ -468,8 +478,7 @@ export default function FeedbackPage() {
                     Print Form
                   </Button>
                   <Button variant="secondary" onClick={() => {
-                    const servicesQuery = selectedServices.length > 0 ? `?services=${encodeURIComponent(selectedServices.join(','))}` : ''
-                    const link = `https://eshs-web.vercel.app/f/${patient.uhid}${servicesQuery}`
+                    const link = `${window.location.origin}/f/${patient.uhid}`
                     navigator.clipboard.writeText(link)
                     toast.success('Feedback link copied!')
                   }}>
@@ -478,8 +487,7 @@ export default function FeedbackPage() {
                   <Button 
                     className="bg-[#25D366] hover:bg-[#1da851] text-white flex items-center gap-2"
                     onClick={() => {
-                      const servicesQuery = selectedServices.length > 0 ? `?services=${encodeURIComponent(selectedServices.join(','))}` : ''
-                      const link = `https://eshs-web.vercel.app/f/${patient.uhid}${servicesQuery}`
+                      const link = `${window.location.origin}/f/${patient.uhid}`
                       const text = encodeURIComponent(`Dear ${patient.name || 'Patient'}, thank you for visiting ES Healthcare Centre. We hope you had a great experience! Please take 1 minute to fill out your feedback form here: ${link}`)
                       window.open(`https://wa.me/?text=${text}`, 'whatsapp_web')
                     }}
@@ -557,6 +565,13 @@ export default function FeedbackPage() {
           </Protect>
         }
       />
+
+      <Tabs defaultValue="analytics" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="analytics">Analytics & Responses</TabsTrigger>
+          <TabsTrigger value="tracking">Status Tracking (Pending / Completed)</TabsTrigger>
+        </TabsList>
+        <TabsContent value="analytics" className="space-y-6">
 
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -891,6 +906,77 @@ export default function FeedbackPage() {
         )}
         </CardContent>
       </Card>
+      </TabsContent>
+      <TabsContent value="tracking" className="space-y-6">
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Feedback Status Tracking</CardTitle>
+            <CardDescription>Monitor which patients have submitted feedback and who is pending.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="pending" className="w-full">
+              <TabsList className="mb-4">
+                <TabsTrigger value="pending" className="flex gap-2">
+                  Pending <Badge variant="secondary">{pendingFeedbacks.length}</Badge>
+                </TabsTrigger>
+                <TabsTrigger value="completed" className="flex gap-2">
+                  Completed <Badge variant="secondary">{completedFeedbacks.length}</Badge>
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="pending">
+                {pendingFeedbacks.length === 0 ? (
+                  <div className="text-center py-8 text-slate-500">No pending feedback found.</div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {pendingFeedbacks.map(p => (
+                      <div key={p.id} className="flex items-center justify-between p-4 rounded-xl border border-amber-200 bg-amber-50/50">
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-slate-800">{p.name}</span>
+                          <span className="text-xs text-slate-500">{p.uhid} • {p.phone}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" onClick={() => {
+                            const link = `${window.location.origin}/f/${p.uhid}`
+                            navigator.clipboard.writeText(link)
+                            toast.success('Feedback link copied!')
+                          }}>Copy Link</Button>
+                          <Button size="sm" className="bg-[#25D366] hover:bg-[#1da851] text-white" onClick={() => {
+                            const link = `${window.location.origin}/f/${p.uhid}`
+                            const text = encodeURIComponent(`Dear ${p.name || 'Patient'}, thank you for visiting ES Healthcare Centre. We hope you had a great experience! Please take 1 minute to fill out your feedback form here: ${link}`)
+                            window.open(`https://wa.me/?text=${text}`, 'whatsapp_web')
+                          }}><MessageCircle className="w-4 h-4 mr-2" /> Share WhatsApp</Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+              
+              <TabsContent value="completed">
+                {completedFeedbacks.length === 0 ? (
+                  <div className="text-center py-8 text-slate-500">No completed feedback found.</div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {completedFeedbacks.map(p => (
+                      <div key={p.id} className="flex items-center justify-between p-4 rounded-xl border border-emerald-200 bg-emerald-50/50">
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-slate-800">{p.name}</span>
+                          <span className="text-xs text-slate-500">{p.uhid} • {p.phone}</span>
+                        </div>
+                        <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border-none">
+                          <CheckCircle2 className="w-4 h-4 mr-1" /> Submitted
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </TabsContent>
+      </Tabs>
 
       <PatientPicker
         open={pickerOpen}

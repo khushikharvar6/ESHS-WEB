@@ -2,13 +2,14 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { CalendarPlus, Eye, LogIn, RotateCcw, XCircle, UserPlus } from 'lucide-react'
+import { CalendarPlus, Eye, LogIn, RotateCcw, XCircle, UserPlus, CalendarDays, UserCheck, CalendarCheck, CheckCircle2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { PageHeader } from '@/components/page-header'
 import { DataTable, type Column } from '@/components/data-table'
 import { StatusBadge } from '@/components/status-badge'
 import { FilterSelect, ALL } from '@/components/filter-select'
+import { KpiCard } from '@/components/kpi-card'
 import { BookAppointmentDialog } from '@/components/book-appointment-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -114,6 +115,11 @@ export default function AppointmentPage() {
     [appointments, fDoctor, fService, fStatus, fDate],
   )
 
+  const totalAppointments = appointments.length
+  const scheduledAppointments = appointments.filter(a => a.status === 'Scheduled').length
+  const checkedInAppointments = appointments.filter(a => a.status === 'Checked In').length
+  const completedAppointments = appointments.filter(a => a.status === 'Completed').length
+
   function openEdit(a: Appointment) {
     setEditTarget(a)
     setEditFirstName(a.firstName)
@@ -172,6 +178,33 @@ export default function AppointmentPage() {
           </Protect>
         }
       />
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="Total Appointments"
+          value={totalAppointments}
+          icon={CalendarDays}
+          accent="primary"
+        />
+        <KpiCard
+          label="Scheduled"
+          value={scheduledAppointments}
+          icon={CalendarCheck}
+          accent="warning"
+        />
+        <KpiCard
+          label="Checked In"
+          value={checkedInAppointments}
+          icon={UserCheck}
+          accent="green"
+        />
+        <KpiCard
+          label="Completed"
+          value={completedAppointments}
+          icon={CheckCircle2}
+          accent="teal"
+        />
+      </div>
 
       <DataTable
         columns={columns}
