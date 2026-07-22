@@ -206,10 +206,9 @@ export default function DashboardPage() {
   const funnelData = [
     { label: 'Inquiries', value: totalInquiries, color: 'bg-blue-500' },
     { label: 'Appointments', value: totalAppointments, color: 'bg-indigo-500' },
-    { label: 'Registered', value: totalRegisteredPatients, color: 'bg-purple-500' },
-    { label: 'Billed', value: billedPatientsCount, color: 'bg-emerald-500' }
+    { label: 'Registered Patients', value: totalRegisteredPatients, color: 'bg-purple-500' },
+    { label: 'Billed Patients', value: billedPatientsCount, color: 'bg-emerald-500' }
   ]
-  const maxFunnelValue = Math.max(totalInquiries, 1) // prevent div by zero
 
   // Missing documents across all registered patients.
   const missingDocs = useMemo(() => {
@@ -628,38 +627,35 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Filter className="size-5 text-indigo-500" />
-              Patient Lifecycle Funnel
+              Patient Lifecycle Pipeline
             </CardTitle>
             <CardDescription>Conversion metrics from inquiry to billed services.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-col items-center w-full py-4 space-y-1">
-              {funnelData.map((step, idx) => {
-                // If there's no data yet, show a default declining funnel shape
-                const widthPct = maxFunnelValue > 0 
-                  ? Math.max((step.value / maxFunnelValue) * 100, 35) // at least 35% width to fit text
-                  : 100 - (idx * 15); // 100%, 85%, 70%, 55%
+          <CardContent className="space-y-4">
+            {funnelData.map((step) => {
+              const maxVal = Math.max(...funnelData.map(d => d.value), 1)
+              const pct = Math.round((step.value / maxVal) * 100)
+              
+              const colorMap: Record<string, string> = {
+                'bg-blue-500': 'from-blue-500 to-cyan-500',
+                'bg-indigo-500': 'from-indigo-500 to-blue-500',
+                'bg-purple-500': 'from-purple-500 to-indigo-500',
+                'bg-emerald-500': 'from-emerald-500 to-teal-500',
+              }
+              const gradient = colorMap[step.color] || 'from-indigo-500 to-purple-500'
 
-                return (
-                  <div key={step.label} className="flex flex-col items-center justify-center w-full group">
-                    <div 
-                      className={`h-10 sm:h-12 flex items-center justify-between px-4 sm:px-6 transition-all duration-700 ease-out shadow-sm hover:brightness-110 relative ${step.color}`}
-                      style={{ 
-                        width: `${widthPct}%`,
-                        minWidth: '140px', // ensures text never truncates weirdly like "I..."
-                        borderTopLeftRadius: idx === 0 ? '8px' : '4px',
-                        borderTopRightRadius: idx === 0 ? '8px' : '4px',
-                        borderBottomLeftRadius: idx === funnelData.length - 1 ? '8px' : '4px',
-                        borderBottomRightRadius: idx === funnelData.length - 1 ? '8px' : '4px',
-                      }}
-                    >
-                      <span className="text-xs sm:text-sm font-semibold text-white drop-shadow-sm">{step.label}</span>
-                      <span className="font-bold text-white tabular-nums drop-shadow-md text-sm sm:text-base ml-4">{step.value}</span>
-                    </div>
+              return (
+                <div key={step.label} className="space-y-1">
+                  <div className="flex justify-between text-xs font-semibold">
+                    <span className="text-slate-700">{step.label}</span>
+                    <span className="text-slate-900">{step.value}</span>
                   </div>
-                )
-              })}
-            </div>
+                  <div className="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden">
+                    <div className={`bg-gradient-to-r ${gradient} h-full rounded-full transition-all duration-500`} style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              )
+            })}
           </CardContent>
         </Card>
 
