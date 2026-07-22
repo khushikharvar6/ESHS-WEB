@@ -81,6 +81,7 @@ export default function DashboardPage() {
     appointments,
     patients,
     invoices,
+    documents,
     ncs,
     inquiries,
     updateAppointmentStatus,
