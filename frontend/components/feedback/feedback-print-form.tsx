@@ -42,13 +42,125 @@ function FieldRow({ label, value }: { label: string; value?: string }) {
 /* ------------------------------------------------------------------ */
 /* Printable Feedback Layout                                           */
 /* ------------------------------------------------------------------ */
+const TRANSLATIONS = {
+  en: {
+    title: 'Patient Experience & Feedback Form',
+    patientName: 'Patient name:',
+    date: 'Date:',
+    time: 'Time:',
+    uhid: 'UHID No.',
+    location: 'Location:',
+    ageGender: 'Age / Gender:',
+    services: 'Services:',
+    howDidYouHear: 'How did you hear about ES healthcare?',
+    referenceBy: 'Reference By:',
+    typeOfService: 'TYPE OF SERVICE AVAILED:',
+    generalExp: 'GENERAL EXPERIENCE',
+    particulars: 'Particulars',
+    poor: 'Poor',
+    average: 'Average',
+    good: 'Good',
+    veryGood: 'Very Good',
+    excellent: 'Excellent',
+    homeHealthcare: 'HOME HEALTHCARE SERVICES',
+    servicesAvailed: 'Services Availed:',
+    homeExp: 'Home Healthcare Experience',
+    opdFeedback: 'OPD FEEDBACK',
+    dental: 'Dental Services',
+    overallSat: 'OVERALL SATISFACTION:',
+    overallSatDesc: 'Please rate the overall quality of healthcare services provided',
+    appreciate: 'Staff member you would like to appreciate:',
+    suggestions: 'Suggestions / Remarks for improvement:',
+    consent: 'I AGREE TO THE USAGE OF ABOVE FEEDBACK BY THE CENTRE:',
+    yes: 'YES',
+    no: 'NO',
+    contactNo: 'Contact No.',
+    emailId: 'Email ID',
+    signature: 'Signature'
+  },
+  hi: {
+    title: 'रोगी अनुभव और प्रतिक्रिया प्रपत्र',
+    patientName: 'रोगी का नाम:',
+    date: 'दिनांक:',
+    time: 'समय:',
+    uhid: 'UHID सं.',
+    location: 'स्थान:',
+    ageGender: 'आयु / लिंग:',
+    services: 'सेवाएं:',
+    howDidYouHear: 'आपने ES स्वास्थ्य सेवा के बारे में कैसे सुना?',
+    referenceBy: 'द्वारा संदर्भ:',
+    typeOfService: 'प्राप्त सेवा का प्रकार:',
+    generalExp: 'सामान्य अनुभव',
+    particulars: 'विवरण',
+    poor: 'खराब',
+    average: 'औसत',
+    good: 'अच्छा',
+    veryGood: 'बहुत अच्छा',
+    excellent: 'उत्कृष्ट',
+    homeHealthcare: 'घरेलू स्वास्थ्य देखभाल सेवाएं',
+    servicesAvailed: 'प्राप्त सेवाएं:',
+    homeExp: 'घरेलू स्वास्थ्य देखभाल अनुभव',
+    opdFeedback: 'OPD प्रतिक्रिया',
+    dental: 'डेंटल सेवाएं',
+    overallSat: 'कुल मिलाकर संतुष्टि:',
+    overallSatDesc: 'कृपया प्रदान की गई स्वास्थ्य देखभाल सेवाओं की समग्र गुणवत्ता को दर दें',
+    appreciate: 'कर्मचारी सदस्य जिसकी आप सराहना करना चाहेंगे:',
+    suggestions: 'सुधार के लिए सुझाव / टिप्पणियाँ:',
+    consent: 'मैं केंद्र द्वारा उपरोक्त प्रतिक्रिया के उपयोग से सहमत हूँ:',
+    yes: 'हाँ',
+    no: 'नहीं',
+    contactNo: 'संपर्क नंबर',
+    emailId: 'ईमेल आईडी',
+    signature: 'हस्ताक्षर'
+  },
+  gu: {
+    title: 'દર્દીનો અનુભવ અને પ્રતિસાદ ફોર્મ',
+    patientName: 'દર્દીનું નામ:',
+    date: 'તારીખ:',
+    time: 'સમય:',
+    uhid: 'UHID નં.',
+    location: 'સ્થળ:',
+    ageGender: 'ઉંમર / લિંગ:',
+    services: 'સેવાઓ:',
+    howDidYouHear: 'તમે ES હેલ્થકેર વિશે કેવી રીતે સાંભળ્યું?',
+    referenceBy: 'દ્વારા સંદર્ભ:',
+    typeOfService: 'પ્રાપ્ત સેવાનો પ્રકાર:',
+    generalExp: 'સામાન્ય અનુભવ',
+    particulars: 'વિગતો',
+    poor: 'નબળું',
+    average: 'સરેરાશ',
+    good: 'સારું',
+    veryGood: 'ખૂબ સારું',
+    excellent: 'ઉત્કૃષ્ટ',
+    homeHealthcare: 'ઘરની આરોગ્ય સંભાળ સેવાઓ',
+    servicesAvailed: 'પ્રાપ્ત સેવાઓ:',
+    homeExp: 'ઘરની આરોગ્ય સંભાળનો અનુભવ',
+    opdFeedback: 'OPD પ્રતિસાદ',
+    dental: 'ડેન્ટલ સેવાઓ',
+    overallSat: 'એકંદરે સંતોષ:',
+    overallSatDesc: 'કૃપા કરીને પૂરી પાડવામાં આવેલ આરોગ્ય સંભાળ સેવાઓની ગુણવત્તાનું રેટિંગ આપો',
+    appreciate: 'સ્ટાફ સભ્ય કે જેની તમે પ્રશંસા કરવા માંગો છો:',
+    suggestions: 'સુધારણા માટેનાં સૂચનો / ટિપ્પણીઓ:',
+    consent: 'હું કેન્દ્ર દ્વારા ઉપરોક્ત પ્રતિસાદના ઉપયોગ સાથે સંમત છું:',
+    yes: 'હા',
+    no: 'ના',
+    contactNo: 'સંપર્ક નંબર',
+    emailId: 'ઈમેલ આઈડી',
+    signature: 'સહી'
+  }
+}
+
 export function FeedbackPrintForm({
   patient,
   services,
+  lang = 'en',
 }: {
   patient?: Patient
   services: string[]
+  lang?: 'en' | 'hi' | 'gu'
 }) {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en
+
   // Determine date, time, location
   const dateStr = patient ? new Date().toLocaleDateString('en-GB') : ''
   const timeStr = patient ? new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : ''
@@ -58,7 +170,7 @@ export function FeedbackPrintForm({
   const isHomecare = services.some(s => s.toLowerCase().includes('home'))
   const isIPD = patient?.careType === 'IPD' || services.some(s => s.toUpperCase().includes('IPD'))
   const hasOPDService = services.some(s => 
-    ['Doctor Consultation', 'Pathology', 'Radiology', 'Cardiology', 'Pulmonology', 'Ophthalmology', 'Physiotherapy', 'Pharmacy', 'Package', 'Day Care'].some(opd => s.includes(opd))
+    ['Doctor Consultation', 'Pathology', 'Radiology', 'Cardiology', 'Pulmonology', 'Dental', 'Ophthalmology', 'Physiotherapy', 'Pharmacy', 'Package', 'Day Care'].some(opd => s.includes(opd))
   )
   const isOPD = (!isHomecare && !isIPD) || hasOPDService
 
@@ -451,6 +563,30 @@ export function FeedbackPrintForm({
                     'Comfort during stay',
                     'Monitoring and care provided',
                     'Discharge process'
+                  ].map(q => (
+                    <tr key={q}>
+                      <td className="border border-slate-300 p-2 w-1/2 font-medium text-slate-700">{q}</td>
+                      {RATING_LABELS.map(r => (
+                        <td key={r} className="border border-slate-300 p-2 text-center w-16"><EmptyBox /></td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Dental Services */}
+          {services.some(s => s.toLowerCase().includes('dental')) && (
+            <div className="break-inside-avoid">
+              <h4 className="font-semibold text-slate-700 mb-1">{t.dental}</h4>
+              <table className="w-full text-left border-collapse border border-slate-300 text-[10px]">
+                <tbody>
+                  {[
+                    'Explanation regarding dental problem and treatment',
+                    'Comfort during the dental treatment',
+                    'Pain management during the procedure',
+                    'Cleanliness and hygiene during the dental treatment'
                   ].map(q => (
                     <tr key={q}>
                       <td className="border border-slate-300 p-2 w-1/2 font-medium text-slate-700">{q}</td>

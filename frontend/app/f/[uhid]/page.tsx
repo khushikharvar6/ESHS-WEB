@@ -433,7 +433,7 @@ export default function PublicFeedbackPage() {
                   <div className="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
                     <Label className="text-base font-semibold mb-3 block text-slate-800">Services Availed</Label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {['Home Sample Collection', 'Home Doctor Visit', 'Home Nursing Care', 'Home Physiotherapy', 'Home Vaccination', 'ECG at Home'].map(opt => (
+                      {['Home Sample Collection', 'Home Doctor Visit', 'Home Nursing Care', 'Home Physiotherapy', 'Home Vaccination', 'ECG at Home', 'Blood Glucose Monitoring'].map(opt => (
                         <div key={opt} className="flex items-center space-x-2">
                           <Checkbox 
                             id={`home-svc-${opt}`} 
@@ -562,9 +562,10 @@ export default function PublicFeedbackPage() {
                         </thead>
                         <tbody>
                           {[
-                            'Explanation of dental procedure',
-                            'Comfort during treatment',
-                            'Overall satisfaction with dental care'
+                            'Explanation regarding dental problem and treatment',
+                            'Comfort during the dental treatment',
+                            'Pain management during the procedure',
+                            'Cleanliness and hygiene during the dental treatment'
                           ].map((q, idx) => (
                              <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-4 border-b font-medium text-slate-700">{q}</td>

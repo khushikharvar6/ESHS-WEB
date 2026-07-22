@@ -66,6 +66,7 @@ const FEEDBACK_SECTIONS = [
   'Radiology',
   'Cardiology',
   'Pulmonology',
+  'Dental Services',
   'Ophthalmology Services',
   'Physiotherapy Services',
   'Pharmacy Services',
@@ -90,6 +91,7 @@ export default function FeedbackPage() {
   const [query, setQuery] = useState('')
   const [patient, setPatient] = useState<Patient | null>(null)
   const [selectedServices, setSelectedServices] = useState<string[]>([])
+  const [printLang, setPrintLang] = useState<'en' | 'hi' | 'gu'>('en')
 
   // CSV Import state
   const [imported, setImported] = useState<any[]>([])
@@ -501,12 +503,22 @@ export default function FeedbackPage() {
           />
 
           <Card className="mt-4">
-            <CardHeader>
-              <CardTitle>Sections to include</CardTitle>
-              <CardDescription>
-                Common sections are always printed. Toggle the services this
-                patient availed to include their sections.
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div>
+                <CardTitle>Sections to include</CardTitle>
+                <CardDescription>
+                  Common sections are always printed. Toggle the services this
+                  patient availed to include their sections.
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-slate-700">Print Language:</span>
+                <div className="flex gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                  <button type="button" onClick={() => setPrintLang('en')} className={`px-2.5 py-1 text-xs font-bold rounded ${printLang === 'en' ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-200'}`}>EN</button>
+                  <button type="button" onClick={() => setPrintLang('hi')} className={`px-2.5 py-1 text-xs font-bold rounded ${printLang === 'hi' ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-200'}`}>HI</button>
+                  <button type="button" onClick={() => setPrintLang('gu')} className={`px-2.5 py-1 text-xs font-bold rounded ${printLang === 'gu' ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-200'}`}>GU</button>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
               {FEEDBACK_SECTIONS.map((s) => {
@@ -534,7 +546,7 @@ export default function FeedbackPage() {
 
         {/* A4 preview / print target */}
         <div className="rounded-lg bg-muted/40 p-4 print:bg-transparent print:p-0">
-          <FeedbackPrintForm patient={patient} services={selectedServices} />
+          <FeedbackPrintForm patient={patient} services={selectedServices} lang={printLang} />
         </div>
 
         <PatientPicker
