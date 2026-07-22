@@ -633,24 +633,26 @@ export default function DashboardPage() {
             <CardDescription>Conversion metrics from inquiry to billed services.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col gap-4 py-2">
+            <div className="flex flex-col items-center w-full py-4 space-y-0.5">
               {funnelData.map((step, idx) => {
-                const widthPct = Math.max((step.value / maxFunnelValue) * 100, 5)
-                const conversionPct = idx > 0 && funnelData[idx - 1].value > 0 
-                  ? Math.round((step.value / funnelData[idx - 1].value) * 100) 
-                  : 100
+                const widthPct = Math.max((step.value / maxFunnelValue) * 100, 15)
 
                 return (
-                  <div key={step.label} className="flex items-center gap-4 group">
-                    <div className="w-24 text-right text-xs font-medium text-slate-700">
-                      {step.label}
-                    </div>
-                    <div className="flex-1 flex items-center gap-2">
-                      <div className="h-8 rounded-r-lg rounded-l-sm transition-all duration-500 ease-out flex items-center px-3 shadow-sm"
-                           style={{ width: `${widthPct}%`, backgroundColor: 'var(--tw-gradient-from)', backgroundImage: `linear-gradient(to right, rgb(248, 250, 252), var(--tw-color-${step.color.split('-')[1]}-500))` }}
-                      >
-                        <span className="font-bold text-slate-800 tabular-nums bg-white/60 px-1.5 py-0.5 rounded text-[10px]">{step.value}</span>
-                      </div>
+                  <div key={step.label} className="flex flex-col items-center justify-center w-full group">
+                    <div 
+                      className="h-10 sm:h-12 flex items-center justify-between px-3 sm:px-6 transition-all duration-700 ease-out shadow-sm hover:brightness-110 relative"
+                      style={{ 
+                        width: `${widthPct}%`, 
+                        // Using a solid color mapping based on the step's color
+                        backgroundColor: `var(--tw-color-${step.color.split('-')[1]}-500, #6366f1)`,
+                        borderTopLeftRadius: idx === 0 ? '8px' : '2px',
+                        borderTopRightRadius: idx === 0 ? '8px' : '2px',
+                        borderBottomLeftRadius: idx === funnelData.length - 1 ? '8px' : '2px',
+                        borderBottomRightRadius: idx === funnelData.length - 1 ? '8px' : '2px',
+                      }}
+                    >
+                      <span className="text-[11px] sm:text-xs font-semibold text-white drop-shadow-sm truncate mr-2">{step.label}</span>
+                      <span className="font-bold text-white tabular-nums drop-shadow-md text-xs sm:text-sm">{step.value}</span>
                     </div>
                   </div>
                 )

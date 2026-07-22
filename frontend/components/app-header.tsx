@@ -86,35 +86,6 @@ export function AppHeader({ onOpenSidebar }: { onOpenSidebar: () => void }) {
       }
     })
 
-    // 2. Search invoices
-    store.invoices.forEach(inv => {
-      const id = String(inv.id).toLowerCase()
-      const patientName = (inv.patient || '').toLowerCase()
-      if (id.includes(query) || patientName.includes(query)) {
-        results.push({
-          type: 'Invoice',
-          title: `Invoice #${inv.id}`,
-          subtitle: `Patient: ${inv.patient} | Balance: ₹${inv.balance} | Total: ₹${inv.total}`,
-          href: `/billing`
-        })
-      }
-    })
-
-    // 3. Search inquiries
-    store.inquiries.forEach(inq => {
-      const name = `${inq.firstName || ''} ${inq.lastName || ''}`.toLowerCase()
-      const phone = (inq.phone || '').toLowerCase()
-      const svc = (inq.service || '').toLowerCase()
-      if (name.includes(query) || phone.includes(query) || svc.includes(query)) {
-        results.push({
-          type: 'Inquiry',
-          title: `Inquiry: ${inq.firstName} ${inq.lastName}`,
-          subtitle: `Service: ${inq.service} | Status: ${inq.status}`,
-          href: `/inquiry`
-        })
-      }
-    })
-
     return results.slice(0, 10)
   }, [searchQuery, store])
 
@@ -232,7 +203,7 @@ export function AppHeader({ onOpenSidebar }: { onOpenSidebar: () => void }) {
             <Search className="text-muted-foreground" />
           </InputGroupAddon>
           <InputGroupInput
-            placeholder="Search UHID, patient, phone, invoice..."
+            placeholder="Search patient name, UHID, or phone..."
             aria-label="Global search"
             value={searchQuery}
             onChange={(e) => {
