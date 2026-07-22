@@ -81,10 +81,10 @@ export default function DashboardPage() {
     appointments,
     patients,
     invoices,
-    documents,
     ncs,
     inquiries,
     updateAppointmentStatus,
+    dbError,
   } = useHealthcare()
 
   const pendingBilling = invoices.filter((i) => i.status !== 'Paid').length
@@ -318,6 +318,17 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      {dbError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-red-700 shadow-sm flex items-start gap-3">
+          <AlertTriangle className="h-6 w-6 shrink-0 mt-0.5" />
+          <div>
+            <h3 className="font-bold text-lg">Backend Connection Error</h3>
+            <p className="text-sm mt-1">{dbError}</p>
+            <p className="text-sm mt-2 font-medium">Please send a screenshot of this error.</p>
+          </div>
+        </div>
+      )}
+      
       <div className="rounded-xl border border-primary/20 bg-gradient-to-r from-blue-50 via-white to-indigo-50 p-5 shadow-sm">
         <div className="flex flex-col gap-2">
           <p className="text-lg font-bold uppercase tracking-[0.2em] text-primary">Dashboard</p>

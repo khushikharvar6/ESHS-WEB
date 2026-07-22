@@ -58,9 +58,10 @@ export async function listResource(resource: DbResource) {
   const model = PRISMA_MAP[resource]
   if (!model) return []
   
-  try {
     let results = []
     if (resource === 'invoices') {
+      results = await model.findMany({ orderBy: { createdAt: 'desc' } })
+    } else if (resource === 'patients') {
       results = await model.findMany({ orderBy: { createdAt: 'desc' } })
     } else {
       results = await model.findMany({ orderBy: { createdAt: 'desc' } })
@@ -68,10 +69,6 @@ export async function listResource(resource: DbResource) {
     
     // Convert to plain JS objects to prevent Next.js serialization crashes
     return JSON.parse(JSON.stringify(results))
-  } catch (err) {
-    console.error(`Error listing resource ${resource}:`, err)
-    return []
-  }
 }
 
 export async function createResource<T extends Record<string, any>>(

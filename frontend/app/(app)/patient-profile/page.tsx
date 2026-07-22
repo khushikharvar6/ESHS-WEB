@@ -17,6 +17,13 @@ import {
   RefreshCw,
   BadgeCheck,
   Users,
+  FileText,
+  Clock,
+  ChevronLeft,
+  Search,
+  Filter,
+  UserPlus,
+  AlertTriangle,
 } from 'lucide-react'
 
 import { Protect } from '@/components/protect'
@@ -93,7 +100,7 @@ function StatCard({
 function PatientProfileContent() {
   const params = useSearchParams()
   const router = useRouter()
-  const { patients, documentsFor, ncsFor, consultationsFor, invoicesFor } =
+  const { patients, documentsFor, ncsFor, consultationsFor, invoicesFor, dbError } =
     useHealthcare()
 
   const [editOpen, setEditOpen] = useState(false)
@@ -255,6 +262,16 @@ function PatientProfileContent() {
   if (!queryUhid) {
     return (
       <div className="flex flex-col gap-6">
+        {dbError && (
+          <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-red-700 shadow-sm flex items-start gap-3">
+            <AlertTriangle className="h-6 w-6 shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-bold text-lg">Backend Connection Error</h3>
+              <p className="text-sm mt-1">{dbError}</p>
+              <p className="text-sm mt-2 font-medium">Please send a screenshot of this error.</p>
+            </div>
+          </div>
+        )}
         <PageHeader
           title="Patients List"
           description="Directory of all registered patients."

@@ -399,6 +399,7 @@ type StoreValue = {
   invoicesFor: (uhid: string) => Invoice[]
   consultationsFor: (uhid: string) => Consultation[]
   refreshData: () => Promise<void>
+  dbError: string | null
 }
 
 const StoreContext = createContext<StoreValue | null>(null)
@@ -419,6 +420,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [invoices, setInvoices] = useState<Invoice[]>(seedInvoices)
   const [documents, setDocuments] = useState<PatientDocument[]>(seedDocuments)
   const [ncs, setNcs] = useState<NonConformance[]>(seedNCs)
+  const [dbError, setDbError] = useState<string | null>(null)
 
   useEffect(() => {
     refreshData()
@@ -426,6 +428,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const refreshData = async () => {
     try {
+      setDbError(null)
       const [apiPatients, apiAppointments, apiInquiries, apiConsultations, apiInvoices, apiDocuments, apiNcs] = await Promise.all([
           apiGetPatients(),
           apiGetAppointments(),
@@ -503,8 +506,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         )
         setDocuments(apiDocuments as PatientDocument[])
         setNcs(apiNcs as NonConformance[])
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error loading backend data:', error)
+        setDbError(error?.message || String(error))
       }
     }
 
@@ -906,6 +910,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       invoicesFor,
       consultationsFor,
       refreshData,
+      dbError,
     }),
     [
       inquiries,
@@ -942,6 +947,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       ncsFor,
       invoicesFor,
       consultationsFor,
+      dbError,
     ],
   )
 

@@ -10,8 +10,12 @@ import {
 export const runtime = 'nodejs'
 
 export async function GET() {
-  const patients = await listResource('patients')
-  return NextResponse.json(patients)
+  try {
+    const patients = await listResource('patients')
+    return NextResponse.json(patients)
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message || 'Unknown error', stack: error?.stack }, { status: 500 })
+  }
 }
 
 export async function POST(request: Request) {
