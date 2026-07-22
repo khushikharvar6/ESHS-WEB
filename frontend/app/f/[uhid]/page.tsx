@@ -142,7 +142,10 @@ export default function PublicFeedbackPage() {
       }
       setLoading(false)
     })
-  }, [uhid])
+  }, [uhid, servicesParam])
+
+  // Select department manually if generic link
+  const [manualDepartments, setManualDepartments] = useState<string[]>([])
 
   // Helpers
   const handleCheckbox = (list: string[], setList: (l: string[]) => void, item: string) => {
@@ -251,17 +254,24 @@ export default function PublicFeedbackPage() {
   const isIPD = serviceAvailed.some(s => s.toLowerCase().includes('ipd'))
   const isOPD = serviceAvailed.some(s => s.toLowerCase().includes('opd')) || (!isHomecare && !isIPD)
 
-  const showPathology = hasSvc('pathology') || hasSvc('lab')
-  const showDoctorConsult = hasSvc('doctor') || (!showPathology && !hasSvc('radiology') && !hasSvc('cardiology') && !hasSvc('pulmonology') && !hasSvc('ophthalmology') && !hasSvc('physiotherapy') && !hasSvc('pharmacy') && !hasSvc('package') && !hasSvc('check-up') && !hasSvc('day care'))
-  const showRadiology = hasSvc('radiology')
-  const showCardiology = hasSvc('cardiology')
-  const showPulmonology = hasSvc('pulmonology')
-  const showOphthalmology = hasSvc('ophthalmology')
-  const showPhysiotherapy = hasSvc('physiotherapy')
-  const showPharmacy = hasSvc('pharmacy')
-  const showPackage = hasSvc('package') || hasSvc('check-up')
-  const showDayCare = hasSvc('day care')
-  const showDental = hasSvc('dental')
+  // Use manual departments if provided, else use auto-detected
+  const activeSvcString = manualDepartments.length > 0 
+    ? manualDepartments.join(' ')
+    : svcString
+
+  const hasActiveSvc = (name: string) => activeSvcString.toLowerCase().includes(name.toLowerCase())
+
+  const showPathology = hasActiveSvc('pathology') || hasActiveSvc('lab') || hasActiveSvc('sample collection')
+  const showDoctorConsult = hasActiveSvc('doctor consult') || (!showPathology && !hasActiveSvc('radiology') && !hasActiveSvc('cardiology') && !hasActiveSvc('pulmonology') && !hasActiveSvc('ophthalmology') && !hasActiveSvc('physiotherapy') && !hasActiveSvc('pharmacy') && !hasActiveSvc('package') && !hasActiveSvc('day care') && !hasActiveSvc('dental'))
+  const showRadiology = hasActiveSvc('radiology')
+  const showCardiology = hasActiveSvc('cardiology')
+  const showPulmonology = hasActiveSvc('pulmonology')
+  const showOphthalmology = hasActiveSvc('ophthalmology')
+  const showPhysiotherapy = hasActiveSvc('physiotherapy')
+  const showPharmacy = hasActiveSvc('pharmacy')
+  const showPackage = hasActiveSvc('package') || hasActiveSvc('check-up')
+  const showDayCare = hasActiveSvc('day care')
+  const showDental = hasActiveSvc('dental')
 
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8 flex justify-center font-sans">
@@ -348,21 +358,39 @@ export default function PublicFeedbackPage() {
                 {/* Service Availed */}
               <div className="md:col-span-2 pt-4 border-t border-slate-200">
                 <Label className="text-base font-semibold mb-4 block text-slate-800 uppercase tracking-wide border-b pb-2">{t.typeOfService}</Label>
-                  <div className="flex flex-wrap gap-6">
+                  <div className="flex flex-wrap gap-6 mb-4">
                     {['Home Care Services', 'OPD', 'IPD'].map(opt => (
                       <div key={opt} className="flex items-center space-x-2">
                         <Checkbox 
                           id={`svc-${opt}`} 
                           checked={serviceAvailed.includes(opt)}
                           onCheckedChange={() => {
-                            if (!servicesParam) handleCheckbox(serviceAvailed, setServiceAvailed, opt)
+                            if (!servicesParam && !patient) handleCheckbox(serviceAvailed, setServiceAvailed, opt)
                           }}
-                          disabled={!!servicesParam}
+                          disabled={!!servicesParam || !!patient}
                         />
-                        <Label htmlFor={`svc-${opt}`} className={`font-medium ${servicesParam ? 'text-slate-400' : 'text-slate-700'}`}>{opt}</Label>
+                        <Label htmlFor={`svc-${opt}`} className={`font-medium ${(servicesParam || patient) ? 'text-slate-400' : 'text-slate-700'}`}>{opt}</Label>
                       </div>
                     ))}
                   </div>
+
+                  {(!patient && !servicesParam && isOPD) && (
+                    <div className="mt-4 p-4 bg-white border rounded-lg border-slate-200">
+                      <Label className="text-sm font-semibold mb-3 block text-slate-700">Please select the OPD department you visited:</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        {['Doctor Consultation', 'Cardiology', 'Pulmonology', 'Radiology', 'Pathology', 'Sample Collection', 'Dental', 'Ophthalmology', 'Day Care', 'Vaccination', 'Physiotherapy'].map(opt => (
+                          <div key={opt} className="flex items-center space-x-2">
+                            <Checkbox 
+                              id={`dept-${opt}`} 
+                              checked={manualDepartments.includes(opt)}
+                              onCheckedChange={() => handleCheckbox(manualDepartments, setManualDepartments, opt)}
+                            />
+                            <Label htmlFor={`dept-${opt}`} className="text-sm font-medium">{opt}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
