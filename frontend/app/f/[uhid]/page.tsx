@@ -19,19 +19,145 @@ const TRANSLATIONS = {
     ageGender: 'Age / Gender',
     date: 'Date',
     howDidYouHear: 'How did you hear about ES healthcare?',
+    hearOptions: {
+      'Family & Friends': 'Family & Friends',
+      'Social Media': 'Social Media',
+      'Magazine & Newspaper': 'Magazine & Newspaper',
+      'Google Search': 'Google Search',
+      'Website': 'Website',
+      'Other': 'Other'
+    },
     referenceBy: 'Reference By:',
+    refOptions: {
+      'Doctor': 'Doctor',
+      'Camps/community Activity': 'Camps/community Activity',
+      'Corporate Tie-up': 'Corporate Tie-up',
+      'Insurance/TPA': 'Insurance/TPA',
+      'Existing Patient': 'Existing Patient',
+      'Other': 'Other'
+    },
     typeOfService: 'TYPE OF SERVICE AVAILED',
-    generalExp: 'GENERAL EXPERIENCE',
-    submit: 'Submit Feedback',
+    serviceTypes: {
+      'Home Care Services': 'Home Care Services',
+      'OPD': 'OPD',
+      'IPD': 'IPD'
+    },
+    selectOpdDept: 'Please select the OPD department you visited:',
     generalExperience: 'General Experience',
+    particulars: 'Particulars',
+    ratingLabels: ['Poor', 'Average', 'Good', 'Very Good', 'Excellent'],
+    generalQuestions: [
+      'Registration and enquiry services',
+      'Handling of patient queries and guidance provided',
+      'Waiting time management',
+      'Behavior of the staff',
+      'Billing and payment process',
+      'Cleanliness and hygiene of the facility'
+    ],
     homeHealthcare: 'Home Healthcare Experience',
+    servicesAvailed: 'Services Availed',
+    homeServicesMap: {
+      'Home Sample Collection': 'Home Sample Collection',
+      'Home Doctor Visit': 'Home Doctor Visit',
+      'Home Nursing Care': 'Home Nursing Care',
+      'Home Physiotherapy': 'Home Physiotherapy',
+      'Home Vaccination': 'Home Vaccination',
+      'ECG at Home': 'ECG at Home',
+      'Blood Glucose Monitoring': 'Blood Glucose Monitoring'
+    },
+    homeQuestions: [
+      'Ease of booking the service',
+      'Timeliness of home visit',
+      'Behaviour, professionalism and explanation given',
+      'Infection control and quality standards',
+      'Overall quality of home healthcare services'
+    ],
     opdFeedback: 'OPD Feedback',
+    depts: {
+      doctor: 'Doctor Consultation',
+      pathology: 'Pathology',
+      dental: 'Dental',
+      radiology: 'Radiology',
+      cardiology: 'Cardiology',
+      pulmonology: 'Pulmonology',
+      ophthalmology: 'Ophthalmology Services',
+      physiotherapy: 'Physiotherapy Services',
+      pharmacy: 'Pharmacy Services',
+      package: 'Health Check-up Package',
+      dayCare: 'Day Care Services'
+    },
+    doctorQuestions: [
+      'Explanation regarding illness and treatment',
+      'Time spent during consultation',
+      'Clarity of advice and follow-up instructions'
+    ],
+    pathologyQuestions: [
+      'Sample collection process',
+      'Comfort during sample collection',
+      'Timely availability of reports'
+    ],
+    dentalQuestions: [
+      'Explanation regarding dental problem and treatment',
+      'Comfort during the dental treatment',
+      'Pain management during the procedure',
+      'Cleanliness and hygiene during the dental treatment'
+    ],
+    radiologyQuestions: [
+      'Appointment scheduling process',
+      'Explanation before the procedure',
+      'Comfort during the procedure'
+    ],
+    cardiologyQuestions: [
+      'Explanation regarding cardiac evaluation',
+      'Quality of diagnostic services provided',
+      'Confidence in care received'
+    ],
+    pulmonologyQuestions: [
+      'Explanation regarding respiratory condition',
+      'Quality of diagnostic services provided',
+      'Satisfaction with care received'
+    ],
+    ophthalmologyQuestions: [
+      'Eye examination process',
+      'Explanation regarding diagnosis and treatment',
+      'Quality of eye care services'
+    ],
+    physiotherapyQuestions: [
+      'Explanation of exercises and treatment plan',
+      'Effectiveness of therapy sessions',
+      'Improvement experienced from treatment'
+    ],
+    pharmacyQuestions: [
+      'Availability of prescribed medicines',
+      'Guidance regarding medication usage'
+    ],
+    packageQuestions: [
+      'Coordination between departments',
+      'Smoothness of overall process',
+      'Completion of package within expected time'
+    ],
+    dayCareQuestions: [
+      'Admission process',
+      'Comfort during stay',
+      'Monitoring and care provided',
+      'Discharge process'
+    ],
     ipdFeedback: 'IPD Feedback',
+    ipdQuestions: [
+      'Admission process',
+      "Doctor's care and communication",
+      'Nursing care and responsiveness',
+      'Investigation and diagnostic services',
+      'Room comfort and cleanliness',
+      'Food quality and service',
+      'Discharge process and instructions'
+    ],
     overallSatisfaction: 'OVERALL SATISFACTION',
     staffAppreciated: 'Staff member you would like to appreciate (Optional):',
-    wellDone: 'What did we do well? (Optional)',
-    improvement: 'Suggestions / Remarks for improvement (Optional):',
-    agreeToUsage: 'I AGREE TO THE USAGE OF ABOVE FEEDBACK BY THE CENTRE'
+    positiveComments: 'What did we do well? (Optional)',
+    negativeComments: 'Suggestions / Remarks for improvement (Optional):',
+    agreeToUsage: 'I AGREE TO THE USAGE OF ABOVE FEEDBACK BY THE CENTRE',
+    submit: 'Submit Feedback'
   },
   hi: {
     title: 'रोगी अनुभव और प्रतिक्रिया प्रपत्र',
@@ -40,19 +166,145 @@ const TRANSLATIONS = {
     ageGender: 'आयु / लिंग',
     date: 'दिनांक',
     howDidYouHear: 'आपने ES स्वास्थ्य सेवा के बारे में कैसे सुना?',
-    referenceBy: 'द्वारा संदर्भ:',
+    hearOptions: {
+      'Family & Friends': 'परिवार और मित्र',
+      'Social Media': 'सोशल मीडिया',
+      'Magazine & Newspaper': 'पत्रिका और समाचार पत्र',
+      'Google Search': 'गूगल खोज',
+      'Website': 'वेबसाइट',
+      'Other': 'अन्य'
+    },
+    referenceBy: 'संदर्भ द्वारा:',
+    refOptions: {
+      'Doctor': 'डॉक्टर',
+      'Camps/community Activity': 'शिविर/सामुदायिक गतिविधि',
+      'Corporate Tie-up': 'कॉर्पोरेट अनुबंध',
+      'Insurance/TPA': 'बीमा/TPA',
+      'Existing Patient': 'मौजूदा रोगी',
+      'Other': 'अन्य'
+    },
     typeOfService: 'प्राप्त सेवा का प्रकार',
-    generalExp: 'सामान्य अनुभव',
-    submit: 'प्रतिक्रिया जमा करें',
+    serviceTypes: {
+      'Home Care Services': 'होम केयर सेवाएं',
+      'OPD': 'OPD',
+      'IPD': 'IPD'
+    },
+    selectOpdDept: 'कृपया वह OPD विभाग चुनें जहाँ आपने दौरा किया:',
     generalExperience: 'सामान्य अनुभव',
+    particulars: 'विवरण',
+    ratingLabels: ['खराब', 'औसत', 'अच्छा', 'बहुत अच्छा', 'उत्कृष्ट'],
+    generalQuestions: [
+      'पंजीकरण और पूछताछ सेवाएं',
+      'रोगी के प्रश्नों का उत्तर और मार्गदर्शन',
+      'प्रतीक्षा समय प्रबंधन',
+      'कर्मचारियों का व्यवहार',
+      'बिलिंग और भुगतान प्रक्रिया',
+      'सुविधा की स्वच्छता और सफाई'
+    ],
     homeHealthcare: 'घरेलू स्वास्थ्य देखभाल अनुभव',
+    servicesAvailed: 'प्राप्त सेवाएं',
+    homeServicesMap: {
+      'Home Sample Collection': 'घर पर सैंपल संग्रह',
+      'Home Doctor Visit': 'घर पर डॉक्टर का दौरा',
+      'Home Nursing Care': 'होम नर्सिंग देखभाल',
+      'Home Physiotherapy': 'होम फिजियोथेरेपी',
+      'Home Vaccination': 'घर पर टीकाकरण',
+      'ECG at Home': 'घर पर ईसीजी',
+      'Blood Glucose Monitoring': 'रक्त शर्करा निगरानी'
+    },
+    homeQuestions: [
+      'सेवा बुक करने में आसानी',
+      'गृह दौरे की समयबद्धता',
+      'व्यवहार, व्यावसायिकता और दी गई व्याख्या',
+      'संक्रमण नियंत्रण और गुणवत्ता मानक',
+      'घरेलू स्वास्थ्य सेवाओं की समग्र गुणवत्ता'
+    ],
     opdFeedback: 'OPD प्रतिक्रिया',
+    depts: {
+      doctor: 'डॉक्टर परामर्श',
+      pathology: 'पैथोलॉजी',
+      dental: 'डेंटल (Dental)',
+      radiology: 'रेडियोलॉजी',
+      cardiology: 'कार्डियोलॉजी',
+      pulmonology: 'पल्मोनोलॉजी',
+      ophthalmology: 'नेत्र रोग सेवाएं (Ophthalmology)',
+      physiotherapy: 'फिजियोथेरेपी सेवाएं',
+      pharmacy: 'फार्मेसी सेवाएं',
+      package: 'स्वास्थ्य जांच पैकेज',
+      dayCare: 'डे केयर सेवाएं'
+    },
+    doctorQuestions: [
+      'बीमारी और इलाज के बारे में विवरण',
+      'परामर्श के दौरान बिताया गया समय',
+      'सलाह और अनुवर्ती निर्देशों की स्पष्टता'
+    ],
+    pathologyQuestions: [
+      'सैंपल संग्रह की प्रक्रिया',
+      'सैंपल संग्रह के दौरान आराम',
+      'रिपोर्ट समय पर उपलब्ध होना'
+    ],
+    dentalQuestions: [
+      'दांतों की समस्या और उपचार के संबंध में विवरण',
+      'डेंटल उपचार के दौरान आराम',
+      'प्रक्रिया के दौरान दर्द प्रबंधन',
+      'डेंटल उपचार के दौरान स्वच्छता और सफाई'
+    ],
+    radiologyQuestions: [
+      'अपॉइंटमेंट शेड्यूलिंग प्रक्रिया',
+      'प्रक्रिया से पहले दिया गया विवरण',
+      'प्रक्रिया के दौरान आराम'
+    ],
+    cardiologyQuestions: [
+      'हृदय संबंधी मूल्यांकन के बारे में विवरण',
+      'प्रदान की गई नैदानिक सेवाओं की गुणवत्ता',
+      'प्राप्त देखभाल में विश्वास'
+    ],
+    pulmonologyQuestions: [
+      'श्वसन स्थिति के बारे में स्पष्टीकरण',
+      'प्रदान की गई नैदानिक सेवाओं की गुणवत्ता',
+      'प्राप्त देखभाल से संतुष्टि'
+    ],
+    ophthalmologyQuestions: [
+      'आंखों की जांच प्रक्रिया',
+      'निदान और उपचार के बारे में स्पष्टीकरण',
+      'नेत्र देखभाल सेवाओं की गुणवत्ता'
+    ],
+    physiotherapyQuestions: [
+      'व्यायाम और उपचार योजना का विवरण',
+      'थेरेपी सत्रों की प्रभावशीलता',
+      'उपचार से अनुभव हुआ सुधार'
+    ],
+    pharmacyQuestions: [
+      'निर्धारित दवाओं की उपलब्धता',
+      'दवा के उपयोग के संबंध में मार्गदर्शन'
+    ],
+    packageQuestions: [
+      'विभागों के बीच समन्वय',
+      'समग्र प्रक्रिया की सुगमता',
+      'अपेक्षित समय में पैकेज पूरा होना'
+    ],
+    dayCareQuestions: [
+      'प्रवेश प्रक्रिया',
+      'रहने के दौरान आराम',
+      'निगरानी और प्रदान की गई देखभाल',
+      'डिस्चार्ज प्रक्रिया'
+    ],
     ipdFeedback: 'IPD प्रतिक्रिया',
+    ipdQuestions: [
+      'प्रवेश प्रक्रिया',
+      'डॉक्टर की देखभाल और संचार',
+      'नर्सिंग देखभाल और जवाबदेही',
+      'जांच और नैदानिक सेवाएं',
+      'कमरे का आराम और स्वच्छता',
+      'भोजन की गुणवत्ता और सेवा',
+      'डिस्चार्ज प्रक्रिया और निर्देश'
+    ],
     overallSatisfaction: 'कुल मिलाकर संतुष्टि',
     staffAppreciated: 'कर्मचारी सदस्य जिसकी आप सराहना करना चाहेंगे (वैकल्पिक):',
-    wellDone: 'हमने क्या अच्छा किया? (वैकल्पिक)',
-    improvement: 'सुधार के लिए सुझाव / टिप्पणियाँ (वैकल्पिक):',
-    agreeToUsage: 'मैं केंद्र द्वारा उपरोक्त प्रतिक्रिया के उपयोग से सहमत हूँ'
+    positiveComments: 'हमने क्या अच्छा किया? (वैकल्पिक)',
+    negativeComments: 'सुधार के लिए सुझाव / टिप्पणियाँ (वैकल्पिक):',
+    agreeToUsage: 'मैं केंद्र द्वारा उपरोक्त प्रतिक्रिया के उपयोग से सहमत हूँ',
+    submit: 'प्रतिक्रिया जमा करें'
   },
   gu: {
     title: 'દર્દીનો અનુભવ અને પ્રતિસાદ ફોર્મ',
@@ -61,23 +313,147 @@ const TRANSLATIONS = {
     ageGender: 'ઉંમર / લિંગ',
     date: 'તારીખ',
     howDidYouHear: 'તમે ES હેલ્થકેર વિશે કેવી રીતે સાંભળ્યું?',
+    hearOptions: {
+      'Family & Friends': 'કુટુંબ અને મિત્રો',
+      'Social Media': 'સોશિયલ મીડિયા',
+      'Magazine & Newspaper': 'મેગેઝિન અને સમાચાર પત્ર',
+      'Google Search': 'ગૂગલ સર્ચ',
+      'Website': 'વેબસાઇટ',
+      'Other': 'અન્ય'
+    },
     referenceBy: 'દ્વારા સંદર્ભ:',
+    refOptions: {
+      'Doctor': 'ડોક્ટર',
+      'Camps/community Activity': 'કેમ્પ/સમુદાય પ્રવૃત્તિ',
+      'Corporate Tie-up': 'કોર્પોરેટ જોડાણ',
+      'Insurance/TPA': 'વીમો/TPA',
+      'Existing Patient': 'હાલના દર્દી',
+      'Other': 'અન્ય'
+    },
     typeOfService: 'પ્રાપ્ત સેવાનો પ્રકાર',
-    generalExp: 'સામાન્ય અનુભવ',
-    submit: 'પ્રતિસાદ સબમિટ કરો',
+    serviceTypes: {
+      'Home Care Services': 'હોમ કેર સેવાઓ',
+      'OPD': 'OPD',
+      'IPD': 'IPD'
+    },
+    selectOpdDept: 'કૃપા કરીને તમે મુલાકાત લીધેલ OPD વિભાગ પસંદ કરો:',
     generalExperience: 'સામાન્ય અનુભવ',
+    particulars: 'વિગતો',
+    ratingLabels: ['નબળું', 'સરેરાશ', 'સારું', 'ખૂબ સારું', 'ઉત્કૃષ્ટ'],
+    generalQuestions: [
+      'નોંધણી અને પૂછપરછ સેવાઓ',
+      'દર્દીના પ્રશ્નોનું નિરાકરણ અને માર્ગદર્શન',
+      'રાહ જોવાનો સમય વ્યવસ્થાપન',
+      'સ્ટાફનું વર્તન',
+      'બિલિંગ અને ચુકવણી પ્રક્રિયા',
+      'સુવિધાની સ્વચ્છતા અને સફાઈ'
+    ],
     homeHealthcare: 'ઘરની આરોગ્ય સંભાળનો અનુભવ',
+    servicesAvailed: 'પ્રાપ્ત સેવાઓ',
+    homeServicesMap: {
+      'Home Sample Collection': 'ઘરે સેમ્પલ કલેક્શન',
+      'Home Doctor Visit': 'ઘરે ડોક્ટર વિઝિટ',
+      'Home Nursing Care': 'હોમ નર્સિંગ કેર',
+      'Home Physiotherapy': 'હોમ ફિઝિયોથેરાપી',
+      'Home Vaccination': 'ઘરે રસીકરણ',
+      'ECG at Home': 'ઘરે ECG',
+      'Blood Glucose Monitoring': 'બ્લડ ગ્લુકોઝ મોનિટરિંગ'
+    },
+    homeQuestions: [
+      'સેવા બુક કરવાની સરળતા',
+      'ઘર મુલાકાતનો સમયપાલન',
+      'વર્તન, વ્યવસાયિકતા અને આપેલ ખુલાસો',
+      'ચેપ નિયંત્રણ અને ગુણવત્તાના ધોરણો',
+      'ઘરની આરોગ્ય સેવાઓની એકંદર ગુણવત્તા'
+    ],
     opdFeedback: 'OPD પ્રતિસાદ',
+    depts: {
+      doctor: 'ડોક્ટર કન્સલ્ટેશન',
+      pathology: 'પેથોલોજી',
+      dental: 'ડેન્ટલ (Dental)',
+      radiology: 'રેડિયોલોજી',
+      cardiology: 'કાર્ડિયોલોજી',
+      pulmonology: 'પલ્મોનોલોજી',
+      ophthalmology: 'આંખની સંભાળ સેવાઓ (Ophthalmology)',
+      physiotherapy: 'ફિઝિયોથેરાપી સેવાઓ',
+      pharmacy: 'ફાર્મસી સેવાઓ',
+      package: 'હેલ્થ ચેક-અપ પેકેજ',
+      dayCare: 'ડે કેર સેવાઓ'
+    },
+    doctorQuestions: [
+      'બીમારી અને સારવાર અંગેની સમજૂતી',
+      'કન્સલ્ટેશન દરમિયાન વિતાવેલો સમય',
+      'સલાહ અને ફોલો-અપ સૂચનાઓની સ્પષ્ટતા'
+    ],
+    pathologyQuestions: [
+      'સેમ્પલ કલેક્શન પ્રક્રિયા',
+      'સેમ્પલ કલેક્શન દરમિયાન આરામ',
+      'રિપોર્ટ સમયસર મળવો'
+    ],
+    dentalQuestions: [
+      'દાંતની સમસ્યા અને સારવાર અંગેની સમજૂતી',
+      'ડેન્ટલ સારવાર દરમિયાન આરામ',
+      'પ્રક્રિયા દરમિયાન દુખાવાનું સંચાલન',
+      'ડેન્ટલ સારવાર દરમિયાન સ્વચ્છતા અને સફાઈ'
+    ],
+    radiologyQuestions: [
+      'એપોઇન્ટમેન્ટ શેડ્યુલિંગ પ્રક્રિયા',
+      'પ્રક્રિયા પહેલાં આપેલી સમજૂતી',
+      'પ્રક્રિયા દરમિયાન આરામ'
+    ],
+    cardiologyQuestions: [
+      'હૃદયના મૂલ્યાંકન અંગેની સમજૂતી',
+      'પૂરી પાડવામાં આવેલ નિદાન સેવાઓની ગુણવત્તા',
+      'મળેલી સંભાળમાં વિશ્વાસ'
+    ],
+    pulmonologyQuestions: [
+      'શ્વાસની સ્થિતિ અંગે સ્પષ્ટતા',
+      'પૂરી પાડવામાં આવેલ નિદાન સેવાઓની ગુણવત્તા',
+      'સંભાળથી સંતોષ'
+    ],
+    ophthalmologyQuestions: [
+      'આંખની તપાસ પ્રક્રિયા',
+      'નિદાન અને સારવાર અંગેની સમજૂતી',
+      'આંખની સંભાળ સેવાઓની ગુણવત્તા'
+    ],
+    physiotherapyQuestions: [
+      'કસરત અને સારવાર યોજનાની સમજૂતી',
+      'થેરાપી સત્રોની અસરકારકતા',
+      'સારવારથી અનુભવાયેલ સુધારો'
+    ],
+    pharmacyQuestions: [
+      'લખેલી દવાઓની ઉપલબ્ધતા',
+      'દવાના ઉપયોગ અંગે માર્ગદર્શન'
+    ],
+    packageQuestions: [
+      'વિભાગો વચ્ચે સંકલન',
+      'એકંદર પ્રક્રિયાની સરળતા',
+      'અપેક્ષિત સમયમાં પેકેજ પૂર્ણ થવું'
+    ],
+    dayCareQuestions: [
+      'દાખલ થવાની પ્રક્રિયા',
+      'રોકાણ દરમિયાન આરામ',
+      'મોનિટરિંગ અને આપેલી સંભાળ',
+      'ડિસ્ચાર્જ પ્રક્રિયા'
+    ],
     ipdFeedback: 'IPD પ્રતિસાદ',
+    ipdQuestions: [
+      'દાખલ થવાની પ્રક્રિયા',
+      'ડોક્ટરની સંભાળ અને વાતચીત',
+      'નર્સિંગ કેર અને પ્રતિભાવ',
+      'તપાસ અને નિદાન સેવાઓ',
+      'રૂમની સુખ-સુવિધા અને સ્વચ્છતા',
+      'ખોરાકની ગુણવત્તા અને સેવા',
+      'ડિસ્ચાર્જ પ્રક્રિયા અને સૂચનાઓ'
+    ],
     overallSatisfaction: 'એકંદરે સંતોષ',
     staffAppreciated: 'સ્ટાફ સભ્ય કે જેની તમે પ્રશંસા કરવા માંગો છો (વૈકલ્પિક):',
-    wellDone: 'અમે શું સારું કર્યું? (વૈકલ્પિક)',
-    improvement: 'સુધારણા માટેનાં સૂચનો / ટિપ્પણીઓ (વૈકલ્પિક):',
-    agreeToUsage: 'હું કેન્દ્ર દ્વારા ઉપરોક્ત પ્રતિસાદના ઉપયોગ સાથે સંમત છું'
+    positiveComments: 'અમે શું સારું કર્યું? (વૈકલ્પિક)',
+    negativeComments: 'સુધારણા માટેનાં સૂચનો / ટિપ્પણીઓ (વૈકલ્પિક):',
+    agreeToUsage: 'હું કેન્દ્ર દ્વારા ઉપરોક્ત પ્રતિસાદના ઉપયોગ સાથે સંમત છું',
+    submit: 'પ્રતિસાદ સબમિટ કરો'
   }
 }
-
-const RATING_LABELS = ['Poor', 'Average', 'Good', 'Very Good', 'Excellent']
 
 const fetchPatientService = async (uhid: string) => {
   const res = await fetch('/api/patients')
@@ -96,7 +472,7 @@ export default function PublicFeedbackPage() {
   const [loading, setLoading] = useState(true)
   const [submitted, setSubmitted] = useState(false)
   const [lang, setLang] = useState<'en' | 'hi' | 'gu'>('en')
-  const t = TRANSLATIONS[lang]
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en
 
   // Form State
   const [heardAbout, setHeardAbout] = useState<string[]>([])
@@ -133,7 +509,6 @@ export default function PublicFeedbackPage() {
         if (pServices.some((s: string) => s.toLowerCase().includes('home'))) checkboxes.push('Home Care Services')
         if (pServices.some((s: string) => s.toLowerCase().includes('ipd'))) checkboxes.push('IPD')
         
-        // If neither Home nor IPD, default to OPD if there are any services
         if (pServices.length > 0 && checkboxes.length === 0) {
           checkboxes.push('OPD')
         }
@@ -170,14 +545,12 @@ export default function PublicFeedbackPage() {
     setSubmitting(true)
     setSubmitError('')
     
-    // Prepare arrays
     const finalHeardAbout = [...heardAbout.filter(x => x !== 'Other')]
     if (heardAbout.includes('Other') && heardAboutOther) finalHeardAbout.push(`Other: ${heardAboutOther}`)
     
     const finalReferenceBy = [...referenceBy.filter(x => x !== 'Other')]
     if (referenceBy.includes('Other') && referenceByOther) finalReferenceBy.push(`Other: ${referenceByOther}`)
 
-    // Prepare ratings array
     const ratingsPayload = Object.keys(ratings).map(key => {
       const [category, question] = key.split('|||')
       return { category, question, rating: ratings[key] }
@@ -234,27 +607,14 @@ export default function PublicFeedbackPage() {
     )
   }
 
-  // --- QUESTIONS DATA ---
-  const generalQuestions = [
-    'Registration and enquiry services',
-    'Handling of patient queries and guidance provided',
-    'Waiting time management',
-    'Behavior of the staff',
-    'Billing and payment process',
-    'Cleanliness and hygiene of the facility'
-  ]
-
   const svcString = servicesParamState.length > 0 
     ? servicesParamState.join(' ') 
     : (patient?.service || '')
-    
-  const hasSvc = (name: string) => svcString.toLowerCase().includes(name.toLowerCase())
 
   const isHomecare = serviceAvailed.some(s => s.toLowerCase().includes('home'))
   const isIPD = serviceAvailed.some(s => s.toLowerCase().includes('ipd'))
   const isOPD = serviceAvailed.some(s => s.toLowerCase().includes('opd')) || (!isHomecare && !isIPD)
 
-  // Use manual departments if provided, else use auto-detected
   const activeSvcString = manualDepartments.length > 0 
     ? manualDepartments.join(' ')
     : svcString
@@ -276,6 +636,7 @@ export default function PublicFeedbackPage() {
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8 flex justify-center font-sans">
       <div className="w-full max-w-4xl relative">
+        {/* Language selector button */}
         <div className="absolute right-0 top-0 flex gap-1 bg-white p-1 rounded shadow-sm border border-slate-200 z-10">
           <button type="button" onClick={() => setLang('en')} className={`px-3 py-1.5 text-xs font-semibold rounded ${lang === 'en' ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}`}>EN</button>
           <button type="button" onClick={() => setLang('hi')} className={`px-3 py-1.5 text-xs font-semibold rounded ${lang === 'hi' ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}`}>HI</button>
@@ -319,14 +680,14 @@ export default function PublicFeedbackPage() {
                 <div>
                   <Label className="text-base font-semibold mb-3 block text-slate-800">{t.howDidYouHear}</Label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {['Family & Friends', 'Social Media', 'Magazine & Newspaper', 'Google Search', 'Website', 'Other'].map(opt => (
-                      <div key={opt} className="flex items-center space-x-2">
+                    {Object.entries(t.hearOptions).map(([rawKey, translatedLabel]) => (
+                      <div key={rawKey} className="flex items-center space-x-2">
                         <Checkbox 
-                          id={`hear-${opt}`} 
-                          checked={heardAbout.includes(opt)}
-                          onCheckedChange={() => handleCheckbox(heardAbout, setHeardAbout, opt)}
+                          id={`hear-${rawKey}`} 
+                          checked={heardAbout.includes(rawKey)}
+                          onCheckedChange={() => handleCheckbox(heardAbout, setHeardAbout, rawKey)}
                         />
-                        <Label htmlFor={`hear-${opt}`} className="font-normal">{opt}</Label>
+                        <Label htmlFor={`hear-${rawKey}`} className="font-normal">{translatedLabel}</Label>
                       </div>
                     ))}
                   </div>
@@ -339,14 +700,14 @@ export default function PublicFeedbackPage() {
                 <div>
                   <Label className="text-base font-semibold mb-3 block text-slate-800">{t.referenceBy}</Label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {['Doctor', 'Camps/community Activity', 'Corporate Tie-up', 'Insurance/TPA', 'Existing Patient', 'Other'].map(opt => (
-                      <div key={opt} className="flex items-center space-x-2">
+                    {Object.entries(t.refOptions).map(([rawKey, translatedLabel]) => (
+                      <div key={rawKey} className="flex items-center space-x-2">
                         <Checkbox 
-                          id={`ref-${opt}`} 
-                          checked={referenceBy.includes(opt)}
-                          onCheckedChange={() => handleCheckbox(referenceBy, setReferenceBy, opt)}
+                          id={`ref-${rawKey}`} 
+                          checked={referenceBy.includes(rawKey)}
+                          onCheckedChange={() => handleCheckbox(referenceBy, setReferenceBy, rawKey)}
                         />
-                        <Label htmlFor={`ref-${opt}`} className="font-normal">{opt}</Label>
+                        <Label htmlFor={`ref-${rawKey}`} className="font-normal">{translatedLabel}</Label>
                       </div>
                     ))}
                   </div>
@@ -359,33 +720,43 @@ export default function PublicFeedbackPage() {
               <div className="md:col-span-2 pt-4 border-t border-slate-200">
                 <Label className="text-base font-semibold mb-4 block text-slate-800 uppercase tracking-wide border-b pb-2">{t.typeOfService}</Label>
                   <div className="flex flex-wrap gap-6 mb-4">
-                    {['Home Care Services', 'OPD', 'IPD'].map(opt => (
-                      <div key={opt} className="flex items-center space-x-2">
+                    {Object.entries(t.serviceTypes).map(([rawKey, translatedLabel]) => (
+                      <div key={rawKey} className="flex items-center space-x-2">
                         <Checkbox 
-                          id={`svc-${opt}`} 
-                          checked={serviceAvailed.includes(opt)}
+                          id={`svc-${rawKey}`} 
+                          checked={serviceAvailed.includes(rawKey)}
                           onCheckedChange={() => {
-                            if (!servicesParam && !patient) handleCheckbox(serviceAvailed, setServiceAvailed, opt)
+                            if (!servicesParam && !patient) handleCheckbox(serviceAvailed, setServiceAvailed, rawKey)
                           }}
                           disabled={!!servicesParam || !!patient}
                         />
-                        <Label htmlFor={`svc-${opt}`} className={`font-medium ${(servicesParam || patient) ? 'text-slate-400' : 'text-slate-700'}`}>{opt}</Label>
+                        <Label htmlFor={`svc-${rawKey}`} className={`font-medium ${(servicesParam || patient) ? 'text-slate-400' : 'text-slate-700'}`}>{translatedLabel}</Label>
                       </div>
                     ))}
                   </div>
 
                   {(!patient && !servicesParam && isOPD) && (
                     <div className="mt-4 p-4 bg-white border rounded-lg border-slate-200">
-                      <Label className="text-sm font-semibold mb-3 block text-slate-700">Please select the OPD department you visited:</Label>
+                      <Label className="text-sm font-semibold mb-3 block text-slate-700">{t.selectOpdDept}</Label>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        {['Doctor Consultation', 'Cardiology', 'Pulmonology', 'Radiology', 'Pathology', 'Sample Collection', 'Dental', 'Ophthalmology', 'Day Care', 'Vaccination', 'Physiotherapy'].map(opt => (
-                          <div key={opt} className="flex items-center space-x-2">
+                        {[
+                          { raw: 'Doctor Consultation', label: t.depts.doctor },
+                          { raw: 'Cardiology', label: t.depts.cardiology },
+                          { raw: 'Pulmonology', label: t.depts.pulmonology },
+                          { raw: 'Radiology', label: t.depts.radiology },
+                          { raw: 'Pathology', label: t.depts.pathology },
+                          { raw: 'Dental', label: t.depts.dental },
+                          { raw: 'Ophthalmology', label: t.depts.ophthalmology },
+                          { raw: 'Day Care', label: t.depts.dayCare },
+                          { raw: 'Physiotherapy', label: t.depts.physiotherapy }
+                        ].map(opt => (
+                          <div key={opt.raw} className="flex items-center space-x-2">
                             <Checkbox 
-                              id={`dept-${opt}`} 
-                              checked={manualDepartments.includes(opt)}
-                              onCheckedChange={() => handleCheckbox(manualDepartments, setManualDepartments, opt)}
+                              id={`dept-${opt.raw}`} 
+                              checked={manualDepartments.includes(opt.raw)}
+                              onCheckedChange={() => handleCheckbox(manualDepartments, setManualDepartments, opt.raw)}
                             />
-                            <Label htmlFor={`dept-${opt}`} className="text-sm font-medium">{opt}</Label>
+                            <Label htmlFor={`dept-${opt.raw}`} className="text-sm font-medium">{opt.label}</Label>
                           </div>
                         ))}
                       </div>
@@ -401,15 +772,15 @@ export default function PublicFeedbackPage() {
                   <table className="w-full text-sm text-left">
                     <thead className="bg-slate-100 text-slate-600 font-semibold">
                       <tr>
-                        <th className="p-4 border-b">Particulars</th>
-                        {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                        <th className="p-4 border-b">{t.particulars}</th>
+                        {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                       </tr>
                     </thead>
                     <tbody>
-                      {generalQuestions.map((q, idx) => (
+                      {t.generalQuestions.map((q, idx) => (
                         <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                           <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                          {RATING_LABELS.map((_, rIdx) => (
+                          {t.ratingLabels.map((_, rIdx) => (
                             <td key={rIdx} className="p-4 border-b text-center">
                               <button
                                 type="button"
@@ -431,16 +802,16 @@ export default function PublicFeedbackPage() {
                   <Label className="text-lg font-bold mb-4 block text-slate-800 uppercase">{t.homeHealthcare}</Label>
                   
                   <div className="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
-                    <Label className="text-base font-semibold mb-3 block text-slate-800">Services Availed</Label>
+                    <Label className="text-base font-semibold mb-3 block text-slate-800">{t.servicesAvailed}</Label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {['Home Sample Collection', 'Home Doctor Visit', 'Home Nursing Care', 'Home Physiotherapy', 'Home Vaccination', 'ECG at Home', 'Blood Glucose Monitoring'].map(opt => (
-                        <div key={opt} className="flex items-center space-x-2">
+                      {Object.entries(t.homeServicesMap).map(([rawKey, translatedLabel]) => (
+                        <div key={rawKey} className="flex items-center space-x-2">
                           <Checkbox 
-                            id={`home-svc-${opt}`} 
-                            checked={homeServicesAvailed.includes(opt)}
-                            onCheckedChange={() => handleCheckbox(homeServicesAvailed, setHomeServicesAvailed, opt)}
+                            id={`home-svc-${rawKey}`} 
+                            checked={homeServicesAvailed.includes(rawKey)}
+                            onCheckedChange={() => handleCheckbox(homeServicesAvailed, setHomeServicesAvailed, rawKey)}
                           />
-                          <Label htmlFor={`home-svc-${opt}`} className="font-normal">{opt}</Label>
+                          <Label htmlFor={`home-svc-${rawKey}`} className="font-normal">{translatedLabel}</Label>
                         </div>
                       ))}
                     </div>
@@ -450,21 +821,15 @@ export default function PublicFeedbackPage() {
                     <table className="w-full text-sm text-left">
                       <thead className="bg-slate-100 text-slate-600 font-semibold">
                         <tr>
-                          <th className="p-4 border-b">Particulars</th>
-                          {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                          <th className="p-4 border-b">{t.particulars}</th>
+                          {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                         </tr>
                       </thead>
                       <tbody>
-                        {[
-                          'Ease of booking the service',
-                          'Timeliness of home visit',
-                          'Behaviour, professionalism and explanation given',
-                          'Infection control and quality standards',
-                          'Overall quality of home healthcare services'
-                        ].map((q, idx) => (
+                        {t.homeQuestions.map((q, idx) => (
                           <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                             <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                            {RATING_LABELS.map((_, rIdx) => (
+                            {t.ratingLabels.map((_, rIdx) => (
                               <td key={rIdx} className="p-4 border-b text-center">
                                 <button
                                   type="button"
@@ -490,19 +855,15 @@ export default function PublicFeedbackPage() {
                       <table className="w-full text-sm text-left">
                         <thead className="bg-slate-100 text-slate-600 font-semibold">
                           <tr>
-                            <th className="p-4 border-b">Doctor Consultation</th>
-                            {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                            <th className="p-4 border-b">{t.depts.doctor}</th>
+                            {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            'Explanation regarding illness and treatment',
-                            'Time spent during consultation',
-                            'Clarity of advice and follow-up instructions'
-                          ].map((q, idx) => (
+                          {t.doctorQuestions.map((q, idx) => (
                             <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                              {RATING_LABELS.map((_, rIdx) => (
+                              {t.ratingLabels.map((_, rIdx) => (
                                 <td key={rIdx} className="p-4 border-b text-center">
                                   <button
                                     type="button"
@@ -523,19 +884,15 @@ export default function PublicFeedbackPage() {
                       <table className="w-full text-sm text-left">
                         <thead className="bg-slate-100 text-slate-600 font-semibold">
                           <tr>
-                            <th className="p-4 border-b">Pathology</th>
-                            {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                            <th className="p-4 border-b">{t.depts.pathology}</th>
+                            {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            'Sample collection process',
-                            'Comfort during sample collection',
-                            'Timely availability of reports'
-                          ].map((q, idx) => (
+                          {t.pathologyQuestions.map((q, idx) => (
                              <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                              {RATING_LABELS.map((_, rIdx) => (
+                              {t.ratingLabels.map((_, rIdx) => (
                                 <td key={rIdx} className="p-4 border-b text-center">
                                   <button
                                     type="button"
@@ -556,20 +913,15 @@ export default function PublicFeedbackPage() {
                       <table className="w-full text-sm text-left">
                         <thead className="bg-slate-100 text-slate-600 font-semibold">
                           <tr>
-                            <th className="p-4 border-b">Dental</th>
-                            {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                            <th className="p-4 border-b">{t.depts.dental}</th>
+                            {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            'Explanation regarding dental problem and treatment',
-                            'Comfort during the dental treatment',
-                            'Pain management during the procedure',
-                            'Cleanliness and hygiene during the dental treatment'
-                          ].map((q, idx) => (
+                          {t.dentalQuestions.map((q, idx) => (
                              <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                              {RATING_LABELS.map((_, rIdx) => (
+                              {t.ratingLabels.map((_, rIdx) => (
                                 <td key={rIdx} className="p-4 border-b text-center">
                                   <button
                                     type="button"
@@ -590,19 +942,15 @@ export default function PublicFeedbackPage() {
                       <table className="w-full text-sm text-left">
                         <thead className="bg-slate-100 text-slate-600 font-semibold">
                           <tr>
-                            <th className="p-4 border-b">Radiology</th>
-                            {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                            <th className="p-4 border-b">{t.depts.radiology}</th>
+                            {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            'Appointment scheduling process',
-                            'Explanation before the procedure',
-                            'Comfort during the procedure'
-                          ].map((q, idx) => (
+                          {t.radiologyQuestions.map((q, idx) => (
                              <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                              {RATING_LABELS.map((_, rIdx) => (
+                              {t.ratingLabels.map((_, rIdx) => (
                                 <td key={rIdx} className="p-4 border-b text-center">
                                   <button
                                     type="button"
@@ -623,19 +971,15 @@ export default function PublicFeedbackPage() {
                       <table className="w-full text-sm text-left">
                         <thead className="bg-slate-100 text-slate-600 font-semibold">
                           <tr>
-                            <th className="p-4 border-b">Cardiology</th>
-                            {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                            <th className="p-4 border-b">{t.depts.cardiology}</th>
+                            {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            'Explanation regarding cardiac evaluation',
-                            'Quality of diagnostic services provided',
-                            'Confidence in care received'
-                          ].map((q, idx) => (
+                          {t.cardiologyQuestions.map((q, idx) => (
                              <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                              {RATING_LABELS.map((_, rIdx) => (
+                              {t.ratingLabels.map((_, rIdx) => (
                                 <td key={rIdx} className="p-4 border-b text-center">
                                   <button
                                     type="button"
@@ -656,19 +1000,15 @@ export default function PublicFeedbackPage() {
                       <table className="w-full text-sm text-left">
                         <thead className="bg-slate-100 text-slate-600 font-semibold">
                           <tr>
-                            <th className="p-4 border-b">Pulmonology</th>
-                            {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                            <th className="p-4 border-b">{t.depts.pulmonology}</th>
+                            {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            'Explanation regarding respiratory condition',
-                            'Quality of diagnostic services provided',
-                            'Satisfaction with care received'
-                          ].map((q, idx) => (
+                          {t.pulmonologyQuestions.map((q, idx) => (
                              <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                              {RATING_LABELS.map((_, rIdx) => (
+                              {t.ratingLabels.map((_, rIdx) => (
                                 <td key={rIdx} className="p-4 border-b text-center">
                                   <button
                                     type="button"
@@ -689,24 +1029,20 @@ export default function PublicFeedbackPage() {
                       <table className="w-full text-sm text-left">
                         <thead className="bg-slate-100 text-slate-600 font-semibold">
                           <tr>
-                            <th className="p-4 border-b">Ophthalmology Services</th>
-                            {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                            <th className="p-4 border-b">{t.depts.ophthalmology}</th>
+                            {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            'Eye examination process',
-                            'Explanation regarding diagnosis and treatment',
-                            'Quality of eye care services'
-                          ].map((q, idx) => (
+                          {t.ophthalmologyQuestions.map((q, idx) => (
                              <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                              {RATING_LABELS.map((_, rIdx) => (
+                              {t.ratingLabels.map((_, rIdx) => (
                                 <td key={rIdx} className="p-4 border-b text-center">
                                   <button
                                     type="button"
-                                    onClick={() => setRating('Ophthalmology Services', q, rIdx + 1)}
-                                    className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${getRating('Ophthalmology Services', q) === rIdx + 1 ? 'border-teal-600 bg-teal-600' : 'border-slate-300 hover:border-teal-400'}`}
+                                    onClick={() => setRating('Ophthalmology', q, rIdx + 1)}
+                                    className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${getRating('Ophthalmology', q) === rIdx + 1 ? 'border-teal-600 bg-teal-600' : 'border-slate-300 hover:border-teal-400'}`}
                                   />
                                 </td>
                               ))}
@@ -722,24 +1058,20 @@ export default function PublicFeedbackPage() {
                       <table className="w-full text-sm text-left">
                         <thead className="bg-slate-100 text-slate-600 font-semibold">
                           <tr>
-                            <th className="p-4 border-b">Physiotherapy Services</th>
-                            {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                            <th className="p-4 border-b">{t.depts.physiotherapy}</th>
+                            {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            'Explanation of exercises and treatment plan',
-                            'Effectiveness of therapy sessions',
-                            'Improvement experienced from treatment'
-                          ].map((q, idx) => (
+                          {t.physiotherapyQuestions.map((q, idx) => (
                              <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                              {RATING_LABELS.map((_, rIdx) => (
+                              {t.ratingLabels.map((_, rIdx) => (
                                 <td key={rIdx} className="p-4 border-b text-center">
                                   <button
                                     type="button"
-                                    onClick={() => setRating('Physiotherapy Services', q, rIdx + 1)}
-                                    className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${getRating('Physiotherapy Services', q) === rIdx + 1 ? 'border-teal-600 bg-teal-600' : 'border-slate-300 hover:border-teal-400'}`}
+                                    onClick={() => setRating('Physiotherapy', q, rIdx + 1)}
+                                    className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${getRating('Physiotherapy', q) === rIdx + 1 ? 'border-teal-600 bg-teal-600' : 'border-slate-300 hover:border-teal-400'}`}
                                   />
                                 </td>
                               ))}
@@ -755,23 +1087,20 @@ export default function PublicFeedbackPage() {
                       <table className="w-full text-sm text-left">
                         <thead className="bg-slate-100 text-slate-600 font-semibold">
                           <tr>
-                            <th className="p-4 border-b">Pharmacy Services</th>
-                            {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                            <th className="p-4 border-b">{t.depts.pharmacy}</th>
+                            {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            'Availability of prescribed medicines',
-                            'Guidance regarding medication usage'
-                          ].map((q, idx) => (
+                          {t.pharmacyQuestions.map((q, idx) => (
                              <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                              {RATING_LABELS.map((_, rIdx) => (
+                              {t.ratingLabels.map((_, rIdx) => (
                                 <td key={rIdx} className="p-4 border-b text-center">
                                   <button
                                     type="button"
-                                    onClick={() => setRating('Pharmacy Services', q, rIdx + 1)}
-                                    className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${getRating('Pharmacy Services', q) === rIdx + 1 ? 'border-teal-600 bg-teal-600' : 'border-slate-300 hover:border-teal-400'}`}
+                                    onClick={() => setRating('Pharmacy', q, rIdx + 1)}
+                                    className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${getRating('Pharmacy', q) === rIdx + 1 ? 'border-teal-600 bg-teal-600' : 'border-slate-300 hover:border-teal-400'}`}
                                   />
                                 </td>
                               ))}
@@ -787,19 +1116,15 @@ export default function PublicFeedbackPage() {
                       <table className="w-full text-sm text-left">
                         <thead className="bg-slate-100 text-slate-600 font-semibold">
                           <tr>
-                            <th className="p-4 border-b">Health Check-up Package</th>
-                            {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                            <th className="p-4 border-b">{t.depts.package}</th>
+                            {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            'Coordination between departments',
-                            'Smoothness of overall process',
-                            'Completion of package within expected time'
-                          ].map((q, idx) => (
+                          {t.packageQuestions.map((q, idx) => (
                              <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                              {RATING_LABELS.map((_, rIdx) => (
+                              {t.ratingLabels.map((_, rIdx) => (
                                 <td key={rIdx} className="p-4 border-b text-center">
                                   <button
                                     type="button"
@@ -820,25 +1145,20 @@ export default function PublicFeedbackPage() {
                       <table className="w-full text-sm text-left">
                         <thead className="bg-slate-100 text-slate-600 font-semibold">
                           <tr>
-                            <th className="p-4 border-b">Day Care Services</th>
-                            {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                            <th className="p-4 border-b">{t.depts.dayCare}</th>
+                            {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            'Admission process',
-                            'Comfort during stay',
-                            'Monitoring and care provided',
-                            'Discharge process'
-                          ].map((q, idx) => (
+                          {t.dayCareQuestions.map((q, idx) => (
                              <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                               <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                              {RATING_LABELS.map((_, rIdx) => (
+                              {t.ratingLabels.map((_, rIdx) => (
                                 <td key={rIdx} className="p-4 border-b text-center">
                                   <button
                                     type="button"
-                                    onClick={() => setRating('Day Care Services', q, rIdx + 1)}
-                                    className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${getRating('Day Care Services', q) === rIdx + 1 ? 'border-teal-600 bg-teal-600' : 'border-slate-300 hover:border-teal-400'}`}
+                                    onClick={() => setRating('Day Care', q, rIdx + 1)}
+                                    className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${getRating('Day Care', q) === rIdx + 1 ? 'border-teal-600 bg-teal-600' : 'border-slate-300 hover:border-teal-400'}`}
                                   />
                                 </td>
                               ))}
@@ -858,23 +1178,15 @@ export default function PublicFeedbackPage() {
                     <table className="w-full text-sm text-left">
                       <thead className="bg-slate-100 text-slate-600 font-semibold">
                         <tr>
-                          <th className="p-4 border-b">Inpatient Experience</th>
-                          {RATING_LABELS.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
+                          <th className="p-4 border-b">{t.particulars}</th>
+                          {t.ratingLabels.map(r => <th key={r} className="p-4 border-b text-center">{r}</th>)}
                         </tr>
                       </thead>
                       <tbody>
-                        {[
-                          'Admission process',
-                          "Doctor's care and communication",
-                          'Nursing care and responsiveness',
-                          'Investigation and diagnostic services',
-                          'Room comfort and cleanliness',
-                          'Food quality and service',
-                          'Discharge process and instructions'
-                        ].map((q, idx) => (
+                        {t.ipdQuestions.map((q, idx) => (
                           <tr key={q} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                             <td className="p-4 border-b font-medium text-slate-700">{q}</td>
-                            {RATING_LABELS.map((_, rIdx) => (
+                            {t.ratingLabels.map((_, rIdx) => (
                               <td key={rIdx} className="p-4 border-b text-center">
                                 <button
                                   type="button"
@@ -891,103 +1203,103 @@ export default function PublicFeedbackPage() {
                 </div>
               )}
 
-              <div className="border-t-2 border-slate-200 my-8"></div>
-
-              {/* Overall Satisfaction */}
-              <div className="bg-slate-50 p-8 rounded-xl text-center border border-slate-200">
-                <Label className="text-xl font-bold block mb-2 text-slate-800">{t.overallSatisfaction}</Label>
-                <p className="text-slate-500 mb-6">Please rate the overall quality of healthcare services provided</p>
-                <div className="flex justify-center gap-3">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => setOverallRating(star)}
-                      className={`p-2 transition-transform hover:scale-110 ${overallRating >= star ? 'text-amber-500' : 'text-slate-300 hover:text-amber-300'}`}
-                    >
-                      <StarIcon className="w-12 h-12 fill-current" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Open Feedback */}
-              <div className="space-y-6">
+              {/* Bottom Section */}
+              <div className="space-y-6 pt-6 border-t border-slate-200">
+                {/* Overall Rating */}
                 <div>
-                  <Label className="text-slate-800 font-semibold">{t.staffAppreciated}</Label>
-                  <Input 
-                    placeholder="Name of doctor, nurse, or staff..."
+                  <Label className="text-base font-semibold mb-2 block text-slate-800">{t.overallSatisfaction}</Label>
+                  <div className="flex items-center space-x-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setOverallRating(star)}
+                        className="p-1 focus:outline-none transition-transform hover:scale-110"
+                      >
+                        <StarIcon
+                          className={`w-8 h-8 ${
+                            star <= overallRating
+                              ? 'text-amber-400 fill-amber-400'
+                              : 'text-slate-300'
+                          }`}
+                        />
+                      </button>
+                    ))}
+                    <span className="ml-3 text-sm font-semibold text-slate-600">
+                      {overallRating > 0 ? `${overallRating} / 5` : ''}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Staff Appreciated */}
+                <div>
+                  <Label htmlFor="staff" className="text-sm font-medium mb-2 block text-slate-700">
+                    {t.staffAppreciated}
+                  </Label>
+                  <Input
+                    id="staff"
+                    placeholder="e.g. Dr. Mehta, Nurse Priya"
                     value={staffAppreciated}
                     onChange={(e) => setStaffAppreciated(e.target.value)}
-                    className="mt-2"
                   />
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label className="text-teal-700 font-semibold mb-2 block">{t.wellDone}</Label>
-                    <Textarea 
-                      placeholder="Positive feedback..."
-                      value={positiveComments}
-                      onChange={(e) => setPositiveComments(e.target.value)}
-                      className="resize-none h-24"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-red-700 font-semibold mb-2 block">{t.improvement}</Label>
-                    <Textarea 
-                      placeholder="Areas for improvement..."
-                      value={negativeComments}
-                      onChange={(e) => setNegativeComments(e.target.value)}
-                      className="resize-none h-24"
-                    />
-                  </div>
+
+                {/* Positive Comments */}
+                <div>
+                  <Label htmlFor="positive" className="text-sm font-medium mb-2 block text-slate-700">
+                    {t.positiveComments}
+                  </Label>
+                  <Textarea
+                    id="positive"
+                    rows={3}
+                    placeholder="Tell us what you liked..."
+                    value={positiveComments}
+                    onChange={(e) => setPositiveComments(e.target.value)}
+                  />
                 </div>
-                
-                <div className="flex items-center space-x-2 pt-4">
-                  <Checkbox 
-                    id="agree" 
+
+                {/* Negative Comments */}
+                <div>
+                  <Label htmlFor="negative" className="text-sm font-medium mb-2 block text-slate-700">
+                    {t.negativeComments}
+                  </Label>
+                  <Textarea
+                    id="negative"
+                    rows={3}
+                    placeholder="How can we serve you better?"
+                    value={negativeComments}
+                    onChange={(e) => setNegativeComments(e.target.value)}
+                  />
+                </div>
+
+                {/* Consent */}
+                <div className="flex items-center space-x-3 pt-2">
+                  <Checkbox
+                    id="consent"
                     checked={agreeToUsage}
-                    onCheckedChange={(checked) => setAgreeToUsage(checked as boolean)}
+                    onCheckedChange={(checked) => setAgreeToUsage(!!checked)}
                   />
-                  <Label htmlFor="agree" className="font-semibold text-slate-700">{t.agreeToUsage || 'I AGREE TO THE USAGE OF ABOVE FEEDBACK BY THE CENTRE'}</Label>
+                  <Label htmlFor="consent" className="text-sm font-medium text-slate-700 cursor-pointer">
+                    {t.agreeToUsage}
+                  </Label>
                 </div>
               </div>
 
               {submitError && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-center font-medium">
-                  ⚠️ {submitError}
+                <div className="p-3 bg-red-50 border border-red-200 rounded text-red-600 text-sm">
+                  {submitError}
                 </div>
               )}
 
-              <Button 
-                type="submit" 
-                className="w-full bg-teal-700 hover:bg-teal-800 text-white py-8 text-xl rounded-xl shadow-lg transition-transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0" 
-                disabled={
-                  submitting ||
-                  overallRating === 0 || 
-                  Object.keys(ratings).length < (() => {
-                    let expectedRatingCount = generalQuestions.length
-                    if (isHomecare) expectedRatingCount += 5
-                    if (isOPD) {
-                      if (showDoctorConsult) expectedRatingCount += 3
-                      if (showPathology) expectedRatingCount += 3
-                      if (showRadiology) expectedRatingCount += 3
-                      if (showCardiology) expectedRatingCount += 3
-                      if (showPulmonology) expectedRatingCount += 3
-                      if (showOphthalmology) expectedRatingCount += 3
-                      if (showPhysiotherapy) expectedRatingCount += 3
-                      if (showPharmacy) expectedRatingCount += 2
-                      if (showPackage) expectedRatingCount += 3
-                      if (showDayCare) expectedRatingCount += 4
-                    }
-                    if (isIPD) expectedRatingCount += 7
-                    return expectedRatingCount
-                  })()
-                }
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-6 text-lg rounded-xl shadow-md transition-colors"
               >
                 {submitting ? 'Submitting...' : t.submit}
               </Button>
+
             </form>
           </CardContent>
         </Card>
