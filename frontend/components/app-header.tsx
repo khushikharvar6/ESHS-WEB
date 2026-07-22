@@ -66,6 +66,58 @@ export function AppHeader({ onOpenSidebar }: { onOpenSidebar: () => void }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim() || !store) return []
+    const query = searchQuery.toLowerCase()
+    const results: { type: string; title: string; subtitle: string; href: string }[] = []
+
+    // 1. Search patients
+    store.patients.forEach(p => {
+      const name = `${p.firstName || ''} ${p.lastName || ''}`.toLowerCase()
+      const uhid = (p.uhid || '').toLowerCase()
+      const phone = (p.phone || '').toLowerCase()
+      if (name.includes(query) || uhid.includes(query) || phone.includes(query)) {
+        results.push({
+          type: 'Patient',
+          title: `${p.firstName} ${p.lastName}`,
+          subtitle: `UHID: ${p.uhid} | Phone: ${p.phone || 'N/A'}`,
+          href: `/patient-profile?uhid=${p.uhid}`
+        })
+      }
+    })
+
+    // 2. Search invoices
+    store.invoices.forEach(inv => {
+      const id = String(inv.id).toLowerCase()
+      const patientName = (inv.patient || '').toLowerCase()
+      if (id.includes(query) || patientName.includes(query)) {
+        results.push({
+          type: 'Invoice',
+          title: `Invoice #${inv.id}`,
+          subtitle: `Patient: ${inv.patient} | Balance: ₹${inv.balance} | Total: ₹${inv.total}`,
+          href: `/billing`
+        })
+      }
+    })
+
+    // 3. Search inquiries
+    store.inquiries.forEach(inq => {
+      const name = `${inq.firstName || ''} ${inq.lastName || ''}`.toLowerCase()
+      const phone = (inq.phone || '').toLowerCase()
+      const svc = (inq.service || '').toLowerCase()
+      if (name.includes(query) || phone.includes(query) || svc.includes(query)) {
+        results.push({
+          type: 'Inquiry',
+          title: `Inquiry: ${inq.firstName} ${inq.lastName}`,
+          subtitle: `Service: ${inq.service} | Status: ${inq.status}`,
+          href: `/inquiry`
+        })
+      }
+    })
+
+    return results.slice(0, 10)
+  }, [searchQuery, store])
+
   useEffect(() => {
     setMounted(true)
   }, [])

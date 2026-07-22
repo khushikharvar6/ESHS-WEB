@@ -16,6 +16,7 @@ import {
   Activity,
   AlertTriangle,
   Filter,
+  Star,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -72,6 +73,16 @@ export default function DashboardPage() {
   const router = useRouter()
   const [backendSummary, setBackendSummary] = useState<HealthSummary | null>(null)
   const [viewMode, setViewMode] = useState<'today' | 'week' | 'all'>('today')
+  const [feedbacks, setFeedbacks] = useState<any[]>([])
+
+  useEffect(() => {
+    fetch('/api/feedback', { cache: 'no-store' })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setFeedbacks(data)
+      })
+      .catch(console.error)
+  }, [])
   const [patientTypeFilter, setPatientTypeFilter] = useState('All')
   const [queueStatusFilter, setQueueStatusFilter] = useState('All')
   const [departmentFilter, setDepartmentFilter] = useState('All')
@@ -163,6 +174,28 @@ export default function DashboardPage() {
 
     return items.slice(0, 4)
   }, [invoices, ncs, patients])
+
+  const avgFeedbackRating = useMemo(() => {
+    if (feedbacks.length === 0) return 0
+    const sum = feedbacks.reduce((acc, f) => acc + (f.overallRating || 0), 0)
+    return parseFloat((sum / feedbacks.length).toFixed(1))
+  }, [feedbacks])
+
+  const starCounts = useMemo(() => {
+    const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+    feedbacks.forEach(f => {
+      const r = Math.round(f.overallRating || 0)
+      if (r >= 1 && r <= 5) {
+        counts[r as 1 | 2 | 3 | 4 | 5]++
+      }
+    })
+    return counts
+  }, [feedbacks])
+
+  const latestComment = useMemo(() => {
+    const sorted = [...feedbacks].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    return sorted.find(f => f.positiveComments || f.negativeComments)
+  }, [feedbacks])
 
   // Funnel Analytics
   const totalInquiries = inquiries.length
@@ -591,7 +624,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <Card className="lg:col-span-2">
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Filter className="size-5 text-indigo-500" />
@@ -609,25 +642,81 @@ export default function DashboardPage() {
 
                 return (
                   <div key={step.label} className="flex items-center gap-4 group">
-                    <div className="w-32 text-right text-sm font-medium text-slate-700">
+                    <div className="w-24 text-right text-xs font-medium text-slate-700">
                       {step.label}
                     </div>
-                    <div className="flex-1 flex items-center gap-3">
-                      <div className="h-10 rounded-r-lg rounded-l-sm transition-all duration-500 ease-out flex items-center px-3 shadow-sm"
+                    <div className="flex-1 flex items-center gap-2">
+                      <div className="h-8 rounded-r-lg rounded-l-sm transition-all duration-500 ease-out flex items-center px-3 shadow-sm"
                            style={{ width: `${widthPct}%`, backgroundColor: 'var(--tw-gradient-from)', backgroundImage: `linear-gradient(to right, rgb(248, 250, 252), var(--tw-color-${step.color.split('-')[1]}-500))` }}
                       >
-                        <span className="font-bold text-slate-800 tabular-nums bg-white/60 px-1.5 py-0.5 rounded text-xs">{step.value}</span>
+                        <span className="font-bold text-slate-800 tabular-nums bg-white/60 px-1.5 py-0.5 rounded text-[10px]">{step.value}</span>
                       </div>
-                      {idx > 0 && (
-                        <div className="text-xs font-semibold text-slate-400 bg-slate-50 px-2 py-1 rounded-full border border-slate-100 opacity-0 group-hover:opacity-100 transition-opacity">
-                          {conversionPct}% of prev
-                        </div>
-                      )}
                     </div>
                   </div>
                 )
               })}
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Star className="size-5 text-amber-500 fill-amber-500" />
+              Patient Satisfaction Tracker
+            </CardTitle>
+            <CardDescription>Real-time rating distribution from submitted feedback.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between border-b pb-4">
+              <div>
+                <div className="text-3xl font-bold text-slate-800">{avgFeedbackRating || '0.0'} <span className="text-sm font-normal text-slate-500">/ 5.0</span></div>
+                <div className="text-xs text-slate-500 font-medium">Based on {feedbacks.length} patient responses</div>
+              </div>
+              <div className="flex items-center">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`w-5 h-5 ${
+                      star <= Math.round(avgFeedbackRating)
+                        ? 'text-amber-400 fill-amber-400'
+                        : 'text-slate-200'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              {[5, 4, 3, 2, 1].map((stars) => {
+                const count = starCounts[stars as 1 | 2 | 3 | 4 | 5] || 0
+                const pct = feedbacks.length > 0 ? Math.round((count / feedbacks.length) * 100) : 0
+                return (
+                  <div key={stars} className="flex items-center gap-2 text-xs">
+                    <span className="w-12 font-medium text-slate-600">{stars} Stars</span>
+                    <div className="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden">
+                      <div className="bg-amber-400 h-full rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+                    </div>
+                    <span className="w-8 text-right font-semibold text-slate-700">{count}</span>
+                  </div>
+                )
+              })}
+            </div>
+
+            {latestComment && (
+              <div className="mt-2 p-3 bg-slate-50 rounded-lg border border-slate-150 text-xs">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="font-semibold text-slate-700">{latestComment.patientName || 'Anonymous Patient'}</span>
+                  <div className="flex items-center gap-0.5">
+                    <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                    <span className="font-bold text-slate-800">{latestComment.overallRating}</span>
+                  </div>
+                </div>
+                <p className="text-slate-600 italic line-clamp-2">
+                  &ldquo;{latestComment.positiveComments || latestComment.negativeComments}&rdquo;
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
