@@ -105,7 +105,7 @@ function PatientProfileContent() {
 
   const [filterDept, setFilterDept] = useState<string>('Department')
   const [filterCategory, setFilterCategory] = useState<string>('Category')
-  const [filterStatus, setFilterStatus] = useState<string>('Status')
+  const [filterStatus, setFilterStatus] = useState<string>('All statuses')
 
   const uniqueDepts = SERVICES
   const uniqueCategories = PATIENT_CATEGORIES
@@ -117,7 +117,7 @@ function PatientProfileContent() {
       const cat = p.patientCategory || 'General'
       if (filterCategory !== 'Category' && cat !== filterCategory) return false
       const stat = p.status || 'Active'
-      if (filterStatus !== 'Status' && stat !== filterStatus) return false
+      if (filterStatus !== 'All statuses' && stat !== filterStatus) return false
       return true
     })
   }, [patients, filterDept, filterCategory, filterStatus])
@@ -325,10 +325,10 @@ function PatientProfileContent() {
                   </Select>
                   <Select value={filterStatus} onValueChange={(val) => setFilterStatus(val || "")}>
                     <SelectTrigger className="w-[130px]">
-                      <SelectValue placeholder="Status" />
+                      <SelectValue placeholder="All statuses" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Status">Status</SelectItem>
+                      <SelectItem value="All statuses">All statuses</SelectItem>
                       {uniqueStatuses.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                     </SelectContent>
                   </Select>
