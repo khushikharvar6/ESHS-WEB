@@ -498,23 +498,29 @@ export default function PublicFeedbackPage() {
     fetchPatientService(uhid).then(p => {
       setPatient(p)
       
-      if (p) {
-        const pServices = Array.isArray(p.services) && p.services.length > 0 
+      let pServices: string[] = []
+      if (servicesParam) {
+        pServices = servicesParam.split(',').map((s: string) => s.trim()).filter(Boolean)
+      } else if (p) {
+        pServices = Array.isArray(p.services) && p.services.length > 0 
           ? p.services 
           : (p.service ? [p.service] : [])
-        
-        setServicesParamState(pServices)
-
-        const checkboxes: string[] = []
-        if (pServices.some((s: string) => s.toLowerCase().includes('home'))) checkboxes.push('Home Care Services')
-        if (pServices.some((s: string) => s.toLowerCase().includes('ipd'))) checkboxes.push('IPD')
-        
-        if (pServices.length > 0 && checkboxes.length === 0) {
-          checkboxes.push('OPD')
-        }
-        
-        setServiceAvailed(checkboxes)
       }
+      
+      setServicesParamState(pServices)
+
+      const checkboxes: string[] = []
+      if (pServices.some((s: string) => s.toLowerCase().includes('home'))) checkboxes.push('Home Care Services')
+      if (pServices.some((s: string) => s.toLowerCase().includes('ipd'))) checkboxes.push('IPD')
+      
+      if (pServices.length > 0 && checkboxes.filter(c => c !== 'OPD').length === 0) {
+        checkboxes.push('OPD')
+      }
+      if (pServices.some((s: string) => !s.toLowerCase().includes('home') && !s.toLowerCase().includes('ipd'))) {
+        if (!checkboxes.includes('OPD')) checkboxes.push('OPD')
+      }
+      
+      setServiceAvailed(checkboxes)
       setLoading(false)
     })
   }, [uhid, servicesParam])
@@ -622,7 +628,7 @@ export default function PublicFeedbackPage() {
   const hasActiveSvc = (name: string) => activeSvcString.toLowerCase().includes(name.toLowerCase())
 
   const showPathology = hasActiveSvc('pathology') || hasActiveSvc('lab') || hasActiveSvc('sample collection')
-  const showDoctorConsult = hasActiveSvc('doctor consult') || (!showPathology && !hasActiveSvc('radiology') && !hasActiveSvc('cardiology') && !hasActiveSvc('pulmonology') && !hasActiveSvc('ophthalmology') && !hasActiveSvc('physiotherapy') && !hasActiveSvc('pharmacy') && !hasActiveSvc('package') && !hasActiveSvc('day care') && !hasActiveSvc('dental'))
+  const showDoctorConsult = hasActiveSvc('doctor consult') || hasActiveSvc('doctor consultation') || (activeSvcString === '' && !showPathology && !hasActiveSvc('radiology') && !hasActiveSvc('cardiology') && !hasActiveSvc('pulmonology') && !hasActiveSvc('ophthalmology') && !hasActiveSvc('physiotherapy') && !hasActiveSvc('pharmacy') && !hasActiveSvc('package') && !hasActiveSvc('day care') && !hasActiveSvc('dental'))
   const showRadiology = hasActiveSvc('radiology')
   const showCardiology = hasActiveSvc('cardiology')
   const showPulmonology = hasActiveSvc('pulmonology')
