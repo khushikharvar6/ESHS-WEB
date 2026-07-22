@@ -263,6 +263,7 @@ export default function PublicFeedbackPage() {
   const showDayCare = hasSvc('day care')
   const showDental = hasSvc('dental')
 
+  return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8 flex justify-center font-sans">
       <div className="w-full max-w-4xl relative">
         <div className="absolute right-0 top-0 flex gap-1 bg-white p-1 rounded shadow-sm border border-slate-200 z-10">

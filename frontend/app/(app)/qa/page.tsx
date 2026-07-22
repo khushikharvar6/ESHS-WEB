@@ -6,8 +6,6 @@ import {
   ShieldAlert,
   ShieldCheck,
   TimerReset,
-  ShieldCheck,
-  TimerReset,
   FileText,
   CheckCircle2,
 } from 'lucide-react'
