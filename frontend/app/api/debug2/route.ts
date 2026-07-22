@@ -4,8 +4,9 @@ import { prisma } from '@/lib/server-db'
 
 export async function GET() {
   try {
-    const patients = await prisma.patient.findMany()
-    return NextResponse.json({ success: true, count: patients.length })
+    const url = process.env.DATABASE_URL || 'NONE'
+    const redactedUrl = url.substring(0, 15) + '...'
+    return NextResponse.json({ success: true, url: redactedUrl, node_env: process.env.NODE_ENV })
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err?.message, stack: err?.stack })
   }

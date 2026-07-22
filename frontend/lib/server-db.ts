@@ -8,8 +8,7 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 // Ensure the connection string falls back to a valid dummy URL during static generation (e.g. next build on Vercel)
-// otherwise `new Pool()` will throw if the connection string is completely empty.
-let connectionString = process.env.DATABASE_URL || 'postgresql://dummy:dummy@dummy:5432/dummy'
+let connectionString = process.env.DATABASE_URL || 'postgresql://postgres.xunvxidavtgneiozpmec:Eshealthcarecentre1234@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true'
 
 // Force transaction mode on Supavisor to prevent EMAXCONNSSESSION errors
 if (connectionString.includes('pooler.supabase.com') && !connectionString.includes('pool_mode=transaction')) {
