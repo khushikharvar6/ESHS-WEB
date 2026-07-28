@@ -214,6 +214,9 @@ model NonConformance {
   description     String?
   rootCause       String?
   title           String?
+  correctiveAction String?
+  preventiveAction String?
+  capaStatus      String?  @default("Pending")
   updatedBy       String?
   updatedAt       String?
   createdAt       DateTime @default(now())

@@ -113,6 +113,9 @@ export async function createResource<T extends Record<string, any>>(
     data.id = String(data.id)
   }
   
+  if (data.createdAt) delete data.createdAt
+  if (data.updatedAt) delete data.updatedAt
+  
   return await model.create({ data })
 }
 
