@@ -29,6 +29,9 @@ let RolesGuard = class RolesGuard {
         if (!user) {
             return false;
         }
+        if (user.role === 'ADMIN' || user.role === 'PROJECT_COORDINATOR') {
+            return true;
+        }
         return requiredRoles.includes(user.role);
     }
 };

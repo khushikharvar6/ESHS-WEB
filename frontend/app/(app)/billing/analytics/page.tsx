@@ -76,6 +76,14 @@ export default function BillingAnalyticsPage() {
   // Generate available months for filtering based on existing invoice data
   const availableMonths = useMemo(() => {
     const months = new Set<string>()
+    
+    // Always include past 6 months as defaults so dropdown is never empty
+    for (let i = 0; i < 6; i++) {
+      const d = new Date()
+      d.setMonth(d.getMonth() - i)
+      months.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`)
+    }
+
     invoices.forEach(inv => {
       const d = parseDate(inv.date || inv.createdAt)
       if (d) {
@@ -87,7 +95,7 @@ export default function BillingAnalyticsPage() {
 
   const formatMonth = (yyyyMm: string) => {
     if (yyyyMm === 'All') return 'All Time'
-    const [y, m] = yyyMm.split('-')
+    const [y, m] = yyyyMm.split('-')
     const d = new Date(parseInt(y), parseInt(m) - 1, 1)
     return d.toLocaleString('default', { month: 'long', year: 'numeric' })
   }
@@ -152,27 +160,40 @@ export default function BillingAnalyticsPage() {
     return Object.entries(map).sort((a, b) => b[1].revenue - a[1].revenue)
   }, [filteredInvoices])
 
-  // Monthly trend (last 6 months)
+  // Dynamic Monthly trend based on filtered invoices
   const monthlyTrend = useMemo(() => {
-    const months: { label: string; revenue: number; count: number }[] = []
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date()
-      d.setMonth(d.getMonth() - i)
-      const monthLabel = d.toLocaleString('default', { month: 'short' })
-      const m = d.getMonth()
-      const y = d.getFullYear()
-      const monthInvs = invoices.filter(inv => {
-        const id = parseDate(inv.date || inv.createdAt)
-        return id && id.getMonth() === m && id.getFullYear() === y
-      })
-      months.push({
-        label: monthLabel,
-        revenue: monthInvs.reduce((s, inv) => s + Number(inv.paid || 0), 0),
-        count: monthInvs.length
-      })
+    const map: Record<string, { revenue: number; count: number }> = {}
+    filteredInvoices.forEach(inv => {
+      const d = parseDate(inv.date || inv.createdAt)
+      if (d) {
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+        if (!map[key]) map[key] = { revenue: 0, count: 0 }
+        map[key].revenue += Number(inv.paid || 0)
+        map[key].count += 1
+      }
+    })
+    
+    // If 'All' is selected and we don't have many months, backfill to 6 months
+    if (monthFilter === 'All' && Object.keys(map).length < 6) {
+      for (let i = 0; i < 6; i++) {
+        const d = new Date()
+        d.setMonth(d.getMonth() - i)
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+        if (!map[key]) map[key] = { revenue: 0, count: 0 }
+      }
     }
-    return months
-  }, [invoices])
+
+    return Object.entries(map)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([key, val]) => {
+        const [y, m] = key.split('-')
+        const d = new Date(parseInt(y), parseInt(m) - 1, 1)
+        return {
+          label: d.toLocaleString('default', { month: 'short', year: '2-digit' }),
+          ...val
+        }
+      })
+  }, [filteredInvoices, monthFilter])
 
   // Payment mode breakdown
   const paymentModes = useMemo(() => {
@@ -268,7 +289,6 @@ export default function BillingAnalyticsPage() {
             />
           </div>
         </div>
-        
         <div className="w-full md:w-1/3 flex items-center gap-3 border-l pl-4 border-slate-200">
           <Calendar className="h-6 w-6 text-indigo-500" />
           <div className="flex-1">
@@ -286,23 +306,43 @@ export default function BillingAnalyticsPage() {
             </Select>
           </div>
         </div>
+
+        <div className="w-full md:w-1/3 flex items-center gap-3 border-l pl-4 border-slate-200">
+          <Shield className="h-6 w-6 text-emerald-500" />
+          <div className="flex-1">
+            <Label className="text-[10px] font-bold text-slate-400 uppercase">Patient Category</Label>
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="border-none shadow-none p-0 h-auto text-lg font-bold text-emerald-900 focus:ring-0 bg-transparent">
+                <SelectValue placeholder="Select Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Categories</SelectItem>
+                <SelectItem value="Walk-In">Walk-In</SelectItem>
+                <SelectItem value="Corporate">Corporate</SelectItem>
+                <SelectItem value="Insurance">Insurance</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </div>
 
       {/* ─── CORE FINANCIAL KPIs ─── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <AnalyticsKPI label="Total Accrued Revenue" value={totalRevenue} icon={DollarSign} prefix="₹" color="text-indigo-600" bgColor="bg-indigo-50" detail={`${filteredInvoices.length} Total Bills Generated`} />
-        <AnalyticsKPI label="Realized Collection" value={totalPaid} icon={TrendingUp} prefix="₹" color="text-emerald-600" bgColor="bg-emerald-50" detail={`₹${totalRevenue - totalPaid} left to collect`} />
-        <AnalyticsKPI label="Outstanding AR (Balances)" value={totalDue} icon={TrendingDown} prefix="₹" color="text-red-600" bgColor="bg-red-50" detail={`${filteredInvoices.filter(i => Number(i.balance)>0).length} Pending Invoices`} />
-        <AnalyticsKPI label="Total Discounts & FOC Loss" value={totalDiscount} icon={Gift} prefix="₹" color="text-amber-600" bgColor="bg-amber-50" detail={`${focInvoices.length} FOC Services Given`} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <AnalyticsKPI label="Total Revenue" value={totalRevenue} icon={DollarSign} prefix="₹" color="text-indigo-600" bgColor="bg-indigo-50" />
+        <AnalyticsKPI label="Collected Amount" value={totalPaid} icon={TrendingUp} prefix="₹" color="text-emerald-600" bgColor="bg-emerald-50" />
+        <AnalyticsKPI label="Due Payment" value={totalDue} icon={TrendingDown} prefix="₹" color="text-red-600" bgColor="bg-red-50" />
+        <AnalyticsKPI label="Total Discounts" value={totalDiscount} icon={Percent} prefix="₹" color="text-amber-600" bgColor="bg-amber-50" />
+        <AnalyticsKPI label="FOC Bills" value={focInvoices.length} icon={Gift} color="text-rose-600" bgColor="bg-rose-50" />
+        <AnalyticsKPI label="Total Bills" value={filteredInvoices.length} icon={Receipt} color="text-blue-600" bgColor="bg-blue-50" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* ─── MONTHLY TREND CHART (6 MONTHS) ─── */}
+        {/* ─── MONTHLY TREND CHART ─── */}
         <Card className="lg:col-span-2 border-slate-200 shadow-sm overflow-hidden">
           <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
               <BarChart3 className="size-5 text-indigo-500" />
-              6-Month Revenue Trend
+              Month Revenue Trend
             </CardTitle>
             <CardDescription>Visual tracker of historical collection performance.</CardDescription>
           </CardHeader>
@@ -330,32 +370,8 @@ export default function BillingAnalyticsPage() {
           </CardContent>
         </Card>
 
-        {/* ─── CATEGORY & PAYMENT INSIGHTS ─── */}
+        {/* ─── PAYMENT INSIGHTS ─── */}
         <div className="flex flex-col gap-6">
-          <Card className="border-slate-200 shadow-sm">
-            <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-3">
-              <CardTitle className="text-md">Revenue by Patient Category</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-4">
-              {categoryBreakdown.map(([cat, data]) => (
-                <div key={cat} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-slate-100">
-                      {cat === 'Walk-In' ? <Users className="size-4 text-slate-600"/> : 
-                       cat === 'Corporate' ? <Building2 className="size-4 text-indigo-600"/> : 
-                       <Shield className="size-4 text-emerald-600"/>}
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-slate-700">{cat}</div>
-                      <div className="text-[11px] text-slate-500">{data.count} Patients</div>
-                    </div>
-                  </div>
-                  <div className="font-bold text-slate-900">₹{data.revenue.toLocaleString('en-IN')}</div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
           <Card className="border-slate-200 shadow-sm flex-1">
             <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-3">
               <CardTitle className="text-md">Payment Mode Split</CardTitle>
@@ -457,21 +473,6 @@ export default function BillingAnalyticsPage() {
                 </Select>
               </div>
 
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-slate-500 uppercase">Patient Category</Label>
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="bg-white"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="All">All Categories</SelectItem>
-                    <SelectItem value="Walk-In">Walk-In</SelectItem>
-                    <SelectItem value="Insurance">Insurance</SelectItem>
-                    <SelectItem value="Corporate">Corporate</SelectItem>
-                    <SelectItem value="Health Camp">Health Camp</SelectItem>
-                    <SelectItem value="Referral">Referral</SelectItem>
-                    <SelectItem value="Existing Patient">Existing Patient</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
 
             <div className="flex justify-end mt-4 gap-2">

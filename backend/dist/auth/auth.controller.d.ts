@@ -23,13 +23,13 @@ export declare class AuthController {
     }>;
     getProfile(userId: string): Promise<{
         id: string;
-        email: string;
-        role: string;
         firstName: string;
         lastName: string;
+        email: string;
+        createdAt: Date;
         department: string | null;
+        role: string;
         isActive: boolean;
         lastLogin: Date | null;
-        createdAt: Date;
     }>;
 }

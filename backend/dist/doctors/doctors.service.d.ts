@@ -5,14 +5,14 @@ export declare class DoctorsService {
     constructor(prisma: PrismaService);
     create(dto: CreateDoctorDto): Promise<{
         id: string;
-        email: string | null;
         firstName: string;
         lastName: string;
-        isActive: boolean;
+        phone: string | null;
+        email: string | null;
         createdAt: Date;
         updatedAt: Date;
-        phone: string | null;
         avatarUrl: string | null;
+        isActive: boolean;
         fullName: string;
         specialization: string[];
         qualification: string | null;
@@ -23,14 +23,14 @@ export declare class DoctorsService {
     }>;
     findAll(): Promise<{
         id: string;
-        email: string | null;
         firstName: string;
         lastName: string;
-        isActive: boolean;
+        phone: string | null;
+        email: string | null;
         createdAt: Date;
         updatedAt: Date;
-        phone: string | null;
         avatarUrl: string | null;
+        isActive: boolean;
         fullName: string;
         specialization: string[];
         qualification: string | null;
@@ -41,14 +41,14 @@ export declare class DoctorsService {
     }[]>;
     findById(id: string): Promise<{
         id: string;
-        email: string | null;
         firstName: string;
         lastName: string;
-        isActive: boolean;
+        phone: string | null;
+        email: string | null;
         createdAt: Date;
         updatedAt: Date;
-        phone: string | null;
         avatarUrl: string | null;
+        isActive: boolean;
         fullName: string;
         specialization: string[];
         qualification: string | null;
@@ -59,14 +59,14 @@ export declare class DoctorsService {
     }>;
     update(id: string, dto: UpdateDoctorDto): Promise<{
         id: string;
-        email: string | null;
         firstName: string;
         lastName: string;
-        isActive: boolean;
+        phone: string | null;
+        email: string | null;
         createdAt: Date;
         updatedAt: Date;
-        phone: string | null;
         avatarUrl: string | null;
+        isActive: boolean;
         fullName: string;
         specialization: string[];
         qualification: string | null;
@@ -77,14 +77,14 @@ export declare class DoctorsService {
     }>;
     deactivate(id: string): Promise<{
         id: string;
-        email: string | null;
         firstName: string;
         lastName: string;
-        isActive: boolean;
+        phone: string | null;
+        email: string | null;
         createdAt: Date;
         updatedAt: Date;
-        phone: string | null;
         avatarUrl: string | null;
+        isActive: boolean;
         fullName: string;
         specialization: string[];
         qualification: string | null;
