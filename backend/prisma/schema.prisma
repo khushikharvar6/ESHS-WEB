@@ -195,11 +195,16 @@ model Invoice {
   remarks       String?
   isFOC         Boolean  @default(false)
   referralType  String?
-  corporateName String?
-  updatedBy     String?
-  updatedAt     String?
-  createdAt     DateTime @default(now())
-  patientRef    Patient? @relation(fields: [uhid], references: [uhid])
+  corporateName     String?
+  department        String?
+  doctorName        String?
+  insuranceProvider String?
+  refundAmount      Decimal  @default(0)
+  focReason         String?
+  updatedBy         String?
+  updatedAt         String?
+  createdAt         DateTime @default(now())
+  patientRef        Patient? @relation(fields: [uhid], references: [uhid])
 }
 
 model NonConformance {

@@ -18,14 +18,9 @@ export declare class PatientsController {
     deactivate(id: string): Promise<{
         firstName: string;
         lastName: string;
-        service: string;
-        services: string[];
-        status: string;
-        inquiryId: string | null;
         createdAt: Date;
         updatedAt: string | null;
         uhid: string;
-        updatedBy: string | null;
         gender: string;
         mobileNo: string;
         bloodGroup: string | null;
@@ -46,12 +41,17 @@ export declare class PatientsController {
         emergencyPhoneNumber: string | null;
         emergencyRelationship: string | null;
         initials: string;
+        inquiryId: string | null;
         lastVisit: string;
         middleName: string | null;
         patientCategory: string | null;
         registeredOn: string;
         residentialAddress: string | null;
         salutation: string;
+        service: string;
+        services: string[];
+        status: string;
+        updatedBy: string | null;
         vip: boolean;
     }>;
 }

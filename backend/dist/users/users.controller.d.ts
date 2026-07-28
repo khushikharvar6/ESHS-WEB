@@ -6,14 +6,14 @@ export declare class UsersController {
     findAll(page?: number, limit?: number): Promise<{
         data: {
             id: string;
+            email: string;
+            role: string;
+            department: string | null;
             firstName: string;
             lastName: string;
-            email: string;
-            createdAt: Date;
-            department: string | null;
-            role: string;
             isActive: boolean;
             lastLogin: Date | null;
+            createdAt: Date;
         }[];
         total: number;
         page: number;
@@ -22,29 +22,29 @@ export declare class UsersController {
     }>;
     findById(id: string): Promise<{
         id: string;
+        email: string;
+        role: string;
+        department: string | null;
         firstName: string;
         lastName: string;
-        email: string;
-        createdAt: Date;
-        updatedAt: Date;
-        department: string | null;
-        role: string;
         isActive: boolean;
         lastLogin: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     update(id: string, dto: UpdateUserDto): Promise<{
         id: string;
+        email: string;
+        role: string;
+        department: string | null;
         firstName: string;
         lastName: string;
-        email: string;
-        department: string | null;
-        role: string;
         isActive: boolean;
     }>;
     remove(id: string): Promise<{
         id: string;
+        email: string;
         firstName: string;
         lastName: string;
-        email: string;
     }>;
 }

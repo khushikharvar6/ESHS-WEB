@@ -60,7 +60,10 @@ export async function listResource(resource: DbResource) {
   
     let results = []
     if (resource === 'invoices') {
-      results = await model.findMany({ orderBy: { createdAt: 'desc' } })
+      results = await model.findMany({ 
+        include: { patientRef: true },
+        orderBy: { createdAt: 'desc' } 
+      })
     } else if (resource === 'patients') {
       results = await model.findMany({ orderBy: { createdAt: 'desc' } })
     } else {

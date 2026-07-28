@@ -25,6 +25,14 @@ export async function POST(request: Request) {
     service: Array.isArray(payload.items) && payload.items.length > 0
       ? `${payload.items[0].department || 'Medical Services'}: ` + payload.items.map((i: any) => i.itemName || i.service || '').filter(Boolean).join(', ')
       : payload.service || '',
+    department: payload.department || (Array.isArray(payload.items) && payload.items.length > 0 ? payload.items[0].department : ''),
+    doctorName: payload.doctorName || '',
+    insuranceProvider: payload.insuranceProvider || '',
+    focReason: payload.focReason || '',
+    refundAmount: payload.refundAmount || 0,
+    corporateName: payload.corporateName || '',
+    isFOC: payload.isFOC || false,
+    referralType: payload.referralType || '',
     date: new Date().toISOString(),
     subtotal: payload.subtotal || 0,
     tax: payload.taxAmount || 0,

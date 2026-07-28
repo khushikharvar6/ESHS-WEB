@@ -4,15 +4,15 @@ export declare class NcController {
     private readonly ncService;
     constructor(ncService: NcService);
     create(dto: CreateNcDto, userId: string): Promise<{
-        description: string | null;
+        patient: string;
         id: string;
-        status: string;
+        department: string;
         createdAt: Date;
         updatedAt: string | null;
-        patient: string;
-        uhid: string;
+        description: string | null;
         title: string | null;
-        department: string;
+        uhid: string;
+        status: string;
         updatedBy: string | null;
         relatedDocument: string;
         severity: string;
@@ -25,15 +25,15 @@ export declare class NcController {
     }>;
     findAll(page?: number, limit?: number, status?: string, severity?: string, patientId?: string): Promise<{
         data: {
-            description: string | null;
+            patient: string;
             id: string;
-            status: string;
+            department: string;
             createdAt: Date;
             updatedAt: string | null;
-            patient: string;
-            uhid: string;
+            description: string | null;
             title: string | null;
-            department: string;
+            uhid: string;
+            status: string;
             updatedBy: string | null;
             relatedDocument: string;
             severity: string;
@@ -50,15 +50,15 @@ export declare class NcController {
         totalPages: number;
     }>;
     findById(id: string): Promise<{
-        description: string | null;
+        patient: string;
         id: string;
-        status: string;
+        department: string;
         createdAt: Date;
         updatedAt: string | null;
-        patient: string;
-        uhid: string;
+        description: string | null;
         title: string | null;
-        department: string;
+        uhid: string;
+        status: string;
         updatedBy: string | null;
         relatedDocument: string;
         severity: string;
@@ -70,15 +70,15 @@ export declare class NcController {
         capaStatus: string | null;
     }>;
     resolve(id: string, dto: ResolveNcDto, userId: string): Promise<{
-        description: string | null;
+        patient: string;
         id: string;
-        status: string;
+        department: string;
         createdAt: Date;
         updatedAt: string | null;
-        patient: string;
-        uhid: string;
+        description: string | null;
         title: string | null;
-        department: string;
+        uhid: string;
+        status: string;
         updatedBy: string | null;
         relatedDocument: string;
         severity: string;
@@ -90,15 +90,15 @@ export declare class NcController {
         capaStatus: string | null;
     }>;
     close(id: string): Promise<{
-        description: string | null;
+        patient: string;
         id: string;
-        status: string;
+        department: string;
         createdAt: Date;
         updatedAt: string | null;
-        patient: string;
-        uhid: string;
+        description: string | null;
         title: string | null;
-        department: string;
+        uhid: string;
+        status: string;
         updatedBy: string | null;
         relatedDocument: string;
         severity: string;

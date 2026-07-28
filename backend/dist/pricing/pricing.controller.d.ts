@@ -4,11 +4,11 @@ export declare class PricingController {
     constructor(pricingService: PricingService);
     getTests(category?: string, department?: string, search?: string): Promise<{
         id: string;
+        department: string;
+        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        department: string;
-        isActive: boolean;
         itemType: string;
         category: string;
         subcategory: string | null;
@@ -19,11 +19,11 @@ export declare class PricingController {
     }[]>;
     getTestById(id: string): Promise<{
         id: string;
+        department: string;
+        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        department: string;
-        isActive: boolean;
         itemType: string;
         category: string;
         subcategory: string | null;
@@ -34,11 +34,11 @@ export declare class PricingController {
     } | null>;
     getServices(): Promise<{
         id: string;
+        department: string;
+        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        department: string;
-        isActive: boolean;
         price: import("@prisma/client/runtime/library").Decimal;
         taxRate: import("@prisma/client/runtime/library").Decimal;
     }[]>;
@@ -46,11 +46,11 @@ export declare class PricingController {
         items: ({
             test: {
                 id: string;
+                department: string;
+                isActive: boolean;
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
-                department: string;
-                isActive: boolean;
                 itemType: string;
                 category: string;
                 subcategory: string | null;
@@ -68,12 +68,12 @@ export declare class PricingController {
             testId: string | null;
         })[];
     } & {
-        description: string | null;
         id: string;
+        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        isActive: boolean;
+        description: string | null;
         price: import("@prisma/client/runtime/library").Decimal;
         taxRate: import("@prisma/client/runtime/library").Decimal;
         sourceUrl: string;
@@ -82,11 +82,11 @@ export declare class PricingController {
         items: ({
             test: {
                 id: string;
+                department: string;
+                isActive: boolean;
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
-                department: string;
-                isActive: boolean;
                 itemType: string;
                 category: string;
                 subcategory: string | null;
@@ -104,12 +104,12 @@ export declare class PricingController {
             testId: string | null;
         })[];
     } & {
-        description: string | null;
         id: string;
+        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        isActive: boolean;
+        description: string | null;
         price: import("@prisma/client/runtime/library").Decimal;
         taxRate: import("@prisma/client/runtime/library").Decimal;
         sourceUrl: string;
@@ -121,11 +121,11 @@ export declare class PricingController {
     search(query: string): Promise<{
         tests: {
             id: string;
+            department: string;
+            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            department: string;
-            isActive: boolean;
             itemType: string;
             category: string;
             subcategory: string | null;
@@ -135,23 +135,23 @@ export declare class PricingController {
             sourceUrl: string;
         }[];
         packages: {
-            description: string | null;
             id: string;
+            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            isActive: boolean;
+            description: string | null;
             price: import("@prisma/client/runtime/library").Decimal;
             taxRate: import("@prisma/client/runtime/library").Decimal;
             sourceUrl: string;
         }[];
         services: {
             id: string;
+            department: string;
+            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
             name: string;
-            department: string;
-            isActive: boolean;
             price: import("@prisma/client/runtime/library").Decimal;
             taxRate: import("@prisma/client/runtime/library").Decimal;
         }[];

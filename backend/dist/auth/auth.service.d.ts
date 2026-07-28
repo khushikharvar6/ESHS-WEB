@@ -25,13 +25,13 @@ export declare class AuthService {
     }>;
     getProfile(userId: string): Promise<{
         id: string;
+        email: string;
+        role: string;
+        department: string | null;
         firstName: string;
         lastName: string;
-        email: string;
-        createdAt: Date;
-        department: string | null;
-        role: string;
         isActive: boolean;
         lastLogin: Date | null;
+        createdAt: Date;
     }>;
 }
