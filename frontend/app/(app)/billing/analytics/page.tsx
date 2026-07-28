@@ -66,7 +66,7 @@ export default function BillingAnalyticsPage() {
   const [searchUhid, setSearchUhid] = useState('')
   const [searchName, setSearchName] = useState('')
   const [periodFilter, setPeriodFilter] = useState('All') // All, Today, This Month, Last 6 Months, This Year
-  const [trendRange, setTrendRange] = useState(6) // 6 or 12 months
+  const [trendFilter, setTrendFilter] = useState('All') // 'All', '0' (Jan) - '11' (Dec)
   const [paymentCategoryFilter, setPaymentCategoryFilter] = useState('All')
 
   // Secondary Filter states
@@ -145,39 +145,42 @@ export default function BillingAnalyticsPage() {
     return Object.entries(map).sort((a, b) => b[1].revenue - a[1].revenue)
   }, [filteredInvoices])
 
-  // Dynamic Monthly trend based on filtered invoices
-  const monthlyTrend = useMemo(() => {
-    const map: Record<string, { revenue: number; count: number }> = {}
-    filteredInvoices.forEach(inv => {
-      const d = parseDate(inv.date || inv.createdAt)
-      if (d) {
-        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-        if (!map[key]) map[key] = { revenue: 0, count: 0 }
-        map[key].revenue += Number(inv.paid || 0)
-        map[key].count += 1
-      }
-    })
+  // Dynamic Trend Data (Yearly or Daily based on filter)
+  const chartData = useMemo(() => {
+    const data: { label: string; revenue: number; count: number }[] = []
     
-    // Always backfill up to trendRange (6 or 12 months)
-    for (let i = 0; i < trendRange; i++) {
-      const d = new Date()
-      d.setMonth(d.getMonth() - i)
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-      if (!map[key]) map[key] = { revenue: 0, count: 0 }
-    }
-
-    return Object.entries(map)
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .slice(-trendRange) // Ensure we only show the requested range
-      .map(([key, val]) => {
-        const [y, m] = key.split('-')
-        const d = new Date(parseInt(y), parseInt(m) - 1, 1)
-        return {
-          label: d.toLocaleString('default', { month: 'short' }),
-          ...val
+    if (trendFilter === 'All') {
+      const currentYear = new Date().getFullYear()
+      for (let i = 0; i < 12; i++) {
+        data.push({ label: new Date(currentYear, i, 1).toLocaleString('default', { month: 'short' }), revenue: 0, count: 0 })
+      }
+      filteredInvoices.forEach(inv => {
+        const d = parseDate(inv.date || inv.createdAt)
+        if (d && d.getFullYear() === currentYear) {
+          const m = d.getMonth()
+          data[m].revenue += Number(inv.paid || 0)
+          data[m].count += 1
         }
       })
-  }, [filteredInvoices, trendRange])
+    } else {
+      const month = parseInt(trendFilter)
+      const currentYear = new Date().getFullYear()
+      const daysInMonth = new Date(currentYear, month + 1, 0).getDate()
+      for (let i = 1; i <= daysInMonth; i++) {
+        data.push({ label: `${i}`, revenue: 0, count: 0 })
+      }
+      filteredInvoices.forEach(inv => {
+        const d = parseDate(inv.date || inv.createdAt)
+        if (d && d.getFullYear() === currentYear && d.getMonth() === month) {
+          const day = d.getDate()
+          data[day - 1].revenue += Number(inv.paid || 0)
+          data[day - 1].count += 1
+        }
+      })
+    }
+    
+    return data
+  }, [filteredInvoices, trendFilter])
 
   // Payment mode breakdown (affected by local category filter)
   const paymentModes = useMemo(() => {
@@ -248,8 +251,7 @@ export default function BillingAnalyticsPage() {
     },
   ]
 
-  const maxServiceRev = serviceRevenue.length > 0 ? Math.max(...serviceRevenue.map(([, v]) => v.revenue), 1) : 1
-  const maxMonthRev = monthlyTrend.length > 0 ? Math.max(...monthlyTrend.map(m => m.revenue), 1) : 1
+  const maxChartRev = chartData.length > 0 ? Math.max(...chartData.map(m => m.revenue), 1) : 1
 
   return (
     <div className="flex flex-col gap-6 max-w-[1600px] mx-auto w-full pb-10">
@@ -334,26 +336,37 @@ export default function BillingAnalyticsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ─── MONTHLY TREND CHART (LINE CHART) ─── */}
-        <Card className="lg:col-span-2 border-slate-200 shadow-sm overflow-hidden flex flex-col">
+        <Card className="lg:col-span-2 border-slate-200 shadow-sm flex flex-col">
           <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-4 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <BarChart3 className="size-5 text-indigo-500" />
-                Month Revenue Trend
+                Revenue Trend
               </CardTitle>
               <CardDescription>Visual tracker of historical collection performance.</CardDescription>
             </div>
-            <Select value={trendRange.toString()} onValueChange={(v) => setTrendRange(Number(v))}>
+            <Select value={trendFilter} onValueChange={setTrendFilter}>
               <SelectTrigger className="w-[160px] bg-white h-9 shadow-sm border-slate-200 text-sm font-semibold">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="6">Last 6 Months</SelectItem>
-                <SelectItem value="12">Last 12 Months</SelectItem>
+                <SelectItem value="All">All Months</SelectItem>
+                <SelectItem value="0">January</SelectItem>
+                <SelectItem value="1">February</SelectItem>
+                <SelectItem value="2">March</SelectItem>
+                <SelectItem value="3">April</SelectItem>
+                <SelectItem value="4">May</SelectItem>
+                <SelectItem value="5">June</SelectItem>
+                <SelectItem value="6">July</SelectItem>
+                <SelectItem value="7">August</SelectItem>
+                <SelectItem value="8">September</SelectItem>
+                <SelectItem value="9">October</SelectItem>
+                <SelectItem value="10">November</SelectItem>
+                <SelectItem value="11">December</SelectItem>
               </SelectContent>
             </Select>
           </CardHeader>
-          <CardContent className="pt-6 flex-1 flex flex-col justify-end">
+          <CardContent className="pt-6 flex-1 flex flex-col justify-end pb-8">
             <div className="h-64 relative w-full pt-4">
               {/* Line Chart SVG */}
               <svg className="absolute inset-0 h-full w-full overflow-visible" preserveAspectRatio="none">
@@ -363,40 +376,46 @@ export default function BillingAnalyticsPage() {
                   strokeWidth="3" 
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  points={monthlyTrend.map((m, i) => {
-                    const x = (i / Math.max(monthlyTrend.length - 1, 1)) * 100
-                    const y = 100 - (m.revenue / maxMonthRev) * 100
+                  points={chartData.map((m, i) => {
+                    const x = (i / Math.max(chartData.length - 1, 1)) * 100
+                    const y = 100 - (m.revenue / maxChartRev) * 100
                     return `${x}%,${y}%`
                   }).join(' ')} 
                 />
               </svg>
               {/* Nodes and Labels */}
               <div className="absolute inset-0 flex justify-between items-end h-full">
-                {monthlyTrend.map((m, i) => {
-                  const yPct = 100 - (m.revenue / maxMonthRev) * 100
+                {chartData.map((m, i) => {
+                  const yPct = 100 - (m.revenue / maxChartRev) * 100
+                  // Show fewer labels on X-axis if it's daily mode (too crowded otherwise)
+                  const showLabel = trendFilter === 'All' || i % 3 === 0 || i === chartData.length - 1
+                  
                   return (
                     <div key={i} className="flex flex-col items-center flex-1 relative group h-full justify-end">
                       {/* Data Point Dot */}
                       <div 
-                        className="absolute w-3 h-3 bg-white border-2 border-indigo-600 rounded-full z-10 transition-transform group-hover:scale-150 group-hover:bg-indigo-600"
-                        style={{ top: `calc(${yPct}% - 6px)` }}
+                        className="absolute w-2.5 h-2.5 bg-white border-2 border-indigo-600 rounded-full z-10 transition-transform group-hover:scale-150 group-hover:bg-indigo-600"
+                        style={{ top: `calc(${yPct}% - 5px)` }}
                       />
                       {/* Tooltip */}
                       <div 
-                        className="absolute opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap pointer-events-none z-20"
+                        className="absolute opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-20 pointer-events-none"
                         style={{ top: `calc(${yPct}% - 35px)` }}
                       >
                         ₹{m.revenue.toLocaleString('en-IN')} ({m.count} bills)
                       </div>
                       
                       {/* X-axis Label */}
-                      <span className="text-xs font-semibold text-slate-600 -mb-6 mt-auto absolute bottom-[-24px]">{m.label}</span>
+                      {showLabel && (
+                        <span className="text-[10px] font-semibold text-slate-500 absolute bottom-[-24px] whitespace-nowrap">
+                          {m.label}
+                        </span>
+                      )}
                     </div>
                   )
                 })}
               </div>
             </div>
-            <div className="h-6" /> {/* spacer for labels */}
           </CardContent>
         </Card>
 
@@ -441,38 +460,7 @@ export default function BillingAnalyticsPage() {
         </div>
       </div>
 
-      {/* ─── DEPARTMENT SERVICE REVENUE DISTRIBUTION ─── */}
-      <Card className="border-slate-200 shadow-sm">
-        <CardHeader className="bg-slate-50/50 border-b border-slate-100">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Stethoscope className="size-5 text-blue-500" />
-            Department / Service Revenue Distribution
-          </CardTitle>
-          <CardDescription>Horizontal tracking of service performance</CardDescription>
-        </CardHeader>
-        <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-          {serviceRevenue.map(([name, val]) => {
-            const pct = Math.round((val.revenue / maxServiceRev) * 100)
-            return (
-              <div key={name} className="space-y-2 group">
-                <div className="flex justify-between items-end">
-                  <div>
-                    <div className="text-sm font-bold text-slate-700">{name}</div>
-                    <div className="text-[11px] text-slate-500">{val.count} procedures billed</div>
-                  </div>
-                  <span className="text-sm font-black text-slate-900">₹{val.revenue.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-                  <div 
-                    className="bg-gradient-to-r from-blue-500 to-cyan-400 h-full rounded-full transition-all duration-700 group-hover:opacity-80" 
-                    style={{ width: `${pct}%` }} 
-                  />
-                </div>
-              </div>
-            )
-          })}
-        </CardContent>
-      </Card>
+
 
       {/* ─── SECONDARY FILTERS & DETAILED DATA TABLE ─── */}
       <Card className="border-slate-200 shadow-sm mt-4">
@@ -531,56 +519,6 @@ export default function BillingAnalyticsPage() {
 
       {/* ─── Charts ─── */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Monthly Revenue Trend */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><TrendingUp className="size-5 text-blue-500" /> Monthly Revenue Trend</CardTitle>
-            <CardDescription>Revenue collection over the last 6 months</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {monthlyTrend.map(m => {
-              const pct = Math.round((m.revenue / maxMonthRev) * 100)
-              return (
-                <div key={m.label} className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-slate-700">{m.label} <span className="text-slate-400 font-normal">({m.count} bills)</span></span>
-                    <span className="text-slate-900">₹{m.revenue.toLocaleString('en-IN')}</span>
-                  </div>
-                  <div className="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden">
-                    <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
-                  </div>
-                </div>
-              )
-            })}
-          </CardContent>
-        </Card>
-
-        {/* Service Revenue Distribution */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Stethoscope className="size-5 text-emerald-500" /> Service Revenue Distribution</CardTitle>
-            <CardDescription>Revenue breakdown by department / service</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {serviceRevenue.length === 0 ? (
-              <div className="text-center py-8 text-slate-500">No billing data available for the selected filters.</div>
-            ) : serviceRevenue.slice(0, 10).map(([name, data]) => {
-              const pct = Math.round((data.revenue / maxServiceRev) * 100)
-              return (
-                <div key={name} className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-slate-700">{name} <span className="text-slate-400 font-normal">({data.count} bills)</span></span>
-                    <span className="text-slate-900">₹{data.revenue.toLocaleString('en-IN')}</span>
-                  </div>
-                  <div className="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden">
-                    <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
-                  </div>
-                </div>
-              )
-            })}
-          </CardContent>
-        </Card>
-
         {/* FOC Analysis */}
         <Card>
           <CardHeader>
