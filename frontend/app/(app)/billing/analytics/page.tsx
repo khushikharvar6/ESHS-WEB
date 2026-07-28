@@ -298,7 +298,7 @@ export default function BillingAnalyticsPage() {
     return alerts
   }, [filteredInvoices, deptData, metrics])
 
-  const columns: Column[] = [
+    const columns: Column<Invoice>[] = [
     { key: 'id', title: 'Invoice No.', render: (r) => <span className="font-mono text-xs">{r.id.substring(0,8)}</span> },
     { key: 'date', title: 'Date', render: (r) => <span className="text-xs">{parseDate(r.date || r.createdAt)?.toLocaleDateString()}</span> },
     { key: 'patient', title: 'Patient', render: (r) => (
@@ -457,7 +457,7 @@ export default function BillingAnalyticsPage() {
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} tickFormatter={(val) => `₹${val}`} />
-                  <RechartsTooltip formatter={(value: number) => `₹${value.toLocaleString()}`} />
+                  <RechartsTooltip formatter={(value: any) => `₹${value.toLocaleString()}`} />
                   <Area type="monotone" dataKey="Revenue" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
                 </AreaChart>
               </ResponsiveContainer>
@@ -472,11 +472,15 @@ export default function BillingAnalyticsPage() {
           <CardContent>
             <div className="h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={deptData} layout="vertical" margin={{ top: 0, right: 10, left: 40, bottom: 0 }}>
+                <BarChart data={deptData} layout="vertical" margin={{ top: 0, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
-                  <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} tickFormatter={(v) => `₹${v}`} />
-                  <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                  <RechartsTooltip cursor={{fill: '#f8fafc'}} formatter={(v: number) => `₹${v.toLocaleString()}`} />
+                  <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} tickFormatter={(v: any) => `₹${v}`} />
+                  <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} width={100} />
+                  <RechartsTooltip 
+                    cursor={{ fill: '#f8fafc' }}
+                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    formatter={(val: any) => [`₹${val}`, 'Revenue']}
+                  />
                   <Bar dataKey="value" fill="#6366f1" radius={[0, 4, 4, 0]} barSize={20} />
                 </BarChart>
               </ResponsiveContainer>
@@ -498,7 +502,7 @@ export default function BillingAnalyticsPage() {
                   <Pie data={demoGenderData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
                     {demoGenderData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                   </Pie>
-                  <RechartsTooltip formatter={(v: number) => `₹${v.toLocaleString()}`} />
+                  <RechartsTooltip formatter={(v: any) => `₹${v.toLocaleString()}`} />
                   <Legend verticalAlign="bottom" height={36} iconType="circle" />
                 </PieChart>
               </ResponsiveContainer>
@@ -516,9 +520,13 @@ export default function BillingAnalyticsPage() {
                 <BarChart data={sourceData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                  <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} tickFormatter={(v) => `₹${v}`} />
+                  <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} tickFormatter={(v: any) => `₹${v}`} />
                   <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                  <RechartsTooltip cursor={{fill: '#f8fafc'}} />
+                  <RechartsTooltip 
+                    cursor={{ fill: '#f8fafc' }}
+                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    formatter={(val: any) => [`₹${val}`, 'Revenue']}
+                  />
                   <Bar yAxisId="left" dataKey="Revenue" fill="#10b981" radius={[4, 4, 0, 0]} barSize={30} />
                   <Line yAxisId="right" type="monotone" dataKey="Patients" stroke="#f59e0b" strokeWidth={3} dot={{r: 4}} />
                 </BarChart>
@@ -538,7 +546,7 @@ export default function BillingAnalyticsPage() {
           <Button variant="outline" size="sm"><Download className="mr-2 h-4 w-4" /> Export All Data</Button>
         </CardHeader>
         <CardContent className="p-0">
-          <DataTable columns={columns} data={filteredInvoices} searchKey="patient" />
+          <DataTable columns={columns} data={filteredInvoices} searchKeys={['patient']} />
         </CardContent>
       </Card>
     </div>

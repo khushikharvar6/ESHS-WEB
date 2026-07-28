@@ -186,9 +186,6 @@ export type Invoice = {
   patient: string
   service: string
   date: string
-  subtotal: number
-  tax: number
-  discount: number
   total: number
   paid: number
   balance: number
@@ -200,6 +197,13 @@ export type Invoice = {
   isFOC?: boolean
   referralType?: string
   corporateName?: string
+  department?: string
+  doctorName?: string
+  insuranceProvider?: string
+  refundAmount?: number
+  patientRef?: any
+  discount?: number
+  subtotal?: number
   createdAt?: string
 } & AuditMeta
 
