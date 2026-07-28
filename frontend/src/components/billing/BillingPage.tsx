@@ -117,7 +117,7 @@ export function BillingPage() {
   const [showServiceDropdown, setShowServiceDropdown] = useState(false)
   
   // Analytics Fields
-  const [primaryDepartment, setPrimaryDepartment] = useState(DEPARTMENTS[0] || 'General')
+  const [primaryDepartment, setPrimaryDepartment] = useState<string>(DEPARTMENTS[0] || 'General')
   const [isFOC, setIsFOC] = useState(false)
   const [focReason, setFocReason] = useState('')
 
