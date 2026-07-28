@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/select'
 import { Protect } from '@/components/protect'
 import { PageHeader } from '@/components/page-header'
-import { DEPARTMENTS } from '@/lib/constants'
+import { DEPARTMENTS, OUR_SERVICES_LIST } from '@/lib/constants'
 import { DataTable, type Column } from '@/components/data-table'
 import { StatusBadge } from '@/components/status-badge'
 import { useHealthcare } from '@/lib/store'
@@ -354,7 +354,7 @@ export default function BillingAnalyticsPage() {
                   <SelectTrigger className="bg-white h-8 text-xs"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="All">All Departments</SelectItem>
-                    {DEPARTMENTS.map(d => (
+                    {OUR_SERVICES_LIST.map(d => (
                       <SelectItem key={d} value={d}>{d}</SelectItem>
                     ))}
                   </SelectContent>

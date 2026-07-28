@@ -12,7 +12,7 @@ import { calculateBillingTotals } from '@/src/hooks/useBillingCalculator'
 import { SERVICE_MASTER } from '@/src/config/serviceMaster'
 import { ESHEALTH_TEST_MASTER } from '@/src/config/testMaster'
 import { PACKAGE_MASTER } from '@/src/config/packageMaster'
-import { DEPARTMENTS, CURRENT_USER } from '@/lib/constants'
+import { DEPARTMENTS, CURRENT_USER, OUR_SERVICES_LIST } from '@/lib/constants'
 import type { BillingInvoice, BillingInvoiceItem, BillingPatient, DiscountType, PaymentMode } from '@/src/types/billing.types'
 import { Protect } from '@/components/protect'
 import { useHealthcare } from '@/lib/store'
@@ -64,19 +64,7 @@ const emptyPatient: BillingPatient = {
   servicesTaken: [],
 }
 
-const OUR_SERVICES_LIST = [
-  'Doctor Consultation',
-  'Cardiology',
-  'Pulmonology',
-  'Radiology',
-  'Pathology',
-  'Home Healthcare',
-  'Vaccination',
-  'Dental',
-  'Ophthalmology',
-  'Sample Collection',
-  'Day Care'
-]
+
 
 /* ------------------------------------------------------------------ */
 /* Main Component                                                      */
@@ -117,7 +105,6 @@ export function BillingPage() {
   const [showServiceDropdown, setShowServiceDropdown] = useState(false)
   
   // Analytics Fields
-  const [primaryDepartment, setPrimaryDepartment] = useState<string>(DEPARTMENTS[0] || 'General')
   const [isFOC, setIsFOC] = useState(false)
   const [focReason, setFocReason] = useState('')
 
@@ -344,7 +331,7 @@ export function BillingPage() {
       transactionId: transactionId,
       remarks: remarksText,
       paymentStatus: totals.dueAmount <= 0 ? 'Paid' : receivedAmt > 0 || depositAmt > 0 ? 'Partially Paid' : 'Pending',
-      department: primaryDepartment,
+      department: invoice.items[0]?.department || 'General',
       doctorName: treatingDoctor,
       referralType: referType,
       insuranceProvider: payer === 'Insurance' ? 'Insurance Provider' : undefined,
@@ -403,7 +390,7 @@ export function BillingPage() {
         amountReceived: receivedAmt, 
         paymentMode: paymentMode as PaymentMode, 
         remarks: remarksText,
-        department: primaryDepartment,
+        department: invoice.items[0]?.department || 'General',
         doctorName: treatingDoctor,
         referralType: referType,
         insuranceProvider: payer === 'Insurance' ? 'Insurance Provider' : undefined,
@@ -616,14 +603,6 @@ export function BillingPage() {
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
-              {/* Primary Department */}
-              <div>
-                <label className="text-xs font-medium text-slate-600 mb-1 block">Primary Department <span className="text-red-500">*</span></label>
-                <select className="w-full border border-slate-300 rounded px-2 py-1.5 text-sm bg-white font-medium" value={primaryDepartment} onChange={e => setPrimaryDepartment(e.target.value)}>
-                  {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
-                </select>
-              </div>
-              
               {/* FOC Checkbox */}
               <div className="flex items-center gap-2 mt-4 md:mt-6">
                 <input type="checkbox" id="isFOC" className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer" checked={isFOC} onChange={e => setIsFOC(e.target.checked)} />

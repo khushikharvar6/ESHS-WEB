@@ -260,6 +260,20 @@ export const DEPARTMENTS = [
   'Nursing',
 ] as const
 
+export const OUR_SERVICES_LIST = [
+  'Doctor Consultation',
+  'Cardiology',
+  'Pulmonology',
+  'Radiology',
+  'Pathology',
+  'Home Healthcare',
+  'Vaccination',
+  'Dental',
+  'Ophthalmology',
+  'Sample Collection',
+  'Day Care'
+] as const
+
 export const NC_SEVERITIES = ['Minor', 'Major', 'Critical'] as const
 export const NC_STATUSES = ['Open', 'In Progress', 'Closed'] as const
 
