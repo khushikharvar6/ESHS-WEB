@@ -260,11 +260,38 @@ export default function BillingAnalyticsPage() {
     const map = new Map<string, { rev: number, count: number }>()
     filteredInvoices.forEach(inv => {
       const s = inv.referralType || 'Walk-in'
-      const ex = map.get(s) || { rev: 0, count: 0 }
-      map.set(s, { rev: ex.rev + Number(inv.total || 0), count: ex.count + 1 })
+      const cur = map.get(s) || { rev: 0, count: 0 }
+      map.set(s, { rev: cur.rev + Number(inv.total || 0), count: cur.count + 1 })
     })
-    return Array.from(map.entries()).map(([name, d]) => ({ name, Revenue: d.rev, Patients: d.count }))
+    return Array.from(map.entries()).map(([name, val]) => ({ name, Revenue: val.rev, Patients: val.count }))
   }, [filteredInvoices])
+
+  const handleExportCSV = () => {
+    const headers = ['Invoice No', 'Date', 'Patient Name', 'UHID', 'Department', 'Source', 'Total Amount', 'Paid', 'Due', 'Status']
+    const csvContent = [
+      headers.join(','),
+      ...filteredInvoices.map(inv => {
+        return [
+          inv.id,
+          parseDate(inv.date || inv.createdAt || '')?.toLocaleDateString() || '',
+          `"${(inv.patient || '').replace(/"/g, '""')}"`,
+          inv.uhid || '',
+          inv.department || 'General',
+          inv.referralType || 'Walk-in',
+          inv.total || 0,
+          inv.paid || 0,
+          inv.balance || 0,
+          inv.status || 'Pending'
+        ].join(',')
+      })
+    ].join('\n')
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `billing_analytics_${new Date().toISOString().split('T')[0]}.csv`
+    link.click()
+  }
 
   const demoGenderData = useMemo(() => {
     const map = new Map<string, number>()
@@ -322,8 +349,8 @@ export default function BillingAnalyticsPage() {
           <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className={showFilters ? 'bg-slate-100' : ''}>
             <Filter className="mr-2 h-4 w-4" /> Filters
           </Button>
-          <Button variant="outline"><Printer className="mr-2 h-4 w-4" /> Print</Button>
-          <Button><Download className="mr-2 h-4 w-4" /> Export CSV</Button>
+          <Button variant="outline" onClick={() => window.print()}><Printer className="mr-2 h-4 w-4" /> Print</Button>
+          <Button onClick={handleExportCSV}><Download className="mr-2 h-4 w-4" /> Export CSV</Button>
         </div>
       </div>
 
@@ -385,6 +412,22 @@ export default function BillingAnalyticsPage() {
                     <SelectItem value="Paid">Paid</SelectItem>
                     <SelectItem value="Partial">Partial</SelectItem>
                     <SelectItem value="Due">Due</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1">
+                <Label className="text-xs font-semibold">Age Group</Label>
+                <Select value={filters.ageGroup} onValueChange={(v) => setFilters({...filters, ageGroup: v || ''})}>
+                  <SelectTrigger className="bg-white h-8 text-xs"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Ages</SelectItem>
+                    <SelectItem value="0-12">0-12 Years</SelectItem>
+                    <SelectItem value="13-18">13-18 Years</SelectItem>
+                    <SelectItem value="19-35">19-35 Years</SelectItem>
+                    <SelectItem value="36-50">36-50 Years</SelectItem>
+                    <SelectItem value="51-65">51-65 Years</SelectItem>
+                    <SelectItem value="65+">65+ Years</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -543,7 +586,7 @@ export default function BillingAnalyticsPage() {
             <CardTitle className="text-md">Detailed Billing Register</CardTitle>
             <CardDescription>Comprehensive analytical data table of all transactions.</CardDescription>
           </div>
-          <Button variant="outline" size="sm"><Download className="mr-2 h-4 w-4" /> Export All Data</Button>
+          <Button variant="outline" size="sm" onClick={handleExportCSV}><Download className="mr-2 h-4 w-4" /> Export All Data</Button>
         </CardHeader>
         <CardContent className="p-0">
           <DataTable columns={columns} data={filteredInvoices} searchKeys={['patient']} getRowKey={(row: Invoice) => row.id} />
