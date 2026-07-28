@@ -15,7 +15,9 @@ import { Label } from '@/components/ui/label'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
+import { Protect } from '@/components/protect'
 import { PageHeader } from '@/components/page-header'
+import { DEPARTMENTS } from '@/lib/constants'
 import { DataTable, type Column } from '@/components/data-table'
 import { StatusBadge } from '@/components/status-badge'
 import { useHealthcare } from '@/lib/store'
@@ -352,8 +354,8 @@ export default function BillingAnalyticsPage() {
                   <SelectTrigger className="bg-white h-8 text-xs"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="All">All Departments</SelectItem>
-                    {Array.from(new Set((invoices || []).map(i => i.department).filter(Boolean))).map(d => (
-                      <SelectItem key={d as string} value={d as string}>{d as string}</SelectItem>
+                    {DEPARTMENTS.map(d => (
+                      <SelectItem key={d} value={d}>{d}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -366,7 +368,9 @@ export default function BillingAnalyticsPage() {
                   <SelectContent>
                     <SelectItem value="All">All Sources</SelectItem>
                     <SelectItem value="Walk-in">Walk-in</SelectItem>
-                    <SelectItem value="Corporate">Corporate</SelectItem>
+                    <SelectItem value="Doctor Referral">Doctor Referral</SelectItem>
+                    <SelectItem value="Corporate Tie-up">Corporate Tie-up</SelectItem>
+                    <SelectItem value="Camp / Outreach">Camp / Outreach</SelectItem>
                     <SelectItem value="Insurance">Insurance</SelectItem>
                   </SelectContent>
                 </Select>

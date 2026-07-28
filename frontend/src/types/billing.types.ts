@@ -123,4 +123,14 @@ export interface BillingInvoice {
   specialInstructions: string
   createdAt: string
   updatedAt: string
+  
+  // Analytics fields
+  department?: string
+  doctorName?: string
+  corporateName?: string
+  insuranceProvider?: string
+  referralType?: string
+  isFOC?: boolean
+  focReason?: string
+  refundAmount?: number
 }

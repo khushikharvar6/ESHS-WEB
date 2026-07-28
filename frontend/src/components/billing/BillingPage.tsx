@@ -115,6 +115,11 @@ export function BillingPage() {
   const [department, setDepartment] = useState('')
   const [serviceSearch, setServiceSearch] = useState('')
   const [showServiceDropdown, setShowServiceDropdown] = useState(false)
+  
+  // Analytics Fields
+  const [primaryDepartment, setPrimaryDepartment] = useState(DEPARTMENTS[0] || 'General')
+  const [isFOC, setIsFOC] = useState(false)
+  const [focReason, setFocReason] = useState('')
 
   // DB items
   const [dbTests, setDbTests] = useState<any[]>(ESHEALTH_TEST_MASTER)
@@ -339,6 +344,14 @@ export function BillingPage() {
       transactionId: transactionId,
       remarks: remarksText,
       paymentStatus: totals.dueAmount <= 0 ? 'Paid' : receivedAmt > 0 || depositAmt > 0 ? 'Partially Paid' : 'Pending',
+      department: primaryDepartment,
+      doctorName: treatingDoctor,
+      referralType: referType,
+      insuranceProvider: payer === 'Insurance' ? 'Insurance Provider' : undefined,
+      corporateName: payer === 'Corporate' ? 'Corporate Tie-up' : undefined,
+      isFOC: isFOC,
+      focReason: isFOC ? focReason : undefined,
+      refundAmount: 0,
     }
     try {
       const result = await billingApi.createInvoice(finalInvoice)
@@ -382,7 +395,23 @@ export function BillingPage() {
   const saveDraft = async () => {
     if (!patient) { toast.error('Please select a patient first'); return }
     try {
-      const result = await billingApi.saveDraft({ ...invoice, ...totals, discountValue: discountAmt, depositAmount: depositAmt, amountReceived: receivedAmt, paymentMode: paymentMode as PaymentMode, remarks: remarksText })
+      const result = await billingApi.saveDraft({ 
+        ...invoice, 
+        ...totals, 
+        discountValue: discountAmt, 
+        depositAmount: depositAmt, 
+        amountReceived: receivedAmt, 
+        paymentMode: paymentMode as PaymentMode, 
+        remarks: remarksText,
+        department: primaryDepartment,
+        doctorName: treatingDoctor,
+        referralType: referType,
+        insuranceProvider: payer === 'Insurance' ? 'Insurance Provider' : undefined,
+        corporateName: payer === 'Corporate' ? 'Corporate Tie-up' : undefined,
+        isFOC: isFOC,
+        focReason: isFOC ? focReason : undefined,
+        refundAmount: 0
+      })
       toast.success(`Draft saved: ${result.invoiceNumber ?? result.id}`)
     } catch {
       toast.error('Failed to save draft')
@@ -584,6 +613,30 @@ export function BillingPage() {
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+              {/* Primary Department */}
+              <div>
+                <label className="text-xs font-medium text-slate-600 mb-1 block">Primary Department <span className="text-red-500">*</span></label>
+                <select className="w-full border border-slate-300 rounded px-2 py-1.5 text-sm bg-white font-medium" value={primaryDepartment} onChange={e => setPrimaryDepartment(e.target.value)}>
+                  {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+                </select>
+              </div>
+              
+              {/* FOC Checkbox */}
+              <div className="flex items-center gap-2 mt-4 md:mt-6">
+                <input type="checkbox" id="isFOC" className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer" checked={isFOC} onChange={e => setIsFOC(e.target.checked)} />
+                <label htmlFor="isFOC" className="text-sm font-medium text-slate-700 cursor-pointer">Free of Cost (FOC)</label>
+              </div>
+
+              {/* FOC Reason */}
+              {isFOC && (
+                <div className="col-span-2">
+                  <label className="text-xs font-medium text-slate-600 mb-1 block">FOC Reason <span className="text-red-500">*</span></label>
+                  <input type="text" className="w-full border border-slate-300 rounded px-2 py-1.5 text-sm bg-white" placeholder="Reason for FOC..." value={focReason} onChange={e => setFocReason(e.target.value)} />
+                </div>
+              )}
             </div>
           </div>
         </div>

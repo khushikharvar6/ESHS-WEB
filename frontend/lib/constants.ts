@@ -31,7 +31,7 @@ export const NAV_ITEMS: NavItem[] = [
     href: '/billing', 
     icon: Receipt,
     subItems: [
-      { title: 'Billing Dashboard', href: '/billing' },
+      { title: 'Billing', href: '/billing' },
       { title: 'Billing Analytics', href: '/billing/analytics' }
     ]
   },
