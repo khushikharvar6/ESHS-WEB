@@ -197,6 +197,10 @@ export type Invoice = {
   transactionId?: string
   remarks?: string
   items?: InvoiceItem[]
+  isFOC?: boolean
+  referralType?: string
+  corporateName?: string
+  createdAt?: string
 } & AuditMeta
 
 export type PatientDocument = {

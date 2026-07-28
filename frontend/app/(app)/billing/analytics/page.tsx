@@ -521,7 +521,7 @@ export default function BillingAnalyticsPage() {
 
             <div className="flex justify-end mt-4 gap-2">
               <Button variant="outline" size="sm" onClick={() => {
-                setDateRange('all'); setCustomStart(''); setCustomEnd(''); setSearchUhid('')
+                setPeriodFilter('All'); setSearchUhid('')
                 setSearchName(''); setDeptFilter('All'); setPaymentStatus('All'); setCategoryFilter('All')
               }}>Reset Filters</Button>
             </div>
@@ -598,7 +598,7 @@ export default function BillingAnalyticsPage() {
                     <div className="text-xs text-rose-600 font-medium">FOC Bills</div>
                   </div>
                   <div className="rounded-lg bg-rose-50 border border-rose-200 p-3 text-center">
-                    <div className="text-2xl font-bold text-rose-700">₹{focAmount.toLocaleString('en-IN')}</div>
+                    <div className="text-2xl font-bold text-rose-700">₹{focInvoices.reduce((sum, inv) => sum + Number(inv.total || 0), 0).toLocaleString('en-IN')}</div>
                     <div className="text-xs text-rose-600 font-medium">Total FOC Value</div>
                   </div>
                   <div className="rounded-lg bg-rose-50 border border-rose-200 p-3 text-center">
