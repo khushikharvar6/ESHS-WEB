@@ -78,7 +78,7 @@ export default function BillingAnalyticsPage() {
   // Apply filters
   const filteredInvoices = useMemo(() => {
     return invoices.filter(inv => {
-      const d = parseDate(inv.date || inv.createdAt)
+      const d = parseDate(inv.date || inv.createdAt || '')
       
       // Relative Period filter
       if (periodFilter !== 'All' && d) {
@@ -155,7 +155,7 @@ export default function BillingAnalyticsPage() {
         data.push({ label: new Date(currentYear, i, 1).toLocaleString('default', { month: 'short' }), revenue: 0, count: 0 })
       }
       filteredInvoices.forEach(inv => {
-        const d = parseDate(inv.date || inv.createdAt)
+        const d = parseDate(inv.date || inv.createdAt || '')
         if (d && d.getFullYear() === currentYear) {
           const m = d.getMonth()
           data[m].revenue += Number(inv.paid || 0)
@@ -170,7 +170,7 @@ export default function BillingAnalyticsPage() {
         data.push({ label: `${i}`, revenue: 0, count: 0 })
       }
       filteredInvoices.forEach(inv => {
-        const d = parseDate(inv.date || inv.createdAt)
+        const d = parseDate(inv.date || inv.createdAt || '')
         if (d && d.getFullYear() === currentYear && d.getMonth() === month) {
           const day = d.getDate()
           data[day - 1].revenue += Number(inv.paid || 0)
@@ -287,7 +287,7 @@ export default function BillingAnalyticsPage() {
           <Calendar className="h-6 w-6 text-indigo-500" />
           <div className="flex-1">
             <Label className="text-[10px] font-bold text-slate-400 uppercase">Analysis Period</Label>
-            <Select value={periodFilter} onValueChange={setPeriodFilter}>
+            <Select value={periodFilter} onValueChange={(v) => setPeriodFilter(v || '')}>
               <SelectTrigger className="border-none shadow-none p-0 h-auto text-lg font-bold text-indigo-900 focus:ring-0 bg-transparent">
                 <SelectValue placeholder="Select Period" />
               </SelectTrigger>
@@ -306,7 +306,7 @@ export default function BillingAnalyticsPage() {
           <Shield className="h-6 w-6 text-emerald-500" />
           <div className="flex-1">
             <Label className="text-[10px] font-bold text-slate-400 uppercase">Patient Category</Label>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <Select value={categoryFilter} onValueChange={(v) => setCategoryFilter(v || '')}>
               <SelectTrigger className="border-none shadow-none p-0 h-auto text-lg font-bold text-emerald-900 focus:ring-0 bg-transparent">
                 <SelectValue placeholder="Select Category" />
               </SelectTrigger>
@@ -345,7 +345,7 @@ export default function BillingAnalyticsPage() {
               </CardTitle>
               <CardDescription>Visual tracker of historical collection performance.</CardDescription>
             </div>
-            <Select value={trendFilter} onValueChange={setTrendFilter}>
+            <Select value={trendFilter} onValueChange={(v) => setTrendFilter(v || '')}>
               <SelectTrigger className="w-[160px] bg-white h-9 shadow-sm border-slate-200 text-sm font-semibold">
                 <SelectValue />
               </SelectTrigger>
@@ -424,7 +424,7 @@ export default function BillingAnalyticsPage() {
           <Card className="border-slate-200 shadow-sm flex-1 flex flex-col">
             <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-3 flex flex-row justify-between items-center">
               <CardTitle className="text-md">Payment Mode Split</CardTitle>
-              <Select value={paymentCategoryFilter} onValueChange={setPaymentCategoryFilter}>
+              <Select value={paymentCategoryFilter} onValueChange={(v) => setPaymentCategoryFilter(v || '')}>
                 <SelectTrigger className="w-[130px] h-8 text-xs bg-white shadow-sm">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
@@ -482,7 +482,7 @@ export default function BillingAnalyticsPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <Label className="text-xs font-semibold text-slate-500 uppercase">Department</Label>
-                <Select value={deptFilter} onValueChange={setDeptFilter}>
+                <Select value={deptFilter} onValueChange={(v) => setDeptFilter(v || '')}>
                   <SelectTrigger className="bg-white"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="All">All Departments</SelectItem>
@@ -493,7 +493,7 @@ export default function BillingAnalyticsPage() {
 
               <div className="space-y-1">
                 <Label className="text-xs font-semibold text-slate-500 uppercase">Payment Status</Label>
-                <Select value={paymentStatus} onValueChange={setPaymentStatus}>
+                <Select value={paymentStatus} onValueChange={(v) => setPaymentStatus(v || '')}>
                   <SelectTrigger className="bg-white"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="All">All Statuses</SelectItem>
