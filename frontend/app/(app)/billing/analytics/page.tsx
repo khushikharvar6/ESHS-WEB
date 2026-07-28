@@ -20,7 +20,7 @@ import { PageHeader } from '@/components/page-header'
 import { DEPARTMENTS, OUR_SERVICES_LIST } from '@/lib/constants'
 import { DataTable, type Column } from '@/components/data-table'
 import { StatusBadge } from '@/components/status-badge'
-import { useHealthcare } from '@/lib/store'
+import { useHealthcare, type Invoice } from '@/lib/store'
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, 
   CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer,
@@ -147,7 +147,7 @@ export default function BillingAnalyticsPage() {
 
       if (filters.uhid && !(inv.uhid || '').toLowerCase().includes(filters.uhid.toLowerCase())) return false
       
-      const patName = typeof inv.patient === 'string' ? inv.patient : inv.patient?.name || ''
+      const patName = inv.patient || ''
       if (filters.patientName && !patName.toLowerCase().includes(filters.patientName.toLowerCase())) return false
 
       if (filters.department !== 'All' && inv.department !== filters.department) return false
@@ -298,20 +298,20 @@ export default function BillingAnalyticsPage() {
     return alerts
   }, [filteredInvoices, deptData, metrics])
 
-    const columns: Column<Invoice>[] = [
-    { key: 'id', title: 'Invoice No.', render: (r) => <span className="font-mono text-xs">{r.id.substring(0,8)}</span> },
-    { key: 'date', title: 'Date', render: (r) => <span className="text-xs">{parseDate(r.date || r.createdAt)?.toLocaleDateString()}</span> },
-    { key: 'patient', title: 'Patient', render: (r) => (
+  const columns: Column<Invoice>[] = [
+    { key: 'id', header: 'Invoice No.', render: (r) => <span className="font-mono text-xs">{r.id.substring(0,8)}</span> },
+    { key: 'date', header: 'Date', render: (r) => <span className="text-xs">{parseDate(r.date || r.createdAt)?.toLocaleDateString()}</span> },
+    { key: 'patient', header: 'Patient', render: (r) => (
       <div>
-        <div className="font-semibold text-sm">{typeof r.patient === 'string' ? r.patient : r.patient?.name}</div>
+        <div className="font-semibold text-sm">{r.patient || ''}</div>
         <div className="text-xs text-muted-foreground">{r.uhid}</div>
       </div>
     )},
-    { key: 'department', title: 'Department', render: (r) => r.department || 'N/A' },
-    { key: 'total', title: 'Net Payable', render: (r) => `₹${Number(r.total).toLocaleString('en-IN')}` },
-    { key: 'paid', title: 'Paid', render: (r) => `₹${Number(r.paid).toLocaleString('en-IN')}` },
-    { key: 'balance', title: 'Due', render: (r) => `₹${Number(r.balance).toLocaleString('en-IN')}` },
-    { key: 'status', title: 'Status', render: (r) => <StatusBadge status={r.status} /> }
+    { key: 'department', header: 'Department', render: (r) => <span className="text-xs">{r.department || 'General'}</span> },
+    { key: 'total', header: 'Net Payable', render: (r) => <span className="font-medium text-sm">₹{Number(r.total || 0).toLocaleString()}</span> },
+    { key: 'paid', header: 'Paid', render: (r) => <span className="text-sm text-green-600">₹{Number(r.paid || 0).toLocaleString()}</span> },
+    { key: 'balance', header: 'Due', render: (r) => <span className="text-sm text-red-600">₹{Number(r.balance || 0).toLocaleString()}</span> },
+    { key: 'status', header: 'Status', render: (r) => <StatusBadge status={r.status || 'Pending'} /> }
   ]
 
   return (
@@ -333,7 +333,7 @@ export default function BillingAnalyticsPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               <div className="space-y-1">
                 <Label className="text-xs font-semibold">Period</Label>
-                <Select value={filters.dateRange} onValueChange={(v) => setFilters({...filters, dateRange: v})}>
+                <Select value={filters.dateRange} onValueChange={(v) => setFilters({...filters, dateRange: v || ''})}>
                   <SelectTrigger className="bg-white h-8 text-xs"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {['All', 'Today', 'Yesterday', 'This Week', 'This Month', 'Quarter', 'Last 6 Months', 'Financial Year', 'Custom Range'].map(o => (
@@ -350,7 +350,7 @@ export default function BillingAnalyticsPage() {
 
               <div className="space-y-1">
                 <Label className="text-xs font-semibold">Department</Label>
-                <Select value={filters.department} onValueChange={(v) => setFilters({...filters, department: v})}>
+                <Select value={filters.department} onValueChange={(v) => setFilters({...filters, department: v || ''})}>
                   <SelectTrigger className="bg-white h-8 text-xs"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="All">All Departments</SelectItem>
@@ -363,7 +363,7 @@ export default function BillingAnalyticsPage() {
               
               <div className="space-y-1">
                 <Label className="text-xs font-semibold">Source / Referral</Label>
-                <Select value={filters.referralType} onValueChange={(v) => setFilters({...filters, referralType: v})}>
+                <Select value={filters.referralType} onValueChange={(v) => setFilters({...filters, referralType: v || ''})}>
                   <SelectTrigger className="bg-white h-8 text-xs"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="All">All Sources</SelectItem>
@@ -378,7 +378,7 @@ export default function BillingAnalyticsPage() {
               
               <div className="space-y-1">
                 <Label className="text-xs font-semibold">Payment Status</Label>
-                <Select value={filters.paymentStatus} onValueChange={(v) => setFilters({...filters, paymentStatus: v})}>
+                <Select value={filters.paymentStatus} onValueChange={(v) => setFilters({...filters, paymentStatus: v || ''})}>
                   <SelectTrigger className="bg-white h-8 text-xs"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="All">All Statuses</SelectItem>
@@ -390,8 +390,8 @@ export default function BillingAnalyticsPage() {
               </div>
 
               <div className="space-y-1">
-                <Label className="text-xs font-semibold">Free of Cost (FOC)</Label>
-                <Select value={filters.foc} onValueChange={(v) => setFilters({...filters, foc: v})}>
+                <Label className="text-xs font-semibold">Discount</Label>
+                <Select value={filters.discount} onValueChange={(v) => setFilters({...filters, discount: v || ''})}>
                   <SelectTrigger className="bg-white h-8 text-xs"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="All">All</SelectItem>
@@ -546,7 +546,7 @@ export default function BillingAnalyticsPage() {
           <Button variant="outline" size="sm"><Download className="mr-2 h-4 w-4" /> Export All Data</Button>
         </CardHeader>
         <CardContent className="p-0">
-          <DataTable columns={columns} data={filteredInvoices} searchKeys={['patient']} />
+          <DataTable columns={columns} data={filteredInvoices} searchKeys={['patient']} getRowKey={(row: Invoice) => row.id} />
         </CardContent>
       </Card>
     </div>
