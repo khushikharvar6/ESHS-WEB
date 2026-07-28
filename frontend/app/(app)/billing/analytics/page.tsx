@@ -65,7 +65,9 @@ export default function BillingAnalyticsPage() {
   // Primary Search States
   const [searchUhid, setSearchUhid] = useState('')
   const [searchName, setSearchName] = useState('')
-  const [monthFilter, setMonthFilter] = useState('All')
+  const [periodFilter, setPeriodFilter] = useState('All') // All, Today, This Month, Last 6 Months, This Year
+  const [trendRange, setTrendRange] = useState(6) // 6 or 12 months
+  const [paymentCategoryFilter, setPaymentCategoryFilter] = useState('All')
 
   // Secondary Filter states
   const [deptFilter, setDeptFilter] = useState('All')
@@ -73,42 +75,25 @@ export default function BillingAnalyticsPage() {
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [showFilters, setShowFilters] = useState(false)
 
-  // Generate available months for filtering based on existing invoice data
-  const availableMonths = useMemo(() => {
-    const months = new Set<string>()
-    
-    // Always include past 6 months as defaults so dropdown is never empty
-    for (let i = 0; i < 6; i++) {
-      const d = new Date()
-      d.setMonth(d.getMonth() - i)
-      months.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`)
-    }
-
-    invoices.forEach(inv => {
-      const d = parseDate(inv.date || inv.createdAt)
-      if (d) {
-        months.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`)
-      }
-    })
-    return Array.from(months).sort().reverse()
-  }, [invoices])
-
-  const formatMonth = (yyyyMm: string) => {
-    if (yyyyMm === 'All') return 'All Time'
-    const [y, m] = yyyyMm.split('-')
-    const d = new Date(parseInt(y), parseInt(m) - 1, 1)
-    return d.toLocaleString('default', { month: 'long', year: 'numeric' })
-  }
-
   // Apply filters
   const filteredInvoices = useMemo(() => {
     return invoices.filter(inv => {
       const d = parseDate(inv.date || inv.createdAt)
       
-      // Monthly filter
-      if (monthFilter !== 'All' && d) {
-        const invMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-        if (invMonth !== monthFilter) return false
+      // Relative Period filter
+      if (periodFilter !== 'All' && d) {
+        const today = new Date()
+        if (periodFilter === 'Today') {
+          if (d.toDateString() !== today.toDateString()) return false
+        } else if (periodFilter === 'This Month') {
+          if (d.getMonth() !== today.getMonth() || d.getFullYear() !== today.getFullYear()) return false
+        } else if (periodFilter === 'This Year') {
+          if (d.getFullYear() !== today.getFullYear()) return false
+        } else if (periodFilter === 'Last 6 Months') {
+          const sixMonthsAgo = new Date()
+          sixMonthsAgo.setMonth(today.getMonth() - 6)
+          if (d < sixMonthsAgo) return false
+        }
       }
 
       // UHID filter
@@ -132,7 +117,7 @@ export default function BillingAnalyticsPage() {
 
       return true
     })
-  }, [invoices, monthFilter, searchUhid, searchName, deptFilter, paymentStatus, categoryFilter, patients])
+  }, [invoices, periodFilter, searchUhid, searchName, deptFilter, paymentStatus, categoryFilter, patients])
 
   // ────── KPI Calculations ──────
   const totalRevenue = useMemo(() => filteredInvoices.reduce((sum, inv) => sum + Number(inv.total || 0), 0), [filteredInvoices])
@@ -173,37 +158,44 @@ export default function BillingAnalyticsPage() {
       }
     })
     
-    // If 'All' is selected and we don't have many months, backfill to 6 months
-    if (monthFilter === 'All' && Object.keys(map).length < 6) {
-      for (let i = 0; i < 6; i++) {
-        const d = new Date()
-        d.setMonth(d.getMonth() - i)
-        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-        if (!map[key]) map[key] = { revenue: 0, count: 0 }
-      }
+    // Always backfill up to trendRange (6 or 12 months)
+    for (let i = 0; i < trendRange; i++) {
+      const d = new Date()
+      d.setMonth(d.getMonth() - i)
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+      if (!map[key]) map[key] = { revenue: 0, count: 0 }
     }
 
     return Object.entries(map)
       .sort((a, b) => a[0].localeCompare(b[0]))
+      .slice(-trendRange) // Ensure we only show the requested range
       .map(([key, val]) => {
         const [y, m] = key.split('-')
         const d = new Date(parseInt(y), parseInt(m) - 1, 1)
         return {
-          label: d.toLocaleString('default', { month: 'short', year: '2-digit' }),
+          label: d.toLocaleString('default', { month: 'short' }),
           ...val
         }
       })
-  }, [filteredInvoices, monthFilter])
+  }, [filteredInvoices, trendRange])
 
-  // Payment mode breakdown
+  // Payment mode breakdown (affected by local category filter)
   const paymentModes = useMemo(() => {
     const map: Record<string, number> = {}
-    filteredInvoices.forEach(inv => {
+    const localFiltered = paymentCategoryFilter === 'All' 
+      ? filteredInvoices 
+      : filteredInvoices.filter(inv => {
+          const patient = patients.find(p => p.uhid === inv.uhid)
+          const cat = patient?.patientCategory || 'Walk-In'
+          return cat === paymentCategoryFilter
+        })
+
+    localFiltered.forEach(inv => {
       const mode = inv.paymentMode || 'Not Specified'
       map[mode] = (map[mode] || 0) + Number(inv.paid || 0)
     })
     return Object.entries(map).sort((a, b) => b[1] - a[1])
-  }, [filteredInvoices])
+  }, [filteredInvoices, paymentCategoryFilter, patients])
 
   // Category breakdown
   const categoryBreakdown = useMemo(() => {
@@ -293,15 +285,16 @@ export default function BillingAnalyticsPage() {
           <Calendar className="h-6 w-6 text-indigo-500" />
           <div className="flex-1">
             <Label className="text-[10px] font-bold text-slate-400 uppercase">Analysis Period</Label>
-            <Select value={monthFilter} onValueChange={setMonthFilter}>
+            <Select value={periodFilter} onValueChange={setPeriodFilter}>
               <SelectTrigger className="border-none shadow-none p-0 h-auto text-lg font-bold text-indigo-900 focus:ring-0 bg-transparent">
-                <SelectValue placeholder="Select Month" />
+                <SelectValue placeholder="Select Period" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">All Time</SelectItem>
-                {availableMonths.map(m => (
-                  <SelectItem key={m} value={m}>{formatMonth(m)}</SelectItem>
-                ))}
+                <SelectItem value="Today">Today</SelectItem>
+                <SelectItem value="This Month">This Month</SelectItem>
+                <SelectItem value="Last 6 Months">Last 6 Months</SelectItem>
+                <SelectItem value="This Year">This Year</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -318,8 +311,11 @@ export default function BillingAnalyticsPage() {
               <SelectContent>
                 <SelectItem value="All">All Categories</SelectItem>
                 <SelectItem value="Walk-In">Walk-In</SelectItem>
-                <SelectItem value="Corporate">Corporate</SelectItem>
                 <SelectItem value="Insurance">Insurance</SelectItem>
+                <SelectItem value="Corporate">Corporate</SelectItem>
+                <SelectItem value="Health Camp">Health Camp</SelectItem>
+                <SelectItem value="Referral">Referral</SelectItem>
+                <SelectItem value="Existing Patient">Existing Patient</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -337,44 +333,92 @@ export default function BillingAnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* ─── MONTHLY TREND CHART ─── */}
-        <Card className="lg:col-span-2 border-slate-200 shadow-sm overflow-hidden">
-          <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-4">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <BarChart3 className="size-5 text-indigo-500" />
-              Month Revenue Trend
-            </CardTitle>
-            <CardDescription>Visual tracker of historical collection performance.</CardDescription>
+        {/* ─── MONTHLY TREND CHART (LINE CHART) ─── */}
+        <Card className="lg:col-span-2 border-slate-200 shadow-sm overflow-hidden flex flex-col">
+          <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-4 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <BarChart3 className="size-5 text-indigo-500" />
+                Month Revenue Trend
+              </CardTitle>
+              <CardDescription>Visual tracker of historical collection performance.</CardDescription>
+            </div>
+            <Select value={trendRange.toString()} onValueChange={(v) => setTrendRange(Number(v))}>
+              <SelectTrigger className="w-[160px] bg-white h-9 shadow-sm border-slate-200 text-sm font-semibold">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="6">Last 6 Months</SelectItem>
+                <SelectItem value="12">Last 12 Months</SelectItem>
+              </SelectContent>
+            </Select>
           </CardHeader>
-          <CardContent className="pt-6">
-            <div className="h-64 flex items-end justify-between gap-2 px-2">
-              {monthlyTrend.map((m, i) => {
-                const pct = Math.max((m.revenue / maxMonthRev) * 100, 5) // min 5% for visibility
-                return (
-                  <div key={i} className="flex flex-col items-center gap-2 flex-1 group">
-                    <div className="w-full flex justify-center h-48 items-end relative">
+          <CardContent className="pt-6 flex-1 flex flex-col justify-end">
+            <div className="h-64 relative w-full pt-4">
+              {/* Line Chart SVG */}
+              <svg className="absolute inset-0 h-full w-full overflow-visible" preserveAspectRatio="none">
+                <polyline 
+                  fill="none" 
+                  stroke="#6366f1" 
+                  strokeWidth="3" 
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  points={monthlyTrend.map((m, i) => {
+                    const x = (i / Math.max(monthlyTrend.length - 1, 1)) * 100
+                    const y = 100 - (m.revenue / maxMonthRev) * 100
+                    return `${x}%,${y}%`
+                  }).join(' ')} 
+                />
+              </svg>
+              {/* Nodes and Labels */}
+              <div className="absolute inset-0 flex justify-between items-end h-full">
+                {monthlyTrend.map((m, i) => {
+                  const yPct = 100 - (m.revenue / maxMonthRev) * 100
+                  return (
+                    <div key={i} className="flex flex-col items-center flex-1 relative group h-full justify-end">
+                      {/* Data Point Dot */}
+                      <div 
+                        className="absolute w-3 h-3 bg-white border-2 border-indigo-600 rounded-full z-10 transition-transform group-hover:scale-150 group-hover:bg-indigo-600"
+                        style={{ top: `calc(${yPct}% - 6px)` }}
+                      />
                       {/* Tooltip */}
-                      <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap pointer-events-none z-10">
+                      <div 
+                        className="absolute opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap pointer-events-none z-20"
+                        style={{ top: `calc(${yPct}% - 35px)` }}
+                      >
                         ₹{m.revenue.toLocaleString('en-IN')} ({m.count} bills)
                       </div>
-                      <div 
-                        className="w-16 bg-gradient-to-t from-indigo-600 to-blue-400 rounded-t-md transition-all duration-700 ease-out group-hover:from-indigo-500 group-hover:to-blue-300" 
-                        style={{ height: `${pct}%` }}
-                      />
+                      
+                      {/* X-axis Label */}
+                      <span className="text-xs font-semibold text-slate-600 -mb-6 mt-auto absolute bottom-[-24px]">{m.label}</span>
                     </div>
-                    <span className="text-sm font-semibold text-slate-600">{m.label}</span>
-                  </div>
-                )
-              })}
+                  )
+                })}
+              </div>
             </div>
+            <div className="h-6" /> {/* spacer for labels */}
           </CardContent>
         </Card>
 
         {/* ─── PAYMENT INSIGHTS ─── */}
         <div className="flex flex-col gap-6">
-          <Card className="border-slate-200 shadow-sm flex-1">
-            <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-3">
+          <Card className="border-slate-200 shadow-sm flex-1 flex flex-col">
+            <CardHeader className="bg-slate-50/50 border-b border-slate-100 pb-3 flex flex-row justify-between items-center">
               <CardTitle className="text-md">Payment Mode Split</CardTitle>
+              <Select value={paymentCategoryFilter} onValueChange={setPaymentCategoryFilter}>
+                <SelectTrigger className="w-[130px] h-8 text-xs bg-white shadow-sm">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All Categories</SelectItem>
+                  <SelectItem value="Walk-In">Walk-In</SelectItem>
+                  <SelectItem value="Insurance">Insurance</SelectItem>
+                  <SelectItem value="Corporate">Corporate</SelectItem>
+                  <SelectItem value="Health Camp">Health Camp</SelectItem>
+                  <SelectItem value="Referral">Referral</SelectItem>
+                  <SelectItem value="Existing Patient">Existing Patient</SelectItem>
+                </SelectContent>
+              </Select>
             </CardHeader>
             <CardContent className="pt-4 space-y-3">
               {paymentModes.map(([mode, amt]) => {
