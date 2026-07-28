@@ -16,6 +16,7 @@ export type NavItem = {
   title: string
   href: string
   icon: LucideIcon
+  subItems?: { title: string; href: string }[]
 }
 
 /** Sidebar items */
@@ -25,7 +26,15 @@ export const NAV_ITEMS: NavItem[] = [
   { title: 'Appointment', href: '/appointment', icon: CalendarDays },
   { title: 'Registration', href: '/registration', icon: UserPlus },
   { title: 'Patients List', href: '/patient-profile', icon: Users },
-  { title: 'Billing', href: '/billing', icon: Receipt },
+  { 
+    title: 'Billing', 
+    href: '/billing', 
+    icon: Receipt,
+    subItems: [
+      { title: 'Billing Dashboard', href: '/billing' },
+      { title: 'Billing Analytics', href: '/billing/analytics' }
+    ]
+  },
   { title: 'Feedback', href: '/feedback', icon: MessageSquare },
   { title: 'MRD', href: '/mrd', icon: FolderCheck },
   { title: 'QA', href: '/qa', icon: ClipboardCheck },

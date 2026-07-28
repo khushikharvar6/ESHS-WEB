@@ -60,6 +60,7 @@ model Patient {
   residentialAddress         String?
   salutation                 String            @default("")
   service                    String            @default("")
+  services                   String[]          @default([])
   status                     String            @default("Active")
   updatedBy                  String?
   vip                        Boolean           @default(false)
@@ -71,6 +72,7 @@ model Patient {
   feedbacks                  Feedback[]
   corporate                  PatientCorporate?
   insurance                  PatientInsurance?
+
 
   @@index([uhid])
   @@index([mobileNo])
@@ -140,6 +142,7 @@ model Appointment {
   email     String?
   doctor    String   @default("")
   service   String   @default("")
+  services  String[] @default([])
   date      String   @default("")
   time      String   @default("")
   type      String   @default("")
@@ -192,6 +195,9 @@ model Invoice {
   paymentMode   String?
   transactionId String?
   remarks       String?
+  isFOC         Boolean  @default(false)
+  referralType  String?
+  corporateName String?
   updatedBy     String?
   updatedAt     String?
   createdAt     DateTime @default(now())
@@ -291,9 +297,16 @@ model Feedback {
   positiveComments          String?
   negativeComments          String?
   agreeToUsage              Boolean                      @default(true)
+  homeHealthcareServices    String?
+  qaStatus                  String?                      @default("Pending")
+  qaVerifiedBy              String?
+  qaVerifiedAt              DateTime?
+  qaReason                  String?
+  qaRemarks                 String?
   createdAt                 DateTime                     @default(now())
   cardiologyRatings         FeedbackCardiology[]
   dayCareRatings            FeedbackDayCare[]
+  dentalRatings             FeedbackDental[]
   doctorConsultationRatings FeedbackDoctorConsultation[]
   generalRatings            FeedbackGeneral[]
   homeHealthcareRatings     FeedbackHomeHealthcare[]
@@ -453,6 +466,17 @@ model FeedbackGeneral {
   @@map("feedback_general")
 }
 
+model FeedbackDental {
+  id         String   @id @default(uuid())
+  uhid       String?
+  feedbackId String
+  question   String
+  rating     Int
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+
+  @@map("feedback_dental")
+}
+
 model Inquiry {
   id            String   @id @default(uuid())
   firstName     String   @default("")
@@ -460,6 +484,7 @@ model Inquiry {
   phone         String   @default("")
   email         String?
   service       String   @default("")
+  services      String[] @default([])
   source        String   @default("")
   priority      String   @default("Routine")
   status        String   @default("New")

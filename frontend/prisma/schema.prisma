@@ -192,6 +192,9 @@ model Invoice {
   paymentMode   String?
   transactionId String?
   remarks       String?
+  isFOC         Boolean  @default(false)
+  referralType  String?
+  corporateName String?
   updatedBy     String?
   updatedAt     String?
   createdAt     DateTime @default(now())
@@ -291,6 +294,11 @@ model Feedback {
   positiveComments          String?
   negativeComments          String?
   homeHealthcareServices    String?
+  qaStatus                  String?                      @default("Pending")
+  qaVerifiedBy              String?
+  qaVerifiedAt              DateTime?
+  qaReason                  String?
+  qaRemarks                 String?
   agreeToUsage              Boolean                      @default(true)
   createdAt                 DateTime                     @default(now())
   cardiologyRatings         FeedbackCardiology[]

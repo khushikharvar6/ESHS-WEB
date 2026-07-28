@@ -364,10 +364,10 @@ export default function DashboardPage() {
       
       <div className="rounded-xl border border-primary/20 bg-gradient-to-r from-blue-50 via-white to-indigo-50 p-5 shadow-sm">
         <div className="flex flex-col gap-2">
-          <p className="text-lg font-bold uppercase tracking-[0.2em] text-primary">Dashboard</p>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl" suppressHydrationWarning>
             Hello {currentUser.name}
           </h1>
+          <p className="text-lg font-bold uppercase tracking-[0.2em] text-primary">Dashboard</p>
         </div>
       </div>
 

@@ -28,30 +28,55 @@ export function SidebarNav({ onNavigateAction }: { onNavigateAction?: () => void
         const active =
           item.href === '/'
             ? pathname === '/'
-            : pathname.startsWith(item.href)
+            : pathname.startsWith(item.href) && (!item.subItems || item.subItems.every(sub => pathname !== sub.href))
         const Icon = item.icon
+        
         return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onNavigateAction}
-            aria-current={active ? 'page' : undefined}
-            className={cn(
-              'group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200',
-              active
-                ? 'bg-primary text-primary-foreground shadow-sm'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-            )}
-          >
-            <Icon
+          <div key={item.href} className="flex flex-col gap-1">
+            <Link
+              href={item.href}
+              onClick={item.subItems ? undefined : onNavigateAction}
+              aria-current={active && !item.subItems ? 'page' : undefined}
               className={cn(
-                'size-4.5 shrink-0 transition-transform duration-200 group-hover:scale-110',
-                active ? 'text-primary-foreground' : 'text-muted-foreground',
+                'group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200',
+                (active && !item.subItems) || (pathname === item.href && item.subItems)
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
               )}
-              aria-hidden="true"
-            />
-            <span>{item.title}</span>
-          </Link>
+            >
+              <Icon
+                className={cn(
+                  'size-4.5 shrink-0 transition-transform duration-200 group-hover:scale-110',
+                  (active && !item.subItems) || (pathname === item.href && item.subItems) ? 'text-primary-foreground' : 'text-muted-foreground',
+                )}
+                aria-hidden="true"
+              />
+              <span>{item.title}</span>
+            </Link>
+
+            {item.subItems && (
+              <div className="flex flex-col gap-1 pl-9 mt-1">
+                {item.subItems.map(subItem => {
+                  const isSubActive = pathname === subItem.href
+                  return (
+                    <Link
+                      key={subItem.href}
+                      href={subItem.href}
+                      onClick={onNavigateAction}
+                      className={cn(
+                        'block rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+                        isSubActive
+                          ? 'text-primary font-semibold'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                      )}
+                    >
+                      {subItem.title}
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
+          </div>
         )
       })}
     </nav>

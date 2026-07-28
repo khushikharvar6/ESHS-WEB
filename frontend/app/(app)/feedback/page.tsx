@@ -66,6 +66,7 @@ const FEEDBACK_SECTIONS = [
   'Radiology',
   'Cardiology',
   'Pulmonology',
+  'Dental',
   'Dental Services',
   'Ophthalmology Services',
   'Physiotherapy Services',
@@ -180,7 +181,11 @@ export default function FeedbackPage() {
     if (serviceFilter !== 'All Services') {
       result = result.filter(f => {
         const s = f.service || 'General'
-        return s.includes(serviceFilter)
+        // Many-to-many: check if any of the patient's services match the filter
+        const serviceList = s.split(',').map((sv: string) => sv.trim())
+        const ratingCategories = (f.ratings || []).map((r: any) => r.category)
+        const allServices = [...serviceList, ...ratingCategories]
+        return allServices.some((sv: string) => sv.includes(serviceFilter) || serviceFilter.includes(sv))
       })
     }
 
@@ -480,19 +485,17 @@ export default function FeedbackPage() {
                     Print Form
                   </Button>
                   <Button variant="secondary" onClick={() => {
-                    const svcQuery = selectedServices.length > 0 ? `?services=${encodeURIComponent(selectedServices.join(','))}` : ''
-                    const link = `${window.location.origin}/f/${patient.uhid}${svcQuery}`
+                    const link = `${window.location.origin}/f/${patient.uhid}`
                     navigator.clipboard.writeText(link)
-                    toast.success('Feedback link copied with selected sections!')
+                    toast.success('Feedback link copied!')
                   }}>
                     Copy Link
                   </Button>
                   <Button 
                     className="bg-[#25D366] hover:bg-[#1da851] text-white flex items-center gap-2"
                     onClick={() => {
-                      const svcQuery = selectedServices.length > 0 ? `?services=${encodeURIComponent(selectedServices.join(','))}` : ''
-                      const link = `${window.location.origin}/f/${patient.uhid}${svcQuery}`
-                      const text = encodeURIComponent(`Dear ${patient.name || 'Patient'}, thank you for visiting ES Healthcare Centre. We hope you had a great experience! Please take 1 minute to fill out your feedback form here: ${link}`)
+                      const link = `${window.location.origin}/f/${patient.uhid}`
+                      const text = encodeURIComponent(`Dear ${patient.name || 'Patient'},\n\nThank you for choosing *ES Healthcare Centre* for your recent visit.\n\nYour health and satisfaction are our top priorities. We would truly appreciate it if you could take 1 minute to share your experience:\n\n${link}\n\nYour UHID: ${patient.uhid}\n\nWarm regards,\nES Healthcare Centre\n📞 +917961616161`)
                       window.open(`https://wa.me/?text=${text}`, 'whatsapp_web')
                     }}
                   >
@@ -957,7 +960,7 @@ export default function FeedbackPage() {
                           }}>Copy Link</Button>
                           <Button size="sm" className="bg-[#25D366] hover:bg-[#1da851] text-white" onClick={() => {
                             const link = `${window.location.origin}/f/${p.uhid}`
-                            const text = encodeURIComponent(`Dear ${p.name || 'Patient'}, thank you for visiting ES Healthcare Centre. We hope you had a great experience! Please take 1 minute to fill out your feedback form here: ${link}`)
+                            const text = encodeURIComponent(`Dear ${p.name || 'Patient'},\n\nThank you for choosing *ES Healthcare Centre* for your recent visit.\n\nYour health and satisfaction are our top priorities. We would truly appreciate it if you could take 1 minute to share your experience:\n\n${link}\n\nYour UHID: ${p.uhid}\n\nWarm regards,\nES Healthcare Centre\n📞 +917961616161`)
                             window.open(`https://wa.me/?text=${text}`, 'whatsapp_web')
                           }}><MessageCircle className="w-4 h-4 mr-2" /> Share WhatsApp</Button>
                         </div>

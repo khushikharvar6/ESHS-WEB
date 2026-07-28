@@ -68,25 +68,71 @@ export function AppHeader({ onOpenSidebar }: { onOpenSidebar: () => void }) {
 
   const searchResults = useMemo(() => {
     if (!searchQuery.trim() || !store) return []
-    const query = searchQuery.toLowerCase()
+    const query = searchQuery.toLowerCase().trim()
     const results: { type: string; title: string; subtitle: string; href: string }[] = []
 
-    // 1. Search patients
+    // 1. Search patients by UHID, firstName, middleName, lastName, mobile
     store.patients.forEach(p => {
-      const name = `${p.firstName || ''} ${p.lastName || ''}`.toLowerCase()
+      const firstName = (p.firstName || '').toLowerCase()
+      const middleName = (p.middleName || '').toLowerCase()
+      const lastName = (p.lastName || '').toLowerCase()
+      const fullName = `${firstName} ${middleName} ${lastName}`.trim()
       const uhid = (p.uhid || '').toLowerCase()
-      const phone = (p.phone || '').toLowerCase()
-      if (name.includes(query) || uhid.includes(query) || phone.includes(query)) {
+      const phone = (p.phone || p.mobileNo || '').toLowerCase()
+      if (
+        fullName.includes(query) ||
+        firstName.includes(query) ||
+        middleName.includes(query) ||
+        lastName.includes(query) ||
+        uhid.includes(query) ||
+        phone.includes(query)
+      ) {
         results.push({
           type: 'Patient',
-          title: `${p.firstName} ${p.lastName}`,
-          subtitle: `UHID: ${p.uhid} | Phone: ${p.phone || 'N/A'}`,
+          title: `${p.firstName || ''} ${p.middleName ? p.middleName + ' ' : ''}${p.lastName || ''}`.trim(),
+          subtitle: `UHID: ${p.uhid} | Phone: ${p.phone || p.mobileNo || 'N/A'}`,
           href: `/patient-profile?uhid=${p.uhid}`
         })
       }
     })
 
-    return results.slice(0, 10)
+    // 2. Search invoices by invoice number
+    store.invoices.forEach(inv => {
+      const invId = (inv.id || '').toLowerCase()
+      const invPatient = (inv.patient || '').toLowerCase()
+      const invUhid = (inv.uhid || '').toLowerCase()
+      if (invId.includes(query) || invPatient.includes(query) || invUhid.includes(query)) {
+        results.push({
+          type: 'Invoice',
+          title: `Invoice ${inv.id}`,
+          subtitle: `Patient: ${inv.patient || 'N/A'} | Amount: ₹${Number(inv.total || 0).toLocaleString('en-IN')} | Status: ${inv.status}`,
+          href: inv.uhid ? `/patient-profile?uhid=${inv.uhid}` : `/billing`
+        })
+      }
+    })
+
+    // 3. Search appointments
+    store.appointments.forEach(a => {
+      const aName = `${a.firstName || ''} ${a.lastName || ''}`.toLowerCase()
+      const aId = (a.id || '').toLowerCase()
+      if (aName.includes(query) || aId.includes(query)) {
+        results.push({
+          type: 'Appointment',
+          title: `${a.firstName} ${a.lastName}`,
+          subtitle: `Ref: ${a.id} | ${a.service} | ${a.date} ${a.time}`,
+          href: `/appointment`
+        })
+      }
+    })
+
+    // Deduplicate by href + title and limit
+    const seen = new Set<string>()
+    return results.filter(r => {
+      const key = `${r.type}-${r.title}-${r.href}`
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    }).slice(0, 12)
   }, [searchQuery, store])
 
   useEffect(() => {
