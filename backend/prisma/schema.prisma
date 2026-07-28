@@ -3,9 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -72,7 +71,6 @@ model Patient {
   feedbacks                  Feedback[]
   corporate                  PatientCorporate?
   insurance                  PatientInsurance?
-
 
   @@index([uhid])
   @@index([mobileNo])
@@ -217,6 +215,9 @@ model NonConformance {
   description     String?
   rootCause       String?
   title           String?
+  correctiveAction String?
+  preventiveAction String?
+  capaStatus      String?  @default("Pending")
   updatedBy       String?
   updatedAt       String?
   createdAt       DateTime @default(now())
@@ -296,13 +297,13 @@ model Feedback {
   staffAppreciated          String?
   positiveComments          String?
   negativeComments          String?
-  agreeToUsage              Boolean                      @default(true)
   homeHealthcareServices    String?
   qaStatus                  String?                      @default("Pending")
   qaVerifiedBy              String?
   qaVerifiedAt              DateTime?
   qaReason                  String?
   qaRemarks                 String?
+  agreeToUsage              Boolean                      @default(true)
   createdAt                 DateTime                     @default(now())
   cardiologyRatings         FeedbackCardiology[]
   dayCareRatings            FeedbackDayCare[]
@@ -354,6 +355,17 @@ model FeedbackPathology {
   feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
 
   @@map("feedback_pathology")
+}
+
+model FeedbackDental {
+  id         String   @id @default(uuid())
+  uhid       String?
+  feedbackId String
+  question   String
+  rating     Int
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+
+  @@map("feedback_dental")
 }
 
 model FeedbackRadiology {
@@ -464,17 +476,6 @@ model FeedbackGeneral {
   feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
 
   @@map("feedback_general")
-}
-
-model FeedbackDental {
-  id         String   @id @default(uuid())
-  uhid       String?
-  feedbackId String
-  question   String
-  rating     Int
-  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
-
-  @@map("feedback_dental")
 }
 
 model Inquiry {
