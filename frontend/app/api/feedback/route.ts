@@ -108,6 +108,24 @@ export async function POST(request: Request) {
         .map(generateRating)
     }
 
+    // QA / NC Generation Logic for Blank Feedbacks
+    const isBlank = (!payload.overallRating || payload.overallRating === 0) && 
+                    (payload.ratings || []).every((r: any) => !r.rating || r.rating === 0)
+    
+    let initialQaStatus = 'Pending'
+    let isFirstTimePatient = true
+    let patientTypeStr = 'First-Time Patient'
+    
+    if (isBlank && uhid) {
+      const invoicesCount = await prisma.invoice.count({ where: { uhid } })
+      const appointmentsCount = await prisma.appointment.count({ where: { uhid } })
+      isFirstTimePatient = (invoicesCount + appointmentsCount) <= 1
+      patientTypeStr = isFirstTimePatient ? 'First-Time Patient' : 'Repetitive Patient'
+      
+      // We always generate an NC for blank forms, but we annotate the status for clarity
+      initialQaStatus = `NC Generated (${patientTypeStr})`
+    }
+
     const feedback = await prisma.feedback.create({
       data: {
         id: feedbackId,
@@ -136,9 +154,28 @@ export async function POST(request: Request) {
         dayCareRatings: { create: getRatings('Day Care Services') },
         ipdRatings: { create: getRatings('IPD') },
         generalRatings: { create: getRatings('General Experience') },
-        dentalRatings: { create: getRatings('Dental') }
+        dentalRatings: { create: getRatings('Dental') },
+        qaStatus: initialQaStatus
       }
     })
+
+    // Auto-generate NC for ANY blank feedback, annotating patient type so QA can decide what to do
+    if (isBlank && uhid) {
+      await prisma.nonConformance.create({
+        data: {
+          uhid: uhid,
+          patient: payload.patientName || 'Unknown',
+          relatedDocument: feedbackId,
+          department: 'Patient Experience',
+          severity: 'Major',
+          status: 'Open',
+          title: `Blank Feedback (${patientTypeStr})`,
+          description: `A ${patientTypeStr.toLowerCase()} submitted a completely blank feedback form. Please verify with them to understand if there was an issue.`,
+          dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // +2 days
+        }
+      })
+      console.log(`Auto-generated NC for blank feedback ${feedbackId} (${patientTypeStr})`)
+    }
 
     console.log(`Feedback created successfully: ${feedbackId} for UHID: ${uhid}`)
     return NextResponse.json(feedback, { status: 201 })

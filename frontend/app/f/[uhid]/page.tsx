@@ -723,52 +723,54 @@ export default function PublicFeedbackPage() {
                 </div>
 
                 {/* Service Availed */}
-              <div className="md:col-span-2 pt-4 border-t border-slate-200">
-                <Label className="text-base font-semibold mb-4 block text-slate-800 uppercase tracking-wide border-b pb-2">{t.typeOfService}</Label>
-                  <div className="flex flex-wrap gap-6 mb-4">
-                    {Object.entries(t.serviceTypes).map(([rawKey, translatedLabel]) => (
-                      <div key={rawKey} className="flex items-center space-x-2">
-                        <Checkbox 
-                          id={`svc-${rawKey}`} 
-                          checked={serviceAvailed.includes(rawKey)}
-                          onCheckedChange={() => {
-                            if (!servicesParam && !patient) handleCheckbox(serviceAvailed, setServiceAvailed, rawKey)
-                          }}
-                          disabled={!!servicesParam || !!patient}
-                        />
-                        <Label htmlFor={`svc-${rawKey}`} className={`font-medium ${(servicesParam || patient) ? 'text-slate-400' : 'text-slate-700'}`}>{translatedLabel}</Label>
-                      </div>
-                    ))}
-                  </div>
-
-                  {(!patient && !servicesParam && isOPD) && (
-                    <div className="mt-4 p-4 bg-white border rounded-lg border-slate-200">
-                      <Label className="text-sm font-semibold mb-3 block text-slate-700">{t.selectOpdDept}</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        {[
-                          { raw: 'Doctor Consultation', label: t.depts.doctor },
-                          { raw: 'Cardiology', label: t.depts.cardiology },
-                          { raw: 'Pulmonology', label: t.depts.pulmonology },
-                          { raw: 'Radiology', label: t.depts.radiology },
-                          { raw: 'Pathology', label: t.depts.pathology },
-                          { raw: 'Dental', label: t.depts.dental },
-                          { raw: 'Ophthalmology', label: t.depts.ophthalmology },
-                          { raw: 'Day Care', label: t.depts.dayCare },
-                          { raw: 'Physiotherapy', label: t.depts.physiotherapy }
-                        ].map(opt => (
-                          <div key={opt.raw} className="flex items-center space-x-2">
-                            <Checkbox 
-                              id={`dept-${opt.raw}`} 
-                              checked={manualDepartments.includes(opt.raw)}
-                              onCheckedChange={() => handleCheckbox(manualDepartments, setManualDepartments, opt.raw)}
-                            />
-                            <Label htmlFor={`dept-${opt.raw}`} className="text-sm font-medium">{opt.label}</Label>
-                          </div>
-                        ))}
-                      </div>
+                {!servicesParam && (
+                  <div className="md:col-span-2 pt-4 border-t border-slate-200">
+                    <Label className="text-base font-semibold mb-4 block text-slate-800 uppercase tracking-wide border-b pb-2">{t.typeOfService}</Label>
+                    <div className="flex flex-wrap gap-6 mb-4">
+                      {Object.entries(t.serviceTypes).map(([rawKey, translatedLabel]) => (
+                        <div key={rawKey} className="flex items-center space-x-2">
+                          <Checkbox 
+                            id={`svc-${rawKey}`} 
+                            checked={serviceAvailed.includes(rawKey)}
+                            onCheckedChange={() => {
+                              if (!patient) handleCheckbox(serviceAvailed, setServiceAvailed, rawKey)
+                            }}
+                            disabled={!!patient}
+                          />
+                          <Label htmlFor={`svc-${rawKey}`} className={`font-medium ${patient ? 'text-slate-400' : 'text-slate-700'}`}>{translatedLabel}</Label>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </div>
+
+                    {(!patient && isOPD) && (
+                      <div className="mt-4 p-4 bg-white border rounded-lg border-slate-200">
+                        <Label className="text-sm font-semibold mb-3 block text-slate-700">{t.selectOpdDept}</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          {[
+                            { raw: 'Doctor Consultation', label: t.depts.doctor },
+                            { raw: 'Cardiology', label: t.depts.cardiology },
+                            { raw: 'Pulmonology', label: t.depts.pulmonology },
+                            { raw: 'Radiology', label: t.depts.radiology },
+                            { raw: 'Pathology', label: t.depts.pathology },
+                            { raw: 'Dental', label: t.depts.dental },
+                            { raw: 'Ophthalmology', label: t.depts.ophthalmology },
+                            { raw: 'Day Care', label: t.depts.dayCare },
+                            { raw: 'Physiotherapy', label: t.depts.physiotherapy }
+                          ].map(opt => (
+                            <div key={opt.raw} className="flex items-center space-x-2">
+                              <Checkbox 
+                                id={`dept-${opt.raw}`} 
+                                checked={manualDepartments.includes(opt.raw)}
+                                onCheckedChange={() => handleCheckbox(manualDepartments, setManualDepartments, opt.raw)}
+                              />
+                              <Label htmlFor={`dept-${opt.raw}`} className="text-sm font-medium">{opt.label}</Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* General Experience Table */}

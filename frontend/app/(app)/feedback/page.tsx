@@ -56,6 +56,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { feedbacks } from '@/lib/mock-data'
 import { useHealthcare, type Patient } from '@/lib/store'
+import { OUR_SERVICES_LIST } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -108,6 +109,19 @@ export default function FeedbackPage() {
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [currentPage, setCurrentPage] = useState<number>(1)
   const ITEMS_PER_PAGE = 10
+
+  // For pending feedbacks link generation
+  const [selectedServicesMap, setSelectedServicesMap] = useState<Record<string, string[]>>({})
+
+  const toggleService = (uhid: string, service: string) => {
+    setSelectedServicesMap(prev => {
+      const current = prev[uhid] || []
+      const updated = current.includes(service)
+        ? current.filter(s => s !== service)
+        : [...current, service]
+      return { ...prev, [uhid]: updated }
+    })
+  }
 
   // Combine default mock feedbacks with imported ones and DB feedbacks
   const allFeedbacks = useMemo(() => {
@@ -947,22 +961,42 @@ export default function FeedbackPage() {
                 ) : (
                   <div className="flex flex-col gap-3">
                     {pendingFeedbacks.map(p => (
-                      <div key={p.id} className="flex items-center justify-between p-4 rounded-xl border border-amber-200 bg-amber-50/50">
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-slate-800">{p.name}</span>
-                          <span className="text-xs text-slate-500">{p.uhid} • {p.phone}</span>
+                      <div key={p.id} className="flex flex-col p-4 rounded-xl border border-amber-200 bg-amber-50/50 gap-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-slate-800">{p.name}</span>
+                            <span className="text-xs text-slate-500">{p.uhid} • {p.phone}</span>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button variant="outline" size="sm" onClick={() => {
+                              const services = selectedServicesMap[p.uhid] || []
+                              const link = `${window.location.origin}/f/${p.uhid}${services.length > 0 ? `?services=${encodeURIComponent(services.join(','))}` : ''}`
+                              navigator.clipboard.writeText(link)
+                              toast.success('Feedback link copied!')
+                            }}>Copy Link</Button>
+                            <Button size="sm" className="bg-[#25D366] hover:bg-[#1da851] text-white" onClick={() => {
+                              const services = selectedServicesMap[p.uhid] || []
+                              const link = `${window.location.origin}/f/${p.uhid}${services.length > 0 ? `?services=${encodeURIComponent(services.join(','))}` : ''}`
+                              const text = encodeURIComponent(`Dear ${p.name || 'Patient'},\n\nThank you for choosing *ES Healthcare Centre* for your recent visit.\n\nYour health and satisfaction are our top priorities. We would truly appreciate it if you could take 1 minute to share your experience:\n\n${link}\n\nYour UHID: ${p.uhid}\n\nWarm regards,\nES Healthcare Centre\n📞 +917961616161`)
+                              window.open(`https://wa.me/?text=${text}`, 'whatsapp_web')
+                            }}><MessageCircle className="w-4 h-4 mr-2" /> Share WhatsApp</Button>
+                          </div>
                         </div>
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm" onClick={() => {
-                            const link = `${window.location.origin}/f/${p.uhid}`
-                            navigator.clipboard.writeText(link)
-                            toast.success('Feedback link copied!')
-                          }}>Copy Link</Button>
-                          <Button size="sm" className="bg-[#25D366] hover:bg-[#1da851] text-white" onClick={() => {
-                            const link = `${window.location.origin}/f/${p.uhid}`
-                            const text = encodeURIComponent(`Dear ${p.name || 'Patient'},\n\nThank you for choosing *ES Healthcare Centre* for your recent visit.\n\nYour health and satisfaction are our top priorities. We would truly appreciate it if you could take 1 minute to share your experience:\n\n${link}\n\nYour UHID: ${p.uhid}\n\nWarm regards,\nES Healthcare Centre\n📞 +917961616161`)
-                            window.open(`https://wa.me/?text=${text}`, 'whatsapp_web')
-                          }}><MessageCircle className="w-4 h-4 mr-2" /> Share WhatsApp</Button>
+                        <div className="flex flex-wrap gap-2 pt-2 border-t border-amber-200/50">
+                          <span className="text-xs font-medium text-amber-800 w-full mb-1">Select Availed Services:</span>
+                          {OUR_SERVICES_LIST.map(service => {
+                            const isSelected = (selectedServicesMap[p.uhid] || []).includes(service)
+                            return (
+                              <Badge 
+                                key={service} 
+                                variant={isSelected ? "default" : "outline"}
+                                className={`cursor-pointer ${isSelected ? 'bg-amber-600 hover:bg-amber-700' : 'bg-white hover:bg-amber-100 text-slate-600 border-amber-200'}`}
+                                onClick={() => toggleService(p.uhid, service)}
+                              >
+                                {service}
+                              </Badge>
+                            )
+                          })}
                         </div>
                       </div>
                     ))}
