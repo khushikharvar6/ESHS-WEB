@@ -137,6 +137,12 @@ export default function BillingAnalyticsPage() {
     refund: 'All',
   })
 
+  // Normalize referral type
+  const getReferral = (inv: Invoice) => {
+    const r = inv.referralType || 'Walk-in'
+    return r.toLowerCase() === 'self' ? 'Walk-in' : r
+  }
+
   // Apply filters
   const filteredInvoices = useMemo(() => {
     return invoices.filter(inv => {
@@ -154,7 +160,7 @@ export default function BillingAnalyticsPage() {
       if (filters.doctor !== 'All' && inv.doctorName !== filters.doctor) return false
       if (filters.corporate !== 'All' && inv.corporateName !== filters.corporate) return false
       if (filters.insurance !== 'All' && inv.insuranceProvider !== filters.insurance) return false
-      if (filters.referralType !== 'All' && inv.referralType !== filters.referralType) return false
+      if (filters.referralType !== 'All' && getReferral(inv) !== filters.referralType) return false
       if (filters.billStatus !== 'All' && inv.status !== filters.billStatus) return false
       
       if (filters.paymentStatus !== 'All') {
@@ -259,7 +265,7 @@ export default function BillingAnalyticsPage() {
   const sourceData = useMemo(() => {
     const map = new Map<string, { rev: number, count: number }>()
     filteredInvoices.forEach(inv => {
-      const s = inv.referralType || 'Walk-in'
+      const s = getReferral(inv)
       const cur = map.get(s) || { rev: 0, count: 0 }
       map.set(s, { rev: cur.rev + Number(inv.total || 0), count: cur.count + 1 })
     })
@@ -277,7 +283,7 @@ export default function BillingAnalyticsPage() {
           `"${(inv.patient || '').replace(/"/g, '""')}"`,
           inv.uhid || '',
           inv.department || 'General',
-          inv.referralType || 'Walk-in',
+          getReferral(inv),
           inv.total || 0,
           inv.paid || 0,
           inv.balance || 0,
@@ -340,7 +346,7 @@ export default function BillingAnalyticsPage() {
     { key: 'balance', header: 'Due', render: (r) => <span className="text-sm text-red-600">₹{Number(r.balance || 0).toLocaleString()}</span> },
     { key: 'refund', header: 'Refund', render: (r) => <span className="text-xs">₹{Number(r.refundAmount || 0).toLocaleString()}</span> },
     { key: 'foc', header: 'FOC', render: (r) => <span className="text-xs">{r.isFOC ? 'Yes' : 'No'}</span> },
-    { key: 'referral', header: 'Refer Type', render: (r) => <span className="text-xs">{r.referralType || '-'}</span> },
+    { key: 'referral', header: 'Refer Type', render: (r) => <span className="text-xs">{getReferral(r)}</span> },
     { key: 'remarks', header: 'Remark', render: (r) => <span className="text-xs max-w-[150px] truncate block" title={r.remarks}>{r.remarks || '-'}</span> },
     { key: 'status', header: 'Status', render: (r) => <StatusBadge status={r.status || 'Pending'} /> }
   ]
