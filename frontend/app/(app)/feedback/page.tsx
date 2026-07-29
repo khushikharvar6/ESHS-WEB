@@ -113,7 +113,7 @@ export default function FeedbackPage() {
   // For pending feedbacks link generation
   const [selectedServicesMap, setSelectedServicesMap] = useState<Record<string, string[]>>({})
 
-  const toggleService = (uhid: string, service: string) => {
+  const togglePendingService = (uhid: string, service: string) => {
     setSelectedServicesMap(prev => {
       const current = prev[uhid] || []
       const updated = current.includes(service)
@@ -991,7 +991,7 @@ export default function FeedbackPage() {
                                 key={service} 
                                 variant={isSelected ? "default" : "outline"}
                                 className={`cursor-pointer ${isSelected ? 'bg-amber-600 hover:bg-amber-700' : 'bg-white hover:bg-amber-100 text-slate-600 border-amber-200'}`}
-                                onClick={() => toggleService(p.uhid, service)}
+                                onClick={() => togglePendingService(p.uhid, service)}
                               >
                                 {service}
                               </Badge>
