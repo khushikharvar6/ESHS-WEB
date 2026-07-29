@@ -327,17 +327,21 @@ export default function BillingAnalyticsPage() {
 
   const columns: Column<Invoice>[] = [
     { key: 'id', header: 'Invoice No.', render: (r) => <span className="font-mono text-xs">{r.id.substring(0,8)}</span> },
-    { key: 'date', header: 'Date', render: (r) => <span className="text-xs">{parseDate(r.date || r.createdAt)?.toLocaleDateString()}</span> },
-    { key: 'patient', header: 'Patient', render: (r) => (
-      <div>
-        <div className="font-semibold text-sm">{r.patient || ''}</div>
-        <div className="text-xs text-muted-foreground">{r.uhid}</div>
-      </div>
-    )},
+    { key: 'date', header: 'Date', render: (r) => <span className="text-xs whitespace-nowrap">{parseDate(r.date || r.createdAt)?.toLocaleDateString()}</span> },
+    { key: 'patient', header: 'Patient Name', render: (r) => <span className="font-semibold text-sm whitespace-nowrap">{r.patient || ''}</span> },
+    { key: 'uhid', header: 'UHID', render: (r) => <span className="text-xs text-muted-foreground">{r.uhid || '-'}</span> },
+    { key: 'gender', header: 'Gender', render: (r) => <span className="text-xs">{r.patientRef?.gender || '-'}</span> },
+    { key: 'age', header: 'Age', render: (r) => <span className="text-xs">{r.patientRef?.age ? `${r.patientRef.age}y` : '-'}</span> },
     { key: 'department', header: 'Department', render: (r) => <span className="text-xs">{r.department || 'General'}</span> },
-    { key: 'total', header: 'Net Payable', render: (r) => <span className="font-medium text-sm">₹{Number(r.total || 0).toLocaleString()}</span> },
+    { key: 'total_bill', header: 'Total Bill Amt', render: (r) => <span className="text-xs">₹{Number(r.subtotal || r.total || 0).toLocaleString()}</span> },
+    { key: 'discount', header: 'Discount', render: (r) => <span className="text-xs">₹{Number(r.discount || 0).toLocaleString()}</span> },
+    { key: 'net_pay', header: 'Net Pay', render: (r) => <span className="font-medium text-sm text-green-700">₹{Number(r.total || 0).toLocaleString()}</span> },
     { key: 'paid', header: 'Paid', render: (r) => <span className="text-sm text-green-600">₹{Number(r.paid || 0).toLocaleString()}</span> },
     { key: 'balance', header: 'Due', render: (r) => <span className="text-sm text-red-600">₹{Number(r.balance || 0).toLocaleString()}</span> },
+    { key: 'refund', header: 'Refund', render: (r) => <span className="text-xs">₹{Number(r.refundAmount || 0).toLocaleString()}</span> },
+    { key: 'foc', header: 'FOC', render: (r) => <span className="text-xs">{r.isFOC ? 'Yes' : 'No'}</span> },
+    { key: 'referral', header: 'Refer Type', render: (r) => <span className="text-xs">{r.referralType || '-'}</span> },
+    { key: 'remarks', header: 'Remark', render: (r) => <span className="text-xs max-w-[150px] truncate block" title={r.remarks}>{r.remarks || '-'}</span> },
     { key: 'status', header: 'Status', render: (r) => <StatusBadge status={r.status || 'Pending'} /> }
   ]
 
