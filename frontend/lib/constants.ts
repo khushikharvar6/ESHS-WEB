@@ -266,6 +266,7 @@ export const OUR_SERVICES_LIST = [
   'Pulmonology',
   'Radiology',
   'Pathology',
+  'Health Checkup',
   'Home Healthcare',
   'Vaccination',
   'Dental',
