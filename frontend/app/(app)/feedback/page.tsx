@@ -499,7 +499,8 @@ export default function FeedbackPage() {
                     Print Form
                   </Button>
                   <Button variant="secondary" onClick={() => {
-                    const link = `${window.location.origin}/f/${patient.uhid}`
+                    const svcParam = selectedServices.length > 0 ? `?services=${encodeURIComponent(selectedServices.join(','))}` : ''
+                    const link = `${window.location.origin}/f/${patient.uhid}${svcParam}`
                     navigator.clipboard.writeText(link)
                     toast.success('Feedback link copied!')
                   }}>
@@ -508,7 +509,8 @@ export default function FeedbackPage() {
                   <Button 
                     className="bg-[#25D366] hover:bg-[#1da851] text-white flex items-center gap-2"
                     onClick={() => {
-                      const link = `${window.location.origin}/f/${patient.uhid}`
+                      const svcParam = selectedServices.length > 0 ? `?services=${encodeURIComponent(selectedServices.join(','))}` : ''
+                      const link = `${window.location.origin}/f/${patient.uhid}${svcParam}`
                       const text = encodeURIComponent(`Dear ${patient.name || 'Patient'},\n\nThank you for choosing *ES Healthcare Centre* for your recent visit.\n\nYour health and satisfaction are our top priorities. We would truly appreciate it if you could take 1 minute to share your experience:\n\n${link}\n\nYour UHID: ${patient.uhid}\n\nWarm regards,\nES Healthcare Centre\n📞 +917961616161`)
                       window.open(`https://wa.me/?text=${text}`, 'whatsapp_web')
                     }}
